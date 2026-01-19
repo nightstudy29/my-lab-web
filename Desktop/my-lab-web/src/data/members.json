@@ -6,6 +6,7 @@
     "joined": "",
     "email": "junminsuh@snu.ac.kr",
     "area": "TBD",
+    "image": "/members/junminsuh.jpg",
     "links": {
       "cv": "https://drive.google.com/file/d/1nqO-AdhA58G_-yAlR3d9bwc0l_-rs9Fb/view?usp=sharing",
       "googleScholar": "https://scholar.google.com/citations?user=M3-oMsgAAAAJ&hl=ko",
@@ -16,10 +17,11 @@
   {
     "id": 2,
     "name": "Jun-Hyeong Park",
-    "role": "MS-PhD integrated student",
+    "role": "MS-PhD Student",
     "joined": "2025 Fall",
     "email": "jhp2910@snu.ac.kr",
     "area": "Co-advisor: Prof. Tae Heon Kim (KIST)",
+    "image": "/members/junhyeongpark.jpg",
     "links": {
       "cv": "",
       "googleScholar": "",
@@ -30,10 +32,11 @@
   {
     "id": 3,
     "name": "Jeongin Bae",
-    "role": "MS-PhD integrated student",
+    "role": "MS-PhD Student",
     "joined": "2026 Spring",
-    "email": "pending@snu.ac.kr",
+    "email": "jeongin2007@snu.ac.kr",
     "area": "Co-advisor: Dr. Ki Chang Kwon (KRISS)",
+    "image": "/members/jeonginbae.jpg",
     "links": {
       "cv": "",
       "googleScholar": "",
@@ -44,10 +47,11 @@
   {
     "id": 6,
     "name": "Jungmin Lee",
-    "role": "MS-PhD integrated student",
+    "role": "MS-PhD Student",
     "joined": "2026 Spring",
     "email": "jungminlee0@snu.ac.kr",
     "area": "",
+    "image": "",
     "links": {
       "cv": "",
       "googleScholar": "",
@@ -57,11 +61,12 @@
   },
   {
     "id": 4,
-    "name": "Hyungchan Kim",
-    "role": "MS-PhD integrated student",
+    "name": "Hyeongchan Kim",
+    "role": "MS-PhD Student",
     "joined": "2026 Spring",
     "email": "khc123@snu.ac.kr",
     "area": "",
+    "image": "",
     "links": {
       "cv": "",
       "googleScholar": "",
@@ -72,10 +77,11 @@
   {
     "id": 5,
     "name": "Yun-Haeng Cho",
-    "role": "PhD student",
+    "role": "PhD Student",
     "joined": "2026 Spring",
     "email": "yunhaengcho@snu.ac.kr",
     "area": "",
+    "image": "",
     "links": {
       "cv": "",
       "googleScholar": "",
