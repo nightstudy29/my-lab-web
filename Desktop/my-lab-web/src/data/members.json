@@ -86,7 +86,6 @@
       "period": "Summer 2025",
       "program": "SNUMSE",
       "achievements": [
-        { "type": "award", "title": "Award Name", "url": "#" },
         { "type": "paper", "title": "Paper Title", "url": "https://iopscience.iop.org/article/10.1088/2634-4386/ae294e" }
       ]
     },
