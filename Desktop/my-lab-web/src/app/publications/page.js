@@ -53,11 +53,12 @@ export default function PublicationsPage() {
             <div 
               style={{ color: '#444', lineHeight: '1.6', fontSize: '1rem' }}
               dangerouslySetInnerHTML={{ 
-               // 하이픈(-) 앞뒤의 모든 공백을 제거하고, 이상한 대시(–)도 일반 하이픈(-)으로 통일
-               __html: paper.authors.replace(/\s*-\s*/g, '-').replace(/–/g, '-') 
-              }}
+                // 대괄호 안에 [ ‐ – - ] 세 가지를 다 넣었습니다. (특수하이픈, 긴대시, 일반빼기)
+                // 이 셋 중 하나라도 발견되면 앞뒤 공백을 없애고 일반(-)으로 바꿉니다.
+                __html: paper.authors.replace(/\s*[‐–-]\s*/g, '-') 
+              }} 
             />
-
+                      
             {/* 학회/저널 정보 */}
             <p style={{ 
               marginTop: '5px', 
