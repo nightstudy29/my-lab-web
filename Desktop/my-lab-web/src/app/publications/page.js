@@ -1,56 +1,69 @@
 import papers from '../../data/papers.json';
 
 export default function PublicationsPage() {
-  // Python의 sort와 비슷합니다. 연도(year)를 기준으로 내림차순(최신순) 정렬합니다.
-  // b.year - a.year가 양수면 순서를 바꿉니다.
   const sortedPapers = papers.sort((a, b) => b.year - a.year);
 
   return (
-    <div style={{ padding: '40px' }}>
+    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto' }}>
       <h1>Publications</h1>
-      <p style={{ marginBottom: '30px' }}>
-        주요 연구 실적입니다. (Total: {sortedPapers.length})
+      <p style={{ marginBottom: '40px', fontSize: '1.1rem', color: '#555' }}>
+        Total: {sortedPapers.length}
       </p>
 
       <div>
         {sortedPapers.map((paper) => (
           <div key={paper.id} style={{ 
-            marginBottom: '20px', 
-            paddingBottom: '20px', 
+            marginBottom: '30px', 
+            paddingBottom: '30px', 
             borderBottom: '1px solid #eee' 
           }}>
-            {/* 연도 표시 배지 */}
+            {/* 연도 표시 */}
             <span style={{ 
               backgroundColor: '#333', 
               color: 'white', 
-              padding: '2px 8px', 
+              padding: '4px 10px', 
               borderRadius: '4px', 
-              fontSize: '0.8rem',
-              fontWeight: 'bold'
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+              display: 'inline-block',
+              marginBottom: '10px'
             }}>
               {paper.year}
             </span>
 
-            {/* 논문 제목 및 링크 */}
-            <div style={{ marginTop: '5px' }}>
+            {/* 논문 제목 */}
+            <div style={{ marginBottom: '8px' }}>
               <a 
                 href={paper.url} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 style={{ 
-                  fontSize: '1.2rem', 
-                  fontWeight: 'bold', 
+                  fontSize: '1.3rem', 
+                  fontWeight: '700', 
                   textDecoration: 'none', 
-                  color: '#0070f3' 
+                  color: '#0070f3',
+                  lineHeight: '1.4'
                 }}
               >
                 {paper.title} 🔗
               </a>
             </div>
 
-            {/* 저자 및 학회명 */}
-            <p style={{ margin: '5px 0', color: '#555' }}>{paper.authors}</p>
-            <p style={{ fontStyle: 'italic', color: '#666' }}>In {paper.conference}</p>
+            {/* ★ 여기가 핵심 수정 부분입니다 ★ */}
+            <div 
+              style={{ color: '#444', lineHeight: '1.6', fontSize: '1rem' }}
+              dangerouslySetInnerHTML={{ __html: paper.authors }} 
+            />
+
+            {/* 학회/저널 정보 */}
+            <p style={{ 
+              marginTop: '5px', 
+              fontStyle: 'italic', 
+              color: '#666',
+              fontSize: '0.95rem'
+            }}>
+              In {paper.conference}
+            </p>
           </div>
         ))}
       </div>
