@@ -94,7 +94,7 @@ export default function ContactPage() {
           </p>
           
           <p style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#555', marginBottom: '15px', fontWeight: '500' }}>
-            <FaPhone size={14} color="#004094" /> 02-880-8463
+            <FaPhone size={14} color="#004094" /> +82-2-880-8463
           </p>
 
           <p style={{ color: '#666', lineHeight: '1.6', marginBottom: '20px' }}>

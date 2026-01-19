@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import Navbar from "../components/Navbar"; // 방금 만든 Navbar 불러오기
+import ScrollToTop from "../components/ScrollToTop";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -37,7 +38,7 @@ export default function RootLayout({ children }) {
           <p style={{ fontSize: '0.9rem', marginBottom: '20px' }}>Laboratory of Semiconductor Materials for Intelligent Devices</p>
           <p style={{ fontSize: '0.8rem', color: '#999' }}>© {new Date().getFullYear()} SMID Lab. All rights reserved.</p>
         </footer>
-
+        <ScrollToTop />
       </body>
     </html>
   );

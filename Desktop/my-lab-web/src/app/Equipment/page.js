@@ -18,8 +18,7 @@ export default function EquipmentPage() {
       <div style={{ textAlign: 'center', marginBottom: '60px' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '15px', color: '#333' }}>Research Equipment</h1>
         <p style={{ fontSize: '1.1rem', color: '#666' }}>
-          SMID 연구실이 보유한 주요 연구 장비 및 시설입니다.
-        </p>
+         </p>
       </div>
 
       {/* 2. 장비 그리드 리스트 */}
