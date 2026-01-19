@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "Low-Dimensional Materials & Nanostructures",
+    "description": "We specialize in the <strong>structural engineering of materials</strong> at the nanometer scale. Our research spans from <strong>atomically thin freestanding membranes</strong> for exploring quantum phenomena to <strong>rationally designed nanostructures</strong> (e.g., porous networks) for maximizing surface interactions.<br/><br/>By manipulating both <strong>dimensionality (2D)</strong> and <strong>geometry (3D)</strong>, we tailor material properties for specific applications ranging from high-performance logic to ultrasensitive sensors.",
+    "image": "/images/research/topic_1.jpg"
+  },
+  {
+    "id": 2,
+    "title": "Heterogeneous 3D Integration Platform",
+    "description": "Realizing multi-functional systems requires integrating dissimilar materials, yet conventional monolithic growth is limited by lattice mismatch. We propose a <strong>universal 3D integration platform</strong> utilizing freestanding nanomembranes.<br/><br/>By stacking diverse functional layers (logic, memory, sensors) without physical constraints, we achieve <strong>high-density, heterogeneous 3D electronics</strong>, transcending the limits of traditional device scaling.",
+    "image": "/images/research/topic_2.jpg"
+  },
+  {
+    "id": 3,
+    "title": "Intelligent Sensor Systems & Free-Form Electronics",
+    "description": "The next generation of sensors must do more than just detect—<strong>they must think.</strong><br/><br/>We develop <strong>AI-enabled sensing platforms</strong> that process data locally (<strong>In-Sensor AI</strong>) for real-time decision making. Leveraging the unique mechanical flexibility of our <strong>freestanding nanomembranes</strong>, these intelligent systems can be realized in <strong>diverse form factors</strong>, enabling seamless integration into any environment beyond rigid chips.",
+    "image": "/images/research/topic_3.jpg"
+  }
+]

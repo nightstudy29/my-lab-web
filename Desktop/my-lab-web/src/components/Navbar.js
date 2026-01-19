@@ -1,86 +1,119 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 export default function Navbar() {
-  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
-  // 기본 링크 스타일
-  const linkStyle = {
-    textDecoration: 'none',
-    color: '#555',
-    fontWeight: '500',
-    fontSize: '0.95rem',
-    transition: 'color 0.2s',
-    whiteSpace: 'nowrap',
-  };
-
-  // 활성화된(현재 페이지) 링크 스타일
-  const activeStyle = {
-    ...linkStyle,
-    color: '#004094', // SMID 메인 컬러
-    fontWeight: '700',
-  };
-
-  // 현재 메뉴가 활성화 상태인지 확인하는 함수 (부분 일치 허용)
-  // 예: /research/detail 페이지에 있어도 Research 메뉴에 불이 들어오게 함
-  const isActive = (path) => {
-    if (path === '/') return pathname === '/';
-    return pathname.startsWith(path);
-  };
+  // [수정됨] 메뉴 순서 변경: Publications -> Equipment
+  const menuItems = ['Home', 'Research', 'Members', 'Publications', 'Equipment', 'News', 'Contact'];
 
   return (
-    <header style={{ 
-      borderBottom: '1px solid #eee', 
-      backgroundColor: '#fff', 
+    <nav style={{ 
+      backgroundColor: '#002b5e', 
+      color: '#fff', 
+      padding: '12px 20px', 
       position: 'sticky', 
       top: 0, 
-      zIndex: 100,
-      width: '100%' 
+      zIndex: 1000,
+      boxShadow: '0 2px 10px rgba(0,0,0,0.1)' 
     }}>
       <div style={{ 
         maxWidth: '1200px', 
         margin: '0 auto', 
-        padding: '15px 20px', 
         display: 'flex', 
-        flexWrap: 'wrap',       
         justifyContent: 'space-between', 
-        alignItems: 'center',
-        gap: '15px'             
+        alignItems: 'center' 
       }}>
         
-        {/* 1. 로고 영역 */}
-        <div style={{ flexShrink: 0 }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: '800', letterSpacing: '-0.5px' }}>
-              <span style={{ color: '#004094' }}>SMID</span>
-              <span style={{ color: '#333' }}> Lab</span>
-            </div>
-            <span style={{ fontSize: '0.65rem', color: '#888', fontWeight: '400', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-              Semiconductor Materials for Intelligent Devices
-            </span>
-          </Link>
+        {/* [LOGO AREA] */}
+        <Link href="/" style={{ 
+          textDecoration: 'none', 
+          color: '#fff', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '15px'
+        }}>
+          <img 
+            src="/images/snu_logo_white.png" 
+            alt="SNU Logo" 
+            style={{ 
+              height: '45px', 
+              width: 'auto',
+              display: 'block'
+            }} 
+          />
+          <span style={{ 
+            fontSize: '1.6rem', 
+            fontWeight: '800', 
+            letterSpacing: '-0.5px',
+            lineHeight: '1'
+          }}>
+            SMID Lab
+          </span>
+        </Link>
+
+        {/* Desktop Menu */}
+        <div className="desktop-menu" style={{ display: 'flex', gap: '25px' }}>
+          {menuItems.map((item) => (
+            <Link 
+              key={item} 
+              href={item === 'Home' ? '/' : `/${item.toLowerCase()}`} 
+              style={{ 
+                color: '#fff', 
+                textDecoration: 'none', 
+                fontWeight: '500', 
+                fontSize: '1rem',
+                transition: 'opacity 0.2s'
+              }}
+              className="nav-link"
+            >
+              {item}
+            </Link>
+          ))}
         </div>
 
-        {/* 2. 메뉴 링크들 */}
-        <nav style={{ 
-          display: 'flex', 
-          gap: '25px', // 간격을 조금 더 넓혔습니다
-          alignItems: 'center',
-          flexWrap: 'wrap',    
-          justifyContent: 'center' 
-        }}>
-          {/* 각 링크마다 isActive 함수를 사용하여 현재 페이지 확인 */}
-          <Link href="/" style={isActive('/') ? activeStyle : linkStyle}>Home</Link>
-          <Link href="/research" style={isActive('/research') ? activeStyle : linkStyle}>Research</Link>
-          <Link href="/members" style={isActive('/members') ? activeStyle : linkStyle}>Members</Link>
-          <Link href="/publications" style={isActive('/publications') ? activeStyle : linkStyle}>Publications</Link>
-          <Link href="/equipment" style={isActive('/equipment') ? activeStyle : linkStyle}>Equipment</Link>
-          <Link href="/news" style={isActive('/news') ? activeStyle : linkStyle}>News</Link>
-          <Link href="/contact" style={isActive('/contact') ? activeStyle : linkStyle}>Contact</Link>
-        </nav>
+        {/* Mobile Menu Icon */}
+        <div className="mobile-menu-icon" onClick={() => setIsOpen(!isOpen)} style={{ cursor: 'pointer', display: 'none' }}>
+          {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+        </div>
       </div>
-    </header>
+
+      {/* Mobile Dropdown */}
+      {isOpen && (
+        <div style={{ 
+          backgroundColor: '#003366', 
+          padding: '20px', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '15px',
+          marginTop: '12px',
+          borderTop: '1px solid rgba(255,255,255,0.1)'
+        }}>
+          {menuItems.map((item) => (
+            <Link 
+              key={item} 
+              href={item === 'Home' ? '/' : `/${item.toLowerCase()}`} 
+              onClick={() => setIsOpen(false)}
+              style={{ color: '#fff', textDecoration: 'none', fontSize: '1.1rem' }}
+            >
+              {item}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      <style jsx>{`
+        .nav-link:hover {
+          opacity: 0.8;
+        }
+        @media (max-width: 900px) {
+          .desktop-menu { display: none !important; }
+          .mobile-menu-icon { display: block !important; }
+        }
+      `}</style>
+    </nav>
   );
 }

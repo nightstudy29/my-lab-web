@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "O<sub>2</sub> Plasma",
+    "model": "Plasol PS-100",
+    "description": "Surface cleaning and treatment.",
+    "image": "/images/equipment/2025-11-24 11.27.08.jpg"
+  },
+  {
+    "id": 2,
+    "name": "TBD",
+    "model": "TBD",
+    "description": "TBD",
+    "image": "/images/equipment/analyzer.jpg"
+  },
+  {
+    "id": 3,
+    "name": "TBD",
+    "model": "TBD",
+    "description": "TBD",
+    "image": "/images/equipment/analyzer.jpg"
+  }
+]
