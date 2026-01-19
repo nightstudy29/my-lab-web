@@ -21,7 +21,7 @@
     "joined": "2025 Fall",
     "email": "jhp2910@snu.ac.kr",
     "area": "Co-advisor: Prof. Tae Heon Kim (KIST)",
-    "image": "/members/junhyeongpark.jpg",
+    "image": "/members/junhyeongpark.jpeg",
     "links": {
       "cv": "",
       "googleScholar": "",
@@ -45,28 +45,13 @@
     }
   },
   {
-    "id": 6,
-    "name": "Jungmin Lee",
-    "role": "MS-PhD Student",
-    "joined": "2026 Spring",
-    "email": "jungminlee0@snu.ac.kr",
-    "area": "",
-    "image": "",
-    "links": {
-      "cv": "",
-      "googleScholar": "",
-      "linkedin": "",
-      "orcid": ""
-    }
-  },
-  {
     "id": 4,
     "name": "Hyeongchan Kim",
     "role": "MS-PhD Student",
     "joined": "2026 Spring",
     "email": "khc123@snu.ac.kr",
     "area": "",
-    "image": "",
+    "image": "/members/hyeongchankim.jpg",
     "links": {
       "cv": "",
       "googleScholar": "",
@@ -81,6 +66,21 @@
     "joined": "2026 Spring",
     "email": "yunhaengcho@snu.ac.kr",
     "area": "",
+    "image": "/members/yunhaengcho.jpg",
+    "links": {
+      "cv": "",
+      "googleScholar": "",
+      "linkedin": "",
+      "orcid": ""
+    }
+  },
+  {
+    "id": 6,
+    "name": "Jungmin Lee",
+    "role": "MS-PhD Student",
+    "joined": "2026 Spring",
+    "email": "jungminlee0@snu.ac.kr",
+    "area": "",
     "image": "",
     "links": {
       "cv": "",
@@ -88,5 +88,5 @@
       "linkedin": "",
       "orcid": ""
     }
-  }
+  },
 ]
