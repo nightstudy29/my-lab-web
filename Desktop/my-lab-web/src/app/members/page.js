@@ -1,18 +1,22 @@
-import membersData from '../../data/members.json';
-import { FaFilePdf, FaLinkedin, FaUser, FaTrophy, FaFileLines } from 'react-icons/fa6'; // 아이콘 추가됨
+import membersData from '../../data/members.json'; // 경로 확인 필요
+import { FaFilePdf, FaLinkedin, FaUser, FaTrophy, FaFileLines } from 'react-icons/fa6';
 import { SiGooglescholar, SiOrcid } from 'react-icons/si';
 
 export default function MembersPage() {
-  const { currentMembers, alumni, interns } = membersData;
+  // 데이터 파일이 로드되지 않았을 때를 대비한 방어 코드
+  if (!membersData) {
+    return <div style={{ padding: '60px', textAlign: 'center' }}>Loading members data...</div>;
+  }
+
+  const { currentMembers = [], alumni = [], interns = [] } = membersData;
 
   return (
-    // ▼ 1. 가장 바깥쪽 부모 div (여기가 제일 중요합니다!)
     <div style={{ 
-      padding: '60px 20px', // 위아래 60px, 양옆 20px 여백
-      maxWidth: '1000px',   // PC에서는 1000px까지만 커짐
-      width: '100%',        // 👈 모바일에서 화면 꽉 채우기 (필수)
-      margin: '0 auto',     // 중앙 정렬
-      boxSizing: 'border-box' // 👈 패딩 때문에 화면 밖으로 튀어 나가는 것 방지
+      padding: '60px 20px', 
+      maxWidth: '1000px',   
+      width: '100%',        
+      margin: '0 auto',     
+      boxSizing: 'border-box' 
     }}>
       
       {/* ==================== 1. Current Members ==================== */}
@@ -94,7 +98,7 @@ export default function MembersPage() {
                       {intern.name}
                     </span>
                     
-                    {/* 프로그램 뱃지 (SNUMSE, SNUTI) */}
+                    {/* 프로그램 뱃지 */}
                     {intern.program && (
                       <span style={{ 
                         fontSize: '0.75rem', 
@@ -108,7 +112,7 @@ export default function MembersPage() {
                       </span>
                     )}
 
-                    {/* 성과 아이콘들 (작게) */}
+                    {/* 성과 아이콘들 */}
                     {intern.achievements && intern.achievements.length > 0 && (
                       <div style={{ display: 'flex', gap: '5px', marginLeft: '5px' }}>
                         {intern.achievements.map((ach, idx) => (
