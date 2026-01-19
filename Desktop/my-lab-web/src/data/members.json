@@ -1,16 +1,44 @@
 [
   {
     "id": 1,
-    "name": "홍길동",
-    "role": "Ph.D Student",
-    "email": "hong@lab.ac.kr",
-    "area": "AI / Deep Learning"
+    "name": "Jun Min Suh",
+    "role": "Principal Investigator",
+    "email": "junminsuh@snu.ac.kr",
+    "area": "TBD"
   },
   {
     "id": 2,
-    "name": "김철수",
-    "role": "MS Student",
-    "email": "kim@lab.ac.kr",
-    "area": "Computer Vision"
+    "name": "Jun-Hyeong Park",
+    "role": "MS-PhD integrated student (Joined 2025 Fall)",
+    "email": "jhp2910@snu.ac.kr",
+    "area": "Co-advisor: Prof. Tae Heon Kim (KIST)"
+  },
+  {
+    "id": 3,
+    "name": "Jeongin Bae",
+    "role": "MS-PhD integrated student (Joined 2026 Spring)",
+    "email": "pending@snu.ac.kr",
+    "area": "Co-advisor: Dr. Ki Chang Kwon (KRISS)"
+  },
+  {
+    "id": 6,
+    "name": "Jungmin Lee",
+    "role": "MS-PhD integrated student (Joined 2026 Spring)",
+    "email": "jungminlee0@snu.ac.kr",
+    "area": ""
+  },
+  {
+    "id": 4,
+    "name": "Hyungchan Kim",
+    "role": "MS-PhD integrated student (Joined 2026 Spring)",
+    "email": "khc123@snu.ac.kr",
+    "area": ""
+  },
+  {
+    "id": 5,
+    "name": "Yun-Haeng Cho",
+    "role": "PhD student (Joined 2026 Spring)",
+    "email": "yunhaengcho@snu.ac.kr",
+    "area": ""
   }
 ]
