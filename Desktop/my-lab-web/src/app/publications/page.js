@@ -30,16 +30,18 @@ export default function PublicationsPage() {
               target="_blank" 
               style={{ textDecoration: 'none' }}
             >
-              <h2 style={{ 
+            <h2 
+              style={{ 
                 fontSize: '1.25rem',
                 color: '#004094', 
                 fontWeight: '700',
                 marginBottom: '8px',
                 lineHeight: '1.4',
                 cursor: 'pointer',
-              }}>
-                {paper.title}
-              </h2>
+              }}
+              // ▼ 여기가 핵심입니다! 제목 안에 있는 태그(<sub> 등)를 해석하라는 뜻입니다.
+              dangerouslySetInnerHTML={{ __html: paper.title }} 
+            />
             </Link>
 
             {/* [저자] */}
