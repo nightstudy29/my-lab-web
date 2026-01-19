@@ -1,4 +1,4 @@
-"use client";  // 👈 이 한 줄이 없어서 에러가 난 겁니다!
+"use client";
 
 import Link from "next/link";
 import { FaNewspaper } from "react-icons/fa6"; 
@@ -75,3 +75,40 @@ export default function PublicationsPage() {
                 </span>
                 
                 {/* 최대 6개까지만 표시 */}
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {paper.news.slice(0, 6).map((newsItem, index) => (
+                    <a 
+                      key={index} 
+                      href={newsItem.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      title={`Media coverage: ${newsItem.name}`} 
+                      style={{ 
+                        color: '#666', 
+                        fontSize: '1.2rem', 
+                        display: 'flex', 
+                        alignItems: 'center',
+                        transition: 'color 0.2s, transform 0.1s'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.color = '#004094'; 
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.color = '#666';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      <FaNewspaper />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
