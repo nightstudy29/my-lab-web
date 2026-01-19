@@ -130,7 +130,10 @@
     "title": "Data-centric artificial olfactory system based on the eigengraph",
     "authors": "S.-H. Sung†, <b><u>J. M. Suh</u></b>†, Y. J. Hwang, H. W. Jang*, J. G. Park*, S. C. Jun*",
     "conference": "Nature Communications 15, 1211",
-    "url": "https://doi.org/10.1038/s41467-024-45430-9"
+    "url": "https://doi.org/10.1038/s41467-024-45430-9",
+    "news": [
+      { "name": "Nature Communications", "url": "https://drive.google.com/file/d/1UUmPiRyYMc4YSZQidyXq0xAhniyohYDv/view?usp=sharing" }
+    ]
   },
   {
     "id": 70,
@@ -162,7 +165,11 @@
     "title": "Monolithic 3D integration of 2D materials-based electronics towards ultimate edge computing solutions",
     "authors": "J.-H. Kang†, H. Shin†, K. Kim†, M. K. Song†, D. Lee, Y. Meng, C. Choi, <b><u>J. M. Suh</u></b>, B. J. Kim, H. Kim, A. T. Hoang, B.-I. Park, G. Zhou, S. Sundaram, P. Vuong, J. Shin, J. Choe, Z. Xu, R. Younas, J. S. Kim, S. Han, S. Lee, S. O. Kim, B. Kang, S. Seo, H. Ahn, S. Seo, K. Reidy, E. Park, S. Mun, M.-C. Park, S. Lee, H.-J. Kim, H. S. Kum, P. Lin, C. Hinkle, A. Ougazzaden, J.-H. Ahn*, J. Kim*, S.-H. Bae*",
     "conference": "Nature Materials 22, 1470-1477",
-    "url": "https://doi.org/10.1038/s41563-023-01704-z"
+    "url": "https://doi.org/10.1038/s41563-023-01704-z",
+    "news": [
+      { "name": "Nature Materials", "url": "https://www.nature.com/articles/s41563-023-01720-z" },
+      { "name": "Nature Electronics", "url": "https://www.nature.com/articles/s41928-024-01120-4" }
+    ]
   },
   {
     "id": 66,
@@ -170,7 +177,10 @@
     "title": "Remote epitaxial interaction through graphene",
     "authors": "C. S. Chang†, K. S. Kim†, B.-I. Park†, J. Choi†, H. Kim, J. Jeong, M. Barone, N. Parker, S. Lee, X. Zhang, K. Lu, <b><u>J. M. Suh</u></b>, J. Kim, D. Lee, N. M. Han, M. Moon, Y. S. Lee, D.-H. Kim, D. G. Schlom*, Y. J. Hong*, J. Kim*",
     "conference": "Science Advances 9(42), eadj5379",
-    "url": "https://www.science.org/doi/10.1126/sciadv.adj5379"
+    "url": "https://www.science.org/doi/10.1126/sciadv.adj5379",
+    "news": [
+      { "name": "Nature Electronics", "url": "https://doi.org/10.1038/s41928-023-01083-y" }
+    ]
   },
   {
     "id": 65,
@@ -202,7 +212,10 @@
     "title": "Vertical full-colour micro-LEDs via 2D materials-based layer transfer",
     "authors": "J. Shin†, H. Kim†, S. Sundaram†, J. Jeong†, B.-I. Park, C. S. Chang, J. Choi, T. Kim, M. Saravanapavanantham, K. Lu, S. Kim, <b><u>J. M. Suh</u></b>, K. S. Kim, M.-K. Song, Y. Liu, K. Qiao, J. H. Kim, Y. Kim, J.-H. Kang, J. Kim, D. Lee, J. Lee, J. S. Kim, H. E. Lee, H. Yeon, H. S. Kum, S.-H. Bae, V. Bulovic, K. J. Yu, K. Lee*, K. Chung*, Y. J. Hong*, A. Ougazzaden*, J. Kim*",
     "conference": "Nature 614, 81-87",
-    "url": "https://doi.org/10.1038/s41586-022-05612-1"
+    "url": "https://doi.org/10.1038/s41586-022-05612-1",
+    "news": [
+      { "name": "MIT News", "url": "https://news.mit.edu/2023/vertical-stacked-color-microscopic-leds-0201" }
+    ]
   },
   {
     "id": 61,
@@ -218,7 +231,10 @@
     "title": "Non-epitaxial single-crystal 2D material growth by geometrical confinement",
     "authors": "K. S. Kim†, D. Lee†, C. S. Chang†, S. Seo, Y. Hu, S. Cha, H. Kim, J. Shin, J.-H. Lee, S. Lee, J. S. Kim, K. H. Kim, <b><u>J. M. Suh</u></b>, Y. Meng, B.-I. Park, J.-H. Lee, H.-S. Park, H. S. Kum, M.-H. Jo, G. Y. Yeom, K. Cho, J.-H. Park*, S.-H. Bae*, J. Kim*",
     "conference": "Nature 614, 88-94",
-    "url": "https://doi.org/10.1038/s41586-022-05524-0"
+    "url": "https://doi.org/10.1038/s41586-022-05524-0",
+    "news": [
+      { "name": "MIT News", "url": "https://news.mit.edu/2023/2d-atom-thin-industrial-silicon-wafers-0118" }
+    ]
   },
   {
     "id": 59,
@@ -242,7 +258,15 @@
     "title": "Chip-less wireless electronic skins by remote epitaxial freestanding compound semiconductors",
     "authors": "Y. Kim†, <b><u>J. M. Suh</u></b>†, J. Shin†, Y. Liu†, H. Yeon, K. Qiao, H. S. Kum, C. Kim, H. E. Lee, C. Choi, H. Kim, D. Lee, J. Lee, J.-H. Kang, B.-I. Park, S. Kang, J. Kim, S. Kim, J. A. Perozek, K. Wang, Y. Park, K. Kishen, L. Kong, T. Palacios, J. Park, M.-C. Park, H.-j. Kim, Y. S. Lee, K. Lee, S.-H. Bae, W. Kong, J. Han*, J. Kim*",
     "conference": "Science 377(6608), 859-864",
-    "url": "https://www.science.org/doi/10.1126/science.abn7325"
+    "url": "https://www.science.org/doi/10.1126/science.abn7325",
+    "news": [
+      { "name": "MIT News", "url": "https://news.mit.edu/2022/sensor-electronic-chipless-0818" },
+      { "name": "IEEE Spectrum", "url": "https://spectrum.ieee.org/electronic-skin-chipless-batteryless" },
+      { "name": "Nature Materials", "url": "https://doi.org/10.1038/s41563-022-01441-9" },
+      { "name": "Materials Today", "url": "https://www.materialstoday.com/electronic-properties/news/piezoelectric-batteryfree-wearable-sensor/" },
+      { "name": "Bioworld", "url": "https://www.bioworld.com/articles/689328-mit-amorepacific-develop-worlds-first-chip-less-wireless-e-skin" },
+      { "name": "DongA Science", "url": "https://www.dongascience.com/news.php?idx=55846" }
+    ]
   },
   {
     "id": 56,
@@ -258,7 +282,11 @@
     "title": "Reconfigurable heterogeneous integration using stackable chips with embedded artificial intelligence",
     "authors": "C. Choi†, H. Kim†, J.-H. Kang†, M.-K. Song†, H. Yeon, C. S. Chang, <b><u>J. M. Suh</u></b>, J. Shin, K. Lu, B.-I. Park, Y. Kim, H. E. Lee, D. Lee, J. Lee, I. Jang, S. Pang, K. Ryu, S.-H. Bae, Y. Nie, H. S. Kum, M.-C. Park, S. Lee, H.-J. Kim, H. Wu*, P. Lin*, J. Kim*",
     "conference": "Nature Electronics 5, 386-393",
-    "url": "https://doi.org/10.1038/s41928-022-00778-y"
+    "url": "https://doi.org/10.1038/s41928-022-00778-y",
+    "news": [
+      { "name": "MIT News", "url": "https://news.mit.edu/2022/stackable-artificial-intelligence-chip-0613" },
+      { "name": "Nature Electronics News", "url": "https://www.nature.com/articles/s41928-022-00785-z" }
+    ]
   },
   {
     "id": 54,
@@ -330,7 +358,10 @@
     "title": "Long-term reliable physical health monitoring by sweat pore–inspired perforated electronic skins",
     "authors": "H. Yeon†, H. Lee†, Y. Kim†, D. Lee, Y. Lee, J.-S. Lee, J. Shin, C. Choi, J.-H. Kang, <b><u>J. M. Suh</u></b>, H. Kim, H. S. Kum, J. Lee, D. Kim, K. Ko, B. S. Ma, P. Lin, S. Han, S. Kim, S.-H. Bae, T.-S. Kim, M.-C. Park, Y.-C. Joo, E. Kim, J. Han*, J. Kim*",
     "conference": "Science Advances 7(27), eabg8459",
-    "url": "http://doi.org/10.1126/sciadv.abg8459"
+    "url": "http://doi.org/10.1126/sciadv.abg8459",
+    "news": [
+      { "name": "MIT News", "url": "https://news.mit.edu/2021/smart-skin-vitals-0630" }
+    ]
   },
   {
     "id": 45,
