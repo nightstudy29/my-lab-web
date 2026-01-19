@@ -10,7 +10,7 @@
   {
     "id": 85,
     "year": 2025,
-    "title": "Single-crystalline BaTiO3-based ferroelectric capacitive memory via membrane transfer",
+    "title": "Single-crystalline BaTiO<sub>3</sub>-based ferroelectric capacitive memory via membrane transfer",
     "authors": "X. Zhang†, S. Lee†, J.-E. Ryu, <b><u>J. M. Suh</u></b>, T.-H. Kim, M. R. Barone, N. A. Parker, G. Lee, I.-J. Kim, I. Yeo, J. Shin, J.-S. Lee, D. G. Schlom, C. S. Chang, J.-S. Seo, S. Yu, M.-K. Song*, J. Kim*",
     "conference": "Science Advances, 11(49), eadz2553",
     "url": "https://doi.org/10.1126/sciadv.adz2553"
@@ -18,7 +18,7 @@
   {
     "id": 84,
     "year": 2025,
-    "title": "Scalable Photoactive NO2-Sensing Framework for Plant Health Monitoring",
+    "title": "Scalable Photoactive NO<sub>2</sub>-Sensing Framework for Plant Health Monitoring",
     "authors": "Y.-H. Cho†, K. Hong†, J. H. Seo†, J. H. Chung, J. Lee, S.-H. Nam, S. Lee, J.-O. Lee, C. Ahn, H. Kim, J. H. Han, G.-L. Kim, S.-J. Ro, J. Y. Hwang, H. Gim, Z. Park, C.-H. Lee, D.-S. Kim, K. Lee*, Y.-S. Shim*, <b><u>J. M. Suh</u></b>*, D. Cho*",
     "conference": "Advanced Science, issue, e18368",
     "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/advs.202518368"
@@ -29,7 +29,12 @@
     "title": "Atomic lift-off of epitaxial membranes for cooling-free infrared detection",
     "authors": "X. Zhang†, O. Ericksen†, S. Lee†, M. Akl†, M.-K. Song, H. Lan, P. Pal, <b><u>J. M. Suh</u></b>, S. Lindemann, J.-E. Ryu, Y. Shao, X. Zheng, N. M. Han, B. Bhatia, H. Kim, H. S. Kum, C. S. Chang*, Y. Shi*, C.-B. Eom*. J. Kim*",
     "conference": "Nature 641, 98-105",
-    "url": "https://doi.org/10.1038/s41586-025-08874-7"
+    "url": "https://doi.org/10.1038/s41586-025-08874-7",
+    "news": [
+      { "name": "Engineeringness", "url": "https://engineeringness.com/10-nm-new-electronic-skin-unveiled-for-cooling-free-night-vision-glasses/" },
+      { "name": "MIT News", "url": "https://news.mit.edu/2025/new-electronic-skin-could-enable-lightweight-night-vision-glasses-0423" },
+      { "name": "MIT DMSE News", "url": "https://dmse.mit.edu/news/new-electronic-skin-could-enable-lightweight-night-vision-glasses/" }
+    ]
   },
   {
     "id": 82,
