@@ -51,16 +51,26 @@ export default function MembersPage() {
               </div>
             </div>
 
-            <p style={{ fontWeight: 'bold', color: '#0056b3', marginBottom: '5px' }}>
+            {/* 역할 (Role) */}
+            <p style={{ fontWeight: 'bold', color: '#0056b3', marginBottom: '3px', marginTop: '0' }}>
               {member.role}
             </p>
+
+            {/* ★ 추가된 부분: Joined 날짜 (데이터가 있을 때만 표시) */}
+            {member.joined && (
+              <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '10px', marginTop: '0' }}>
+                Joined {member.joined}
+              </p>
+            )}
             
-            <p style={{ color: '#666', marginBottom: '10px', fontSize: '0.95rem' }}>
-              📧 <a href={`mailto:${member.email}`} style={{ textDecoration: 'none', color: '#666' }}>{member.email}</a>
+            {/* 이메일 */}
+            <p style={{ color: '#444', marginBottom: '10px', fontSize: '0.95rem' }}>
+              📧 <a href={`mailto:${member.email}`} style={{ textDecoration: 'none', color: '#444' }}>{member.email}</a>
             </p>
 
+            {/* 연구 분야 / 공동 지도교수 */}
             {member.area && (
-              <p style={{ fontSize: '0.9rem', color: '#888', fontStyle: 'italic' }}>
+              <p style={{ fontSize: '0.9rem', color: '#888', fontStyle: 'italic', marginTop: '10px' }}>
                 {member.area}
               </p>
             )}
