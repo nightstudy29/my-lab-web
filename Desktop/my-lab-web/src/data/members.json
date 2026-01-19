@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "홍길동",
+    "role": "Ph.D Student",
+    "email": "hong@lab.ac.kr",
+    "area": "AI / Deep Learning"
+  },
+  {
+    "id": 2,
+    "name": "김철수",
+    "role": "MS Student",
+    "email": "kim@lab.ac.kr",
+    "area": "Computer Vision"
+  }
+]

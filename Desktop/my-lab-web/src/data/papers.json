@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "year": 2024,
+    "title": "Deep Learning for Everything",
+    "authors": "Gildong Hong, Cheolsoo Kim",
+    "conference": "CVPR 2024 (Oral)",
+    "url": "https://arxiv.org/"
+  },
+  {
+    "id": 2,
+    "year": 2023,
+    "title": "New Approach to AI",
+    "authors": "Cheolsoo Kim, Gildong Hong",
+    "conference": "NeurIPS 2023",
+    "url": "https://google.com/"
+  },
+  {
+    "id": 3,
+    "year": 2024,
+    "title": "Advanced Computer Vision",
+    "authors": "Gildong Hong et al.",
+    "conference": "ICCV 2024",
+    "url": "#"
+  }
+]
