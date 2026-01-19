@@ -1,26 +1,242 @@
 [
   {
-    "id": 1,
-    "year": 2024,
-    "title": "Deep Learning for Everything",
-    "authors": "Gildong Hong, Cheolsoo Kim",
-    "conference": "CVPR 2024 (Oral)",
-    "url": "https://arxiv.org/"
+    "id": 86,
+    "year": 2025,
+    "title": "Van der Waals integration of 2D materials for advanced intelligent computing",
+    "authors": "C. Kwak†, K. Park†, M.-K. Song, H. W. Jang*, <b><u>J. M. Suh</u></b>*",
+    "conference": "Neuromorphic Computing and Engineering 5(4), 042002",
+    "url": "https://iopscience.iop.org/article/10.1088/2634-4386/ae294e"
   },
   {
-    "id": 2,
+    "id": 85,
+    "year": 2025,
+    "title": "Single-crystalline BaTiO3-based ferroelectric capacitive memory via membrane transfer",
+    "authors": "X. Zhang†, S. Lee†, J.-E. Ryu, <b><u>J. M. Suh</u></b>, T.-H. Kim, M. R. Barone, N. A. Parker, G. Lee, I.-J. Kim, I. Yeo, J. Shin, J.-S. Lee, D. G. Schlom, C. S. Chang, J.-S. Seo, S. Yu, M.-K. Song*, J. Kim*",
+    "conference": "Science Advances,11(49), eadz2553",
+    "url": "https://doi.org/10.1126/sciadv.adz2553"
+  },
+  {
+    "id": 84,
+    "year": 2025,
+    "title": "Scalable Photoactive NO2-Sensing Framework for Plant Health Monitoring",
+    "authors": "Y.-H. Cho†, K. Hong†, J. H. Seo†, J. H. Chung, J. Lee, S.-H. Nam, S. Lee, J.-O. Lee, C. Ahn, H. Kim, J. H. Han, G.-L. Kim, S.-J. Ro, J. Y. Hwang, H. Gim, Z. Park, C.-H. Lee, D.-S. Kim, K. Lee*, Y.-S. Shim*, <b><u>J. M. Suh</u></b>*, D. Cho*",
+    "conference": "Advanced Science, issue, e18368",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/advs.202518368"
+  },
+  {
+    "id": 83,
+    "year": 2025,
+    "title": "Atomic lift-off of epitaxial membranes for cooling-free infrared detection",
+    "authors": "X. Zhang†, O. Ericksen†, S. Lee†, M. Akl†, M.-K. Song, H. Lan, P. Pal, <b><u>J. M. Suh</u></b>, S. Lindemann, J.-E. Ryu, Y. Shao, X. Zheng, N. M. Han, B. Bhatia, H. Kim, H. S. Kum, C. S. Chang*, Y. Shi*, C.-B. Eom*. J. Kim*",
+    "conference": "Nature 641, 98-105",
+    "url": "https://doi.org/10.1038/s41586-025-08874-7"
+  },
+  {
+    "id": 82,
+    "year": 2025,
+    "title": "Advancements in Surface Plasmon Resonance Sensors for Real-Time Detection of Chemical Analytes: Sensing Materials and Applications",
+    "authors": "S. H. Cho†, S. Choi†, <b><u>J. M. Suh</u></b>†, H. W. Jang*",
+    "conference": "Journal of Materials Chemistry C 13, 6484-6507",
+    "url": "https://doi.org/10.1039/D4TC04890C"
+  },
+  {
+    "id": 81,
+    "year": 2025,
+    "title": "A Review of Pnictogenides for Next-Generation Anode Materials for Sodium-Ion Batteries",
+    "authors": "S. Ha, J. Kim, D. W. Kim, <b><u>J. M. Suh</u></b>, K.-H. Kim*",
+    "conference": "Batteries 11(2), 54",
+    "url": "https://doi.org/10.3390/batteries11020054"
+  },
+  {
+    "id": 80,
+    "year": 2024,
+    "title": "Growth-based monolithic 3D integration of single-crystal 2D semiconductors",
+    "authors": "K. S. Kim†, S. Seo†, J. Kwon†, D. Lee†, C. Kim†, J.-E. Ryu, J. Kim, <b><u>J. M. Suh</u></b>, H.-G. Jung, Y. Jo, J.-C. Shin, M.-K. Song, J. Feng, H. Ahn, S. Lee, K. Cho, J. Jeon, M. Seol*, J.-H. Park*, S. W. Kim*, J. Kim*",
+    "conference": "Nature 636, 615-621",
+    "url": "https://doi.org/10.1038/s41586-024-08236-9"
+  },
+  {
+    "id": 79,
+    "year": 2024,
+    "title": "Real-Time Tunable Gas Sensing Platform Based on SnO2 Nanoparticles Activated by Blue Micro-Light-Emitting Diode",
+    "authors": "G. B. Nam†, J.-E. Ryu†, T. H. Eom†, S. J. Kim†, <b><u>J. M. Suh</u></b>, S. Lee, S. Choi, C. W. Moon, S. J. Park, S. M. Lee, B. Kim, S. H. Park, J. W. Yang, S. Min, S. Park, S. H. Cho, H. J. Kim, S. E. Jun, T. H. Lee, Y. J. Kim, J. Y. Kim, Y. J. Hong, J.-I. Shim, H.-G. Byun, Y. Park, I. Park*, S.-W. Ryu*, H. W. Jang*",
+    "conference": "Nano-Micro Letters 16, 261",
+    "url": "https://doi.org/10.1007/s40820-024-01486-2"
+  },
+  {
+    "id": 78,
+    "year": 2024,
+    "title": "Resistive random-access memories using quasi-2D halide perovskites for wafer-scale reliable switching behaviors",
+    "authors": "H. Kim, M.-j. Choi, <b><u>J. M. Suh</u></b>, Y.-S. Shim, I. H. Im, D. Hyun, S. J. Yang, Z. Cai, M. Hilal, M. G. Lee, C. W. Moon*, S. Y. Kim*, H. W. Jang*",
+    "conference": "Materials Science in Semiconductor Processing 182, 108718",
+    "url": "https://doi.org/10.1016/j.mssp.2024.108718"
+  },
+  {
+    "id": 77,
+    "year": 2024,
+    "title": "Mixed-Dimensional Integration of 3D-on-2D Heterostructures for Advanced Electronics",
+    "authors": "S. Lee†, M.-K. Song†, X. Zhang†, <b><u>J. M. Suh</u></b>, J.-E. Ryu, J. Kim*",
+    "conference": "Nano Letters 24(30), 9117-9128",
+    "url": "https://pubs.acs.org/doi/abs/10.1021/acs.nanolett.4c02663"
+  },
+  {
+    "id": 76,
+    "year": 2024,
+    "title": "The future of two-dimensional semiconductors beyond Moore’s law",
+    "authors": "K. S. Kim†, J. Kwon†, H. Ryu†, C. Kim†, H. Kim†, E.-K. Lee, D. Lee, S. Seo, N. M. Han, <b><u>J. M. Suh</u></b>, J. Kim, M.-K. Song, S. Lee, M. Seol*, J. Kim*",
+    "conference": "Nature Nanotechnology 19, 895-906",
+    "url": "https://doi.org/10.1038/s41565-024-01695-1"
+  },
+  {
+    "id": 75,
+    "year": 2024,
+    "title": "Real-time detection of sub-ppm aromatic compounds in alcohol by surface plasmon resonance using label-free graphene",
+    "authors": "S. H. Cho†, <b><u>J. M. Suh</u></b>†, W. Kim†, J. Kim, Y. J. Kim, T. H. Lee, J. Y. Kim, J. Sim, S. W. Choi, B. H. Hong*, S. Y. Kim*, H. W. Jang*",
+    "conference": "Energy & Environmental Materials 8(1), e12801",
+    "url": "https://doi.org/10.1002/eem2.12801"
+  },
+  {
+    "id": 74,
+    "year": 2024,
+    "title": "Maximized nanojunctions in Pd/SnO2 nanoparticles for ultrasensitive and rapid H2 detection",
+    "authors": "G. B. Nam†, T. H. Eom†, S. H. Cho†, Y. J. Kim, S. Choi, W. S. Cheon, S. J. Park, M. Shokouhimehr, <b><u>J. M. Suh</u></b>, J.-E. Ryu, S. Park, H. K. Park, H. J. Kim, S. J. Kim, S. M. Lee, S. H. Park, L. Shiming*, M.-H. Oh*, Y. S. Huh*, H. W. Jang*",
+    "conference": "Chemical Engineering Journal 494, 153116",
+    "url": "https://doi.org/10.1016/j.cej.2024.153116"
+  },
+  {
+    "id": 73,
+    "year": 2024,
+    "title": "Substantially Accelerated Response and Recovery in Pd-Decorated WO3 Nanorods Gasochromic Hydrogen Sensor",
+    "authors": "S. H. Cho†, <b><u>J. M. Suh</u></b>†, B. Jeong, T. H. Lee, K. S. Choi, S. Choi, T. H. Eom, G. B. Nam, S. Kim, H. W. Jang*",
+    "conference": "Small 20(32), 2309744",
+    "url": "https://onlinelibrary.wiley.com/doi/10.1002/smll.202309744"
+  },
+  {
+    "id": 72,
+    "year": 2024,
+    "title": "Remote Epitaxy: Fundamentals, Challenges, and Opportunities",
+    "authors": "B.-I. Park†, J. Kim†, K. Lu†, X. Zhang, S. Lee, <b><u>J. M. Suh</u></b>, D.-H. Kim*, H. Kim*, J. Kim*",
+    "conference": "Nano Letters 24(10), 2939-2952",
+    "url": "https://pubs.acs.org/doi/10.1021/acs.nanolett.3c04465"
+  },
+  {
+    "id": 71,
+    "year": 2024,
+    "title": "Data-centric artificial olfactory system based on the eigengraph",
+    "authors": "S.-H. Sung†, <b><u>J. M. Suh</u></b>†, Y. J. Hwang, H. W. Jang*, J. G. Park*, S. C. Jun*",
+    "conference": "Nature Communications 15, 1211",
+    "url": "https://doi.org/10.1038/s41467-024-45430-9"
+  },
+  {
+    "id": 70,
+    "year": 2024,
+    "title": "MAPbBr3 Halide Perovskite-Based Resistive Random-Access Memories Using Electron Transport Layers",
+    "authors": "H. Kim, J. S. Kim, J. Choi, Y.-H. Kim, <b><u>J. M. Suh</u></b>, M.-J. Choi, Y.-S. Shim, S. Y. Kim, T.-W. Lee*, H. W. Jang*",
+    "conference": "ACS Applied Materials & Interfaces 16(2), 2457-2466",
+    "url": "https://doi.org/10.1021/acsami.3c01450"
+  },
+  {
+    "id": 69,
+    "year": 2024,
+    "title": "Phenol-Assisted Electrochemical Metallization of Peptide-Based Bimodal Memristors",
+    "authors": "M.-K. Song†, S. D. Namgung†, <b><u>J. M. Suh</u></b>, J. H. Yoon, K. T. Nam, J.-Y. Kwon*",
+    "conference": "ACS Materials Letters 6(1), 275-280",
+    "url": "https://doi.org/10.1021/acsmaterialslett.3c01241"
+  },
+  {
+    "id": 68,
+    "year": 2024,
+    "title": "Rapid and Ultrahighly Sensitive Ethanol Sensing in p-type SrTi1-xFexO3",
+    "authors": "S. H. Cho†, M.-J. Choi†, B. Koo†, J. Kim, T. H. Lee, <b><u>J. M. Suh</u></b>, T. H. Eom, S. Y. Park, T. Kim, W. C. Jung*, H. W. Jang*",
+    "conference": "Sensors and Actuators B: Chemical 403, 135137",
+    "url": "https://doi.org/10.1016/j.snb.2023.135137"
+  },
+  {
+    "id": 67,
     "year": 2023,
-    "title": "New Approach to AI",
-    "authors": "Cheolsoo Kim, Gildong Hong",
-    "conference": "NeurIPS 2023",
-    "url": "https://google.com/"
+    "title": "Monolithic 3D integration of 2D materials-based electronics towards ultimate edge computing solutions",
+    "authors": "J.-H. Kang†, H. Shin†, K. Kim†, M. K. Song†, D. Lee, Y. Meng, C. Choi, <b><u>J. M. Suh</u></b>, B. J. Kim, H. Kim, A. T. Hoang, B.-I. Park, G. Zhou, S. Sundaram, P. Vuong, J. Shin, J. Choe, Z. Xu, R. Younas, J. S. Kim, S. Han, S. Lee, S. O. Kim, B. Kang, S. Seo, H. Ahn, S. Seo, K. Reidy, E. Park, S. Mun, M.-C. Park, S. Lee, H.-J. Kim, H. S. Kum, P. Lin, C. Hinkle, A. Ougazzaden, J.-H. Ahn*, J. Kim*, S.-H. Bae*",
+    "conference": "Nature Materials 22, 1470-1477",
+    "url": "https://doi.org/10.1038/s41563-023-01704-z"
   },
   {
-    "id": 3,
-    "year": 2024,
-    "title": "Advanced Computer Vision",
-    "authors": "Gildong Hong et al.",
-    "conference": "ICCV 2024",
-    "url": "#"
+    "id": 66,
+    "year": 2023,
+    "title": "Remote epitaxial interaction through graphene",
+    "authors": "C. S. Chang†, K. S. Kim†, B.-I. Park†, J. Choi†, H. Kim, J. Jeong, M. Barone, N. Parker, S. Lee, X. Zhang, K. Lu, <b><u>J. M. Suh</u></b>, J. Kim, D. Lee, N. M. Han, M. Moon, Y. S. Lee, D.-H. Kim, D. G. Schlom*, Y. J. Hong*, J. Kim*",
+    "conference": "Science Advances 9(42), eadj5379",
+    "url": "https://www.science.org/doi/10.1126/sciadv.adj5379"
+  },
+  {
+    "id": 65,
+    "year": 2023,
+    "title": "Facile Formation of Metal–Oxide Nanocraters by Laser Irradiation for Highly Enhanced Detection of VOCs",
+    "authors": "<b><u>J. M. Suh</u></b>†, Y. G. Song†, J. H. Seo†, M. S. Noh, M. G. Kang, W. Sohn, J. Lee, K. Lee, D. Cho, S. Jeon, C.-Y. Kang*, Y.-S. Shim*, H. W. Jang*",
+    "conference": "Small Structures 4(6), 2300068",
+    "url": "https://doi.org/10.1002/sstr.202300068"
+  },
+  {
+    "id": 64,
+    "year": 2023,
+    "title": "Drastic Gas Sensing Selectivity in 2-Dimensional MoS2 Nanoflakes by Noble Metal Decoration",
+    "authors": "T. Kim†, T. H. Lee†, S. Y. Park†, T. H. Eom†, I. Cho, Y. Kim, C. Kim, S. A. Lee, M.-J. Choi, <b><u>J. M. Suh</u></b>, I.-S. Hwang, D. Lee*, I. Park*, H. W. Jang*",
+    "conference": "ACS Nano 17(5), 4404-4413",
+    "url": "https://doi.org/10.1021/acsnano.2c09733"
+  },
+  {
+    "id": 63,
+    "year": 2023,
+    "title": "High-throughput manufacturing of epitaxial membranes from a single wafer by 2D materials-based layer transfer process",
+    "authors": "H. Kim†, Y. Liu†, K. Lu†, C. S. Chang†, D. Sung, M. Akl, K. Qiao, K. S. Kim, B.-I. Park, M. Zhu, <b><u>J. M. Suh</u></b>, J. Kim, J. Jeong, Y. Baek, Y. J. Ji, S. Kang, S. Lee, N. M. Han, C. Kim, C. Choi, X. Zhang, H.-K. Choi, Y. Zhang, H. Wang, L. Kong, N. N. Afeefah, M. N. M. Ansari, J. Park, K. Lee, G. Y. Yeom, S. Kim, J. Hwang, J. Kong, S.-H. Bae, Y. Shi*, S. Hong*, W. Kong*, J. Kim*",
+    "conference": "Nature Nanotechnology 18, 464-470",
+    "url": "https://www.nature.com/articles/s41565-023-01340-3"
+  },
+  {
+    "id": 62,
+    "year": 2023,
+    "title": "Vertical full-colour micro-LEDs via 2D materials-based layer transfer",
+    "authors": "J. Shin†, H. Kim†, S. Sundaram†, J. Jeong†, B.-I. Park, C. S. Chang, J. Choi, T. Kim, M. Saravanapavanantham, K. Lu, S. Kim, <b><u>J. M. Suh</u></b>, K. S. Kim, M.-K. Song, Y. Liu, K. Qiao, J. H. Kim, Y. Kim, J.-H. Kang, J. Kim, D. Lee, J. Lee, J. S. Kim, H. E. Lee, H. Yeon, H. S. Kum, S.-H. Bae, V. Bulovic, K. J. Yu, K. Lee*, K. Chung*, Y. J. Hong*, A. Ougazzaden*, J. Kim*",
+    "conference": "Nature 614, 81-87",
+    "url": "https://doi.org/10.1038/s41586-022-05612-1"
+  },
+  {
+    "id": 61,
+    "year": 2023,
+    "title": "Tailored BiVO4 /In2O3 nanostructures with boosted charge separation ability toward unassisted water splitting",
+    "authors": "M. G. Lee†, J. W. Yang†, I. J. Park, T. H. Lee, H. Park, W. S. Cheon, S. A. Lee, H. Lee, S. G. Ji, <b><u>J. M. Suh</u></b>, J. Moon, J. Y. Kim*, H. W. Jang*",
+    "conference": "Carbon Energy 5(6), e321",
+    "url": "https://doi.org/10.1002/cey2.321"
+  },
+  {
+    "id": 60,
+    "year": 2023,
+    "title": "Non-epitaxial single-crystal 2D material growth by geometrical confinement",
+    "authors": "K. S. Kim†, D. Lee†, C. S. Chang†, S. Seo, Y. Hu, S. Cha, H. Kim, J. Shin, J.-H. Lee, S. Lee, J. S. Kim, K. H. Kim, <b><u>J. M. Suh</u></b>, Y. Meng, B.-I. Park, J.-H. Lee, H.-S. Park, H. S. Kum, M.-H. Jo, G. Y. Yeom, K. Cho, J.-H. Park*, S.-H. Bae*, J. Kim*",
+    "conference": "Nature 614, 88-94",
+    "url": "https://doi.org/10.1038/s41586-022-05524-0"
+  },
+  {
+    "id": 59,
+    "year": 2022,
+    "title": "Vertical Metal-Oxide Electrochemical Memory for High-Density Synaptic Array Based High-Performance Neuromorphic Computing",
+    "authors": "H. Lee†, D. G. Ryu†, G. Lee, M.-K. Song, H. Moon, J. Lee, J. Ryu, J.-H. Kang, <b><u>J. Suh</u></b>, S. Kim, J. Lim, D. Jeon, S. Kim*, J. Kim*, Y. S. Lee*",
+    "conference": "Advanced Electronic Materials 8(8), 2200378",
+    "url": "https://doi.org/10.1002/aelm.202200378"
+  },
+  {
+    "id": 58,
+    "year": 2022,
+    "title": "Graphene nanopattern as a universal epitaxy platform for single-crystal membrane production and defect reduction",
+    "authors": "H. Kim†, S. Lee†, J. Shin†, M. Zhu, M. Akl, K. Lu, N. M. Han, Y. Baek, C. S. Chang, <b><u>J. M. Suh</u></b>, K. S. Kim, B.-I. Park, Y. Zhang, C. Choi, H. Shin, H. Yu, Y. Meng, S.-I. Kim, S. Seo, K. Lee, H. S. Kum, J.-H. Lee, J.-H. Ahn, S.-H. Bae*, J. Hwang*, Y. Shi*, J. Kim*",
+    "conference": "Nature Nanotechnology 17, 1054-1059",
+    "url": "https://doi.org/10.1038/s41565-022-01200-6"
+  },
+  {
+    "id": 57,
+    "year": 2022,
+    "title": "Chip-less wireless electronic skins by remote epitaxial freestanding compound semiconductors",
+    "authors": "Y. Kim†, <b><u>J. M. Suh</u></b>†, J. Shin†, Y. Liu†, H. Yeon, K. Qiao, H. S. Kum, C. Kim, H. E. Lee, C. Choi, H. Kim, D. Lee, J. Lee, J.-H. Kang, B.-I. Park, S. Kang, J. Kim, S. Kim, J. A. Perozek, K. Wang, Y. Park, K. Kishen, L. Kong, T. Palacios, J. Park, M.-C. Park, H.-j. Kim, Y. S. Lee, K. Lee, S.-H. Bae, W. Kong, J. Han*, J. Kim*",
+    "conference": "Science 377(6608), 859-864",
+    "url": "https://www.science.org/doi/10.1126/science.abn7325"
   }
 ]

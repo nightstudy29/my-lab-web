@@ -1,22 +1,72 @@
-// src/app/page.js
-export default function Home() {
+import papers from '../../data/papers.json';
+
+export default function PublicationsPage() {
+  const sortedPapers = papers.sort((a, b) => b.year - a.year);
+
   return (
-    <div style={{ padding: '40px', textAlign: 'center' }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '20px' }}>
-        Future AI Lab 🤖
-      </h1>
-      <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#555' }}>
-        미래를 선도하는 인공지능 연구실입니다.<br />
-        Deep Learning, Computer Vision, NLP 등 다양한 분야를 연구합니다.
+    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto' }}>
+      <h1>Publications</h1>
+      <p style={{ marginBottom: '40px', fontSize: '1.1rem', color: '#555' }}>
+        Total: {sortedPapers.length}
       </p>
-      
-      <div style={{ marginTop: '50px' }}>
-        <h3>📢 Latest News</h3>
-        <ul style={{ textAlign: 'left', marginTop: '20px', paddingLeft: '20px' }}>
-          <li>[2024.03] CVPR 2024 논문 2편 채택! 🎉</li>
-          <li>[2024.02] 신입 석사 과정 김철수 학생 입학</li>
-          <li>[2024.01] 연구재단 과제 선정</li>
-        </ul>
+
+      <div>
+        {sortedPapers.map((paper) => (
+          <div key={paper.id} style={{ 
+            marginBottom: '30px', 
+            paddingBottom: '30px', 
+            borderBottom: '1px solid #eee' 
+          }}>
+            {/* 연도 표시 */}
+            <span style={{ 
+              backgroundColor: '#333', 
+              color: 'white', 
+              padding: '4px 10px', 
+              borderRadius: '4px', 
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+              display: 'inline-block',
+              marginBottom: '10px'
+            }}>
+              {paper.year}
+            </span>
+
+            {/* 논문 제목 */}
+            <div style={{ marginBottom: '8px' }}>
+              <a 
+                href={paper.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{ 
+                  fontSize: '1.3rem', 
+                  fontWeight: '700', 
+                  textDecoration: 'none', 
+                  color: '#0070f3',
+                  lineHeight: '1.4'
+                }}
+              >
+                {paper.title} 🔗
+              </a>
+            </div>
+
+            {/* ★핵심: 저자 이름 (HTML 태그 적용) */}
+            <div 
+              style={{ color: '#444', lineHeight: '1.6', fontSize: '1rem' }}
+              // ↓ 이 부분이 <b> 태그를 작동하게 만듭니다.
+              dangerouslySetInnerHTML={{ __html: paper.authors }} 
+            />
+
+            {/* 학회/저널 정보 */}
+            <p style={{ 
+              marginTop: '5px', 
+              fontStyle: 'italic', 
+              color: '#666',
+              fontSize: '0.95rem'
+            }}>
+              In {paper.conference}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
