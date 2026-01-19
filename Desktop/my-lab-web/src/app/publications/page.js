@@ -1,5 +1,7 @@
+"use client";  // 👈 이 한 줄이 없어서 에러가 난 겁니다!
+
 import Link from "next/link";
-import { FaNewspaper } from "react-icons/fa6"; // 신문 아이콘 불러오기
+import { FaNewspaper } from "react-icons/fa6"; 
 import papers from '../../data/papers.json';
 
 export default function PublicationsPage() {
@@ -56,7 +58,7 @@ export default function PublicationsPage() {
               <span>, {paper.year}</span>
             </div>
 
-            {/* [뉴스 링크 영역] - 데이터에 'news'가 있을 때만 표시 */}
+            {/* [뉴스 링크 영역] */}
             {paper.news && paper.news.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
                 <span style={{ 
@@ -72,41 +74,4 @@ export default function PublicationsPage() {
                   Press
                 </span>
                 
-                {/* 최대 6개까지만 자르고(.slice(0,6)) 보여줌 */}
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {paper.news.slice(0, 6).map((newsItem, index) => (
-                    <a 
-                      key={index} 
-                      href={newsItem.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      title={`Media coverage: ${newsItem.name}`} // 마우스 올리면 언론사 이름 뜸
-                      style={{ 
-                        color: '#666', 
-                        fontSize: '1.2rem', 
-                        display: 'flex', 
-                        alignItems: 'center',
-                        transition: 'color 0.2s, transform 0.1s'
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.color = '#004094'; // 호버 시 SMID 블루
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.color = '#666';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                      }}
-                    >
-                      <FaNewspaper />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+                {/* 최대 6개까지만 표시 */}
