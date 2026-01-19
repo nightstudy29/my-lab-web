@@ -74,8 +74,8 @@ export default function Navbar() {
           {/* 각 링크마다 isActive 함수를 사용하여 현재 페이지 확인 */}
           <Link href="/" style={isActive('/') ? activeStyle : linkStyle}>Home</Link>
           <Link href="/research" style={isActive('/research') ? activeStyle : linkStyle}>Research</Link>
-          <Link href="/publications" style={isActive('/publications') ? activeStyle : linkStyle}>Publications</Link>
           <Link href="/members" style={isActive('/members') ? activeStyle : linkStyle}>Members</Link>
+          <Link href="/publications" style={isActive('/publications') ? activeStyle : linkStyle}>Publications</Link>
           <Link href="/equipment" style={isActive('/equipment') ? activeStyle : linkStyle}>Equipment</Link>
           <Link href="/news" style={isActive('/news') ? activeStyle : linkStyle}>News</Link>
           <Link href="/contact" style={isActive('/contact') ? activeStyle : linkStyle}>Contact</Link>
