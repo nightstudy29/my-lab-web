@@ -1,5 +1,5 @@
 import membersData from '../../data/members.json';
-import { FaFilePdf, FaLinkedin, FaUser } from 'react-icons/fa6';
+import { FaFilePdf, FaLinkedin, FaUser, FaTrophy, FaFileLines } from 'react-icons/fa6'; // 아이콘 추가됨
 import { SiGooglescholar, SiOrcid } from 'react-icons/si';
 
 export default function MembersPage() {
@@ -8,7 +8,7 @@ export default function MembersPage() {
   return (
     <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto' }}>
       
-      {/* 1. Current Members */}
+      {/* ==================== 1. Current Members ==================== */}
       <section style={{ marginBottom: '80px' }}>
         <h1 style={{ marginBottom: '40px', borderBottom: '2px solid #333', paddingBottom: '10px' }}>
           Current Members
@@ -53,7 +53,7 @@ export default function MembersPage() {
         </div>
       </section>
 
-      {/* 2. Alumni */}
+      {/* ==================== 2. Alumni ==================== */}
       <section style={{ marginBottom: '60px' }}>
         <h2 style={{ fontSize: '1.8rem', marginBottom: '20px', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Alumni</h2>
         {alumni.length > 0 ? (
@@ -65,15 +65,67 @@ export default function MembersPage() {
         )}
       </section>
 
-      {/* 3. Interns */}
+      {/* ==================== 3. Former Interns ==================== */}
       <section>
         <h2 style={{ fontSize: '1.8rem', marginBottom: '20px', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Former Interns</h2>
+        
         {interns.length > 0 ? (
-          <ul style={{ listStyle: 'none', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '15px' }}>
+          <ul style={{ listStyle: 'none', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
             {interns.map((intern) => (
-              <li key={intern.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 15px', backgroundColor: '#f9f9f9', borderRadius: '6px', border: '1px solid #eee' }}>
-                <span style={{ fontWeight: '500', color: '#333' }}>{intern.name}</span>
-                <span style={{ color: '#666', fontSize: '0.9rem' }}>{intern.period}</span>
+              <li key={intern.id} style={{ 
+                display: 'flex', 
+                flexDirection: 'column',
+                padding: '15px', 
+                backgroundColor: '#f9f9f9', 
+                borderRadius: '8px',
+                border: '1px solid #eee'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {/* 이름 */}
+                    <span style={{ fontWeight: '600', fontSize: '1.05rem', color: '#333' }}>
+                      {intern.name}
+                    </span>
+                    
+                    {/* 프로그램 뱃지 (SNUMSE, SNUTI) */}
+                    {intern.program && (
+                      <span style={{ 
+                        fontSize: '0.75rem', 
+                        backgroundColor: '#e9ecef', 
+                        color: '#555', 
+                        padding: '2px 6px', 
+                        borderRadius: '4px',
+                        fontWeight: '500'
+                      }}>
+                        {intern.program}
+                      </span>
+                    )}
+
+                    {/* 성과 아이콘들 (작게) */}
+                    {intern.achievements && intern.achievements.length > 0 && (
+                      <div style={{ display: 'flex', gap: '5px', marginLeft: '5px' }}>
+                        {intern.achievements.map((ach, idx) => (
+                          <a 
+                            key={idx} 
+                            href={ach.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title={ach.title}
+                            style={{ display: 'flex', alignItems: 'center' }}
+                          >
+                            {ach.type === 'award' && <FaTrophy size={14} color="#f1c40f" />}
+                            {ach.type === 'paper' && <FaFileLines size={14} color="#3498db" />}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* 기간 */}
+                <span style={{ color: '#777', fontSize: '0.85rem' }}>
+                  {intern.period}
+                </span>
               </li>
             ))}
           </ul>
