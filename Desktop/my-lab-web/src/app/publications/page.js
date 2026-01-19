@@ -52,7 +52,10 @@ export default function PublicationsPage() {
             {/* ★ 여기가 핵심 수정 부분입니다 ★ */}
             <div 
               style={{ color: '#444', lineHeight: '1.6', fontSize: '1rem' }}
-              dangerouslySetInnerHTML={{ __html: paper.authors }} 
+              dangerouslySetInnerHTML={{ 
+               // 하이픈(-) 앞뒤의 모든 공백을 제거하고, 이상한 대시(–)도 일반 하이픈(-)으로 통일
+               __html: paper.authors.replace(/\s*-\s*/g, '-').replace(/–/g, '-') 
+              }}
             />
 
             {/* 학회/저널 정보 */}
