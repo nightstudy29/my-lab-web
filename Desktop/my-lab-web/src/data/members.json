@@ -31,21 +31,6 @@
   },
   {
     "id": 3,
-    "name": "Jeongin Bae",
-    "role": "MS-PhD Student",
-    "joined": "2026 Spring",
-    "email": "jeongin2007@snu.ac.kr",
-    "area": "Co-advisor: Dr. Ki Chang Kwon (KRISS)",
-    "image": "/members/jeonginbae.jpg",
-    "links": {
-      "cv": "",
-      "googleScholar": "",
-      "linkedin": "",
-      "orcid": ""
-    }
-  },
-  {
-    "id": 4,
     "name": "Hyeongchan Kim",
     "role": "MS-PhD Student",
     "joined": "2026 Spring",
@@ -60,7 +45,7 @@
     }
   },
   {
-    "id": 5,
+    "id": 4,
     "name": "Yun-Haeng Cho",
     "role": "PhD Student",
     "joined": "2026 Spring",
@@ -75,13 +60,28 @@
     }
   },
   {
-    "id": 6,
+    "id": 5,
     "name": "Jungmin Lee",
     "role": "MS-PhD Student",
     "joined": "2026 Spring",
     "email": "jungminlee0@snu.ac.kr",
     "area": "",
     "image": "",
+    "links": {
+      "cv": "",
+      "googleScholar": "",
+      "linkedin": "",
+      "orcid": ""
+    }
+  },
+  {
+    "id": 3,
+    "name": "Jeongin Bae",
+    "role": "MS-PhD Student",
+    "joined": "2026 Spring",
+    "email": "jeongin2007@snu.ac.kr",
+    "area": "Co-advisor: Dr. Ki Chang Kwon (KRISS)",
+    "image": "/members/jeonginbae.jpg",
     "links": {
       "cv": "",
       "googleScholar": "",
