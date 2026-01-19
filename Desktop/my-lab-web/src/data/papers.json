@@ -63,7 +63,7 @@
   {
     "id": 79,
     "year": 2024,
-    "title": "Real-Time Tunable Gas Sensing Platform Based on SnO2 Nanoparticles Activated by Blue Micro-Light-Emitting Diode",
+    "title": "Real-Time Tunable Gas Sensing Platform Based on SnO<sub>2</sub> Nanoparticles Activated by Blue Micro-Light-Emitting Diode",
     "authors": "G. B. Nam†, J.-E. Ryu†, T. H. Eom†, S. J. Kim†, <b><u>J. M. Suh</u></b>, S. Lee, S. Choi, C. W. Moon, S. J. Park, S. M. Lee, B. Kim, S. H. Park, J. W. Yang, S. Min, S. Park, S. H. Cho, H. J. Kim, S. E. Jun, T. H. Lee, Y. J. Kim, J. Y. Kim, Y. J. Hong, J.-I. Shim, H.-G. Byun, Y. Park, I. Park*, S.-W. Ryu*, H. W. Jang*",
     "conference": "Nano-Micro Letters 16, 261",
     "url": "https://doi.org/10.1007/s40820-024-01486-2"
@@ -103,7 +103,7 @@
   {
     "id": 74,
     "year": 2024,
-    "title": "Maximized nanojunctions in Pd/SnO2 nanoparticles for ultrasensitive and rapid H2 detection",
+    "title": "Maximized nanojunctions in Pd/SnO<sub>2</sub> nanoparticles for ultrasensitive and rapid H<sub>2</sub> detection",
     "authors": "G. B. Nam†, T. H. Eom†, S. H. Cho†, Y. J. Kim, S. Choi, W. S. Cheon, S. J. Park, M. Shokouhimehr, <b><u>J. M. Suh</u></b>, J.-E. Ryu, S. Park, H. K. Park, H. J. Kim, S. J. Kim, S. M. Lee, S. H. Park, L. Shiming*, M.-H. Oh*, Y. S. Huh*, H. W. Jang*",
     "conference": "Chemical Engineering Journal 494, 153116",
     "url": "https://doi.org/10.1016/j.cej.2024.153116"
@@ -111,7 +111,7 @@
   {
     "id": 73,
     "year": 2024,
-    "title": "Substantially Accelerated Response and Recovery in Pd-Decorated WO3 Nanorods Gasochromic Hydrogen Sensor",
+    "title": "Substantially Accelerated Response and Recovery in Pd-Decorated WO<sub>3</sub> Nanorods Gasochromic Hydrogen Sensor",
     "authors": "S. H. Cho†, <b><u>J. M. Suh</u></b>†, B. Jeong, T. H. Lee, K. S. Choi, S. Choi, T. H. Eom, G. B. Nam, S. Kim, H. W. Jang*",
     "conference": "Small 20(32), 2309744",
     "url": "https://onlinelibrary.wiley.com/doi/10.1002/smll.202309744"
@@ -138,7 +138,7 @@
   {
     "id": 70,
     "year": 2024,
-    "title": "MAPbBr3 Halide Perovskite-Based Resistive Random-Access Memories Using Electron Transport Layers",
+    "title": "MAPbBr<sub>3</sub> Halide Perovskite-Based Resistive Random-Access Memories Using Electron Transport Layers",
     "authors": "H. Kim, J. S. Kim, J. Choi, Y.-H. Kim, <b><u>J. M. Suh</u></b>, M.-J. Choi, Y.-S. Shim, S. Y. Kim, T.-W. Lee*, H. W. Jang*",
     "conference": "ACS Applied Materials & Interfaces 16(2), 2457-2466",
     "url": "https://doi.org/10.1021/acsami.3c01450"
@@ -154,7 +154,7 @@
   {
     "id": 68,
     "year": 2024,
-    "title": "Rapid and Ultrahighly Sensitive Ethanol Sensing in p-type SrTi1-xFexO3",
+    "title": "Rapid and Ultrahighly Sensitive Ethanol Sensing in p-type SrTi<sub>1-x</sub>Fe<sub>x</sub>O<sub>3</sub>",
     "authors": "S. H. Cho†, M.-J. Choi†, B. Koo†, J. Kim, T. H. Lee, <b><u>J. M. Suh</u></b>, T. H. Eom, S. Y. Park, T. Kim, W. C. Jung*, H. W. Jang*",
     "conference": "Sensors and Actuators B: Chemical 403, 135137",
     "url": "https://doi.org/10.1016/j.snb.2023.135137"
@@ -193,7 +193,7 @@
   {
     "id": 64,
     "year": 2023,
-    "title": "Drastic Gas Sensing Selectivity in 2-Dimensional MoS2 Nanoflakes by Noble Metal Decoration",
+    "title": "Drastic Gas Sensing Selectivity in 2-Dimensional MoS<sub>2</sub> Nanoflakes by Noble Metal Decoration",
     "authors": "T. Kim†, T. H. Lee†, S. Y. Park†, T. H. Eom†, I. Cho, Y. Kim, C. Kim, S. A. Lee, M.-J. Choi, <b><u>J. M. Suh</u></b>, I.-S. Hwang, D. Lee*, I. Park*, H. W. Jang*",
     "conference": "ACS Nano 17(5), 4404-4413",
     "url": "https://doi.org/10.1021/acsnano.2c09733"
@@ -220,7 +220,7 @@
   {
     "id": 61,
     "year": 2023,
-    "title": "Tailored BiVO4 /In2O3 nanostructures with boosted charge separation ability toward unassisted water splitting",
+    "title": "Tailored BiVO<sub>4</sub>/In<sub>2</sub>O<sub>3</sub> nanostructures with boosted charge separation ability toward unassisted water splitting",
     "authors": "M. G. Lee†, J. W. Yang†, I. J. Park, T. H. Lee, H. Park, W. S. Cheon, S. A. Lee, H. Lee, S. G. Ji, <b><u>J. M. Suh</u></b>, J. Moon, J. Y. Kim*, H. W. Jang*",
     "conference": "Carbon Energy 5(6), e321",
     "url": "https://doi.org/10.1002/cey2.321"
@@ -271,7 +271,7 @@
   {
     "id": 56,
     "year": 2022,
-    "title": "Extremely Sensitive and Selective NO2 Detection at Relative Humidity 90 % in 2-Dimensional Tin Sulfides/SnO2 Nanorod Heterostructure",
+    "title": "Extremely Sensitive and Selective NO<sub>2</sub> Detection at Relative Humidity 90 % in 2-Dimensional Tin Sulfides/SnO<sub>2</sub> Nanorod Heterostructure",
     "authors": "<b><u>J. M. Suh</u></b>, T. H. Lee, K. Hong, Y. G. Song, S. H. Cho, C.-Y. Kang, Y.-S. Shim, D. Lee*, K. C. Kwon*, H. W. Jang*",
     "conference": "Sensors and Actuators B: Chemical 369, 132319",
     "url": "https://doi.org/10.1016/j.snb.2022.132319"
@@ -291,7 +291,7 @@
   {
     "id": 54,
     "year": 2022,
-    "title": "Fast Responding and Highly Reversible Gasochromic H2 Sensor using Pd-decorated Amorphous WO3 thin films",
+    "title": "Fast Responding and Highly Reversible Gasochromic H<sub>2</sub> Sensor using Pd-decorated Amorphous WO<sub>3</sub> thin films",
     "authors": "S. H. Cho†, <b><u>J. M. Suh</u></b>†, B. Jeong, T. H. Lee, K. S. Choi, T. H. Eom, T. Kim, H. W. Jang*",
     "conference": "Chemical Engineering Journal 446, 136862",
     "url": "https://doi.org/10.1016/j.cej.2022.136862"
@@ -299,7 +299,7 @@
   {
     "id": 53,
     "year": 2022,
-    "title": "Visible Light Driven Ultrasensitive and Selective NO2 Detection in Tin Oxide Nanoparticles with Sulfur Doping Assisted by L‐Cysteine",
+    "title": "Visible Light Driven Ultrasensitive and Selective NO<sub>2</sub> Detection in Tin Oxide Nanoparticles with Sulfur Doping Assisted by L‐Cysteine",
     "authors": "T. H. Eom, S. H. Cho, <b><u>J. M. Suh</u></b>, T. Kim, J. W. Yang, T. H. Lee, S. E. Jun, S. J. Kim, J. Lee, S.‐H. Hong, H. W. Jang*",
     "conference": "Small 18(12), 2106613",
     "url": "https://doi.org/10.1002/smll.202106613"
@@ -347,7 +347,7 @@
   {
     "id": 47,
     "year": 2021,
-    "title": "Rationally Designed TiO2 Nanostructures of Continuous Nanonetworks for Fast-responding Highly Sensitive Acetone Sensor",
+    "title": "Rationally Designed TiO<sub>2</sub> Nanostructures of Continuous Nanonetworks for Fast-responding Highly Sensitive Acetone Sensor",
     "authors": "<b><u>J. M. Suh</u></b>†, D. Cho†, S. Lee, T. H. Lee, J.-W. Jung, J. Lee, S. H. Cho, T. H. Eom, J.-W. Hong*, Y.-S. Shim*, S. Jeon*, H. W. Jang*",
     "conference": "Small Methods 5(12) 2100941",
     "url": "https://doi.org/10.1002/smtd.202100941"
@@ -366,7 +366,7 @@
   {
     "id": 45,
     "year": 2021,
-    "title": "Substantially improved room temperature NO2 sensing in 2-dimensional SnS2 nanoflowers enabled by visible light illumination",
+    "title": "Substantially improved room temperature NO<sub>2</sub> sensing in 2-dimensional SnS<sub>2</sub> nanoflowers enabled by visible light illumination",
     "authors": "T. H. Eom, S. H. Cho, <b><u>J. M. Suh</u></b>, T. Kim, T. H. Lee, S. E. Jun, J. W. Yang, J. Lee, S.-H. Hong, H. W. Jang*",
     "conference": "Journal of Materials Chemistry A 9, 11168-11178",
     "url": "https://doi.org/10.1039/D1TA00953B"
@@ -374,7 +374,7 @@
   {
     "id": 44,
     "year": 2021,
-    "title": "Microscopic evidence of strong interaction between chemical vapor deposited 2D MoS2 film and SiO2 growth template",
+    "title": "Microscopic evidence of strong interaction between chemical vapor deposited 2D MoS<sub>2</sub> film and SiO<sub>2</sub> growth template",
     "authors": "W. Sohn, K. C. Kwon, <b><u>J. M. Suh</u></b>, T. H. Lee, K. C. Roh*, H. W. Jang*",
     "conference": "Nano Convergence 8, 11",
     "url": "https://doi.org/10.1186/s40580-021-00262-x"
@@ -382,7 +382,7 @@
   {
     "id": 43,
     "year": 2021,
-    "title": "Vertically Aligned MoS2 Thin Film Catalysts with Fe-Ni Sulfide Nanoparticles by One-Step Sulfurization for Efficient Solar Water Reduction",
+    "title": "Vertically Aligned MoS<sub>2</sub> Thin Film Catalysts with Fe-Ni Sulfide Nanoparticles by One-Step Sulfurization for Efficient Solar Water Reduction",
     "authors": "S. Choi†, C. Kim†, J. Y. Lee†, T. H. Lee, K. C. Kwon, S. Kang, S. A. Lee, K. S. Choi, <b><u>J. M. Suh</u></b>, K. Hong, S. E. Jun, W. K. Kim, S. H. Ahn, S. Han, S. Y. Kim*, C.-H. Lee*, H. W. Jang*",
     "conference": "Chemical Engineering Journal 418, 129369",
     "url": "https://doi.org/10.1016/j.cej.2021.129369"
@@ -398,7 +398,7 @@
   {
     "id": 41,
     "year": 2021,
-    "title": "Edge-exposed WS2 on 1D Nanostructures for Highly Selective NO2 Sensor at Room Temperature",
+    "title": "Edge-exposed WS<sub>2</sub> on 1D Nanostructures for Highly Selective NO<sub>2</sub> Sensor at Room Temperature",
     "authors": "<b><u>J. M. Suh</u></b>, K. C. Kwon, T. H. Lee, C. Kim, C. W. Lee, Y. G. Song, M.-J. Choi, S. Choi, S. H. Cho, S. Kim, M. Shokouhimehr, C.-Y. Kang, Y.-S. Shim, D. Lee*, H. W. Jang*",
     "conference": "Sensors and Actuators B: Chemical 333, 129566",
     "url": "https://doi.org/10.1016/j.snb.2021.129566"
@@ -414,7 +414,7 @@
   {
     "id": 39,
     "year": 2021,
-    "title": "Optically Activated 3D Thin-Shell TiO2 for Super-sensitive Chemoresistive Responses: Toward Visible Light Activation",
+    "title": "Optically Activated 3D Thin-Shell TiO<sub>2</sub> for Super-sensitive Chemoresistive Responses: Toward Visible Light Activation",
     "authors": "D. Cho†, <b><u>J. M. Suh</u></b>†, S.-H. Nam, S. Y. Park, M. Park, T. H. Lee, K. S. Choi, J. Lee, C. Ahn, H. W. Jang*, Y.-S. Shim*, S. Jeon*",
     "conference": "Advanced Science 8(3), 2001883",
     "url": "https://doi.org/10.1002/advs.202001883"
@@ -446,7 +446,7 @@
   {
     "id": 35,
     "year": 2020,
-    "title": "Quasi-2D halide perovskites for resistive switching devices with ON/OFF ratios above 10^9",
+    "title": "Quasi-2D halide perovskites for resistive switching devices with ON/OFF ratios above 10<sup>9</sup>",
     "authors": "H. Kim, M.-J. Choi, <b><u>J. M. Suh</u></b>, J. S. Han, S. G. Kim, Q. V. Le*, S. Y. Kim*, H. W. Jang*",
     "conference": "NPG Asia Materials 12, 21",
     "url": "https://doi.org/10.1038/s41427-020-0202-2"
@@ -462,7 +462,7 @@
   {
     "id": 33,
     "year": 2020,
-    "title": "Photoelectrochemical Hydrogen Production at Neutral pH Phosphate Buffer Solution Using TiO2 Passivated InAs Nanowire/p-Si Heterostructure Photocathode",
+    "title": "Photoelectrochemical Hydrogen Production at Neutral pH Phosphate Buffer Solution Using TiO<sub>2</sub> Passivated InAs Nanowire/p-Si Heterostructure Photocathode",
     "authors": "S. Choi, J. Hwang, T. H. Lee, H.-H. Kim, S.-P. Hong, C. Kim, M.-J. Choi, H. K. Park, S. S. M. Bhat, <b><u>J. M. Suh</u></b>, J. Lee, K. S. Choi, S.-H. Hong, J. C. Shin*, H. W. Jang*",
     "conference": "Chemical Engineering Journal 392, 123688",
     "url": "https://doi.org/10.1016/j.cej.2019.123688"
@@ -486,7 +486,7 @@
   {
     "id": 30,
     "year": 2019,
-    "title": "Substantially enhanced photoelectrochemical performance of TiO2 nanorods/CdS nanocrystals heterojunction photoanode decorated with MoS2 nanosheets",
+    "title": "Substantially enhanced photoelectrochemical performance of TiO<sub>2</sub> nanorods/CdS nanocrystals heterojunction photoanode decorated with MoS2 nanosheets",
     "authors": "S. S. M. Bhat†, S. A. Pawar†, D. Potphode, C.-K. Moon, <b><u>J. M. Suh</u></b>, C. Kim, S. Choi, D. S. Patil, J.-J. Kim, J. C. Shin*, H. W. Jang*",
     "conference": "Applied Catalysis B: Environmental 259 (15), 118102",
     "url": "https://doi.org/10.1016/j.apcatb.2019.118102"
@@ -510,7 +510,7 @@
   {
     "id": 27,
     "year": 2019,
-    "title": "Two-dimensional NbS2 Gas Sensors for Selective and Reversible NO2 Detection at Room Temperature",
+    "title": "Two-dimensional NbS<sub>2</sub> Gas Sensors for Selective and Reversible NO2 Detection at Room Temperature",
     "authors": "Y. Kim†, K. C. Kwon†, S. Kang†, C. Kim, T. Kim, S.-P. Hong, S. Y. Park, <b><u>J. M. Suh</u></b>, M.-J. Choi, S. Han*, H. W. Jang*",
     "conference": "ACS Sensors 4 (9), 2395-2402",
     "url": "https://doi.org/10.1021/acssensors.9b00992"
@@ -534,7 +534,7 @@
   {
     "id": 24,
     "year": 2019,
-    "title": "SnS2 Nanograins on Porous SiO2 Nanorods Template for Highly Sensitive NO2 Sensor at Room Temperature with Excellent Recovery",
+    "title": "SnS2 Nanograins on Porous SiO<sub>2</sub> Nanorods Template for Highly Sensitive NO2 Sensor at Room Temperature with Excellent Recovery",
     "authors": "K. C. Kwon†, <b><u>J. M. Suh</u></b>†, T. H. Lee, K. S. Choi, K. T. Hong, Y. G. Song, Y.-S. Shim, M. Shokouhimehr, C.-Y. Kang, S. Y. Kim*, H. W. Jang*",
     "conference": "ACS Sensors 4 (3), 678-686",
     "url": "https://doi.org/10.1021/acssensors.8b01526"
@@ -566,7 +566,7 @@
   {
     "id": 20,
     "year": 2019,
-    "title": "Pd- and Au-Decorated MoS2 Gas Sensors for Enhanced Selectivity",
+    "title": "Pd- and Au-Decorated MoS<sub>2</sub> Gas Sensors for Enhanced Selectivity",
     "authors": "<b><u>J. M. Suh</u></b>†, Y.-S. Shim†, K. C. Kwon†, J.-M. Jeon, T. H. Lee, M. Shokouhimehr, H. W. Jang*",
     "conference": "Electronic Materials Letters 15 (3), 368-376",
     "url": "https://doi.org/10.1007/s13391-019-00128-9"
@@ -582,7 +582,7 @@
   {
     "id": 18,
     "year": 2018,
-    "title": "Heterojunction Based on Rh-Decorated WO3 Nanorods for Morphological Change and Gas Sensor Application Using the Transition Effect",
+    "title": "Heterojunction Based on Rh-Decorated WO<sub>3</sub> Nanorods for Morphological Change and Gas Sensor Application Using the Transition Effect",
     "authors": "Y. G. Song, J. Y. Park, <b><u>J. M. Suh</u></b>, Y.-S. Shim, S. Y. Yi, H. W. Jang, S. Kim, J. M. Yuk, B.-K. Ju*, C.-Y. Kang*",
     "conference": "Chemistry of Materials 31 (1), 207-215",
     "url": "https://doi.org/10.1021/acsami.7b14545"
@@ -598,7 +598,7 @@
   {
     "id": 16,
     "year": 2018,
-    "title": "Triple Planar Heterojunction of SnO2/WO3/BiVO4 with Enhanced Photoelectrochemical Performance under Front Illumination",
+    "title": "Triple Planar Heterojunction of SnO<sub>2</sub>/WO<sub>3</sub>/BiVO<sub>4</sub> with Enhanced Photoelectrochemical Performance under Front Illumination",
     "authors": "S. S. M. Bhat, S. A. Lee, <b><u>J. M. Suh</u></b>, S.-P. Hong, H. W. Jang*",
     "conference": "Applied Sciences 8 (10), 1765",
     "url": "https://doi.org/10.3390/app8101765"
@@ -606,7 +606,7 @@
   {
     "id": 15,
     "year": 2018,
-    "title": "Synthesis of Numerous Edge Sites in MoS2 via SiO2 Nanorods Platform for Highly Sensitive Gas Sensor",
+    "title": "Synthesis of Numerous Edge Sites in MoS<sub>2</sub> via SiO<sub>2</sub> Nanorods Platform for Highly Sensitive Gas Sensor",
     "authors": "Y.-S. Shim†, K. C. Kwon†, <b><u>J. M. Suh</u></b>, K. S. Choi, Y. G. Song, W. Sohn, S. Choi, K. Hong, J.-M. Jeon, S.-P. Hong, S. Kim, S. Y. Kim, C.-Y. Kang*, H. W. Jang*",
     "conference": "ACS Applied Materials & Interfaces 10 (37), 31594-31602",
     "url": "https://doi.org/10.1021/acsami.8b08114"
@@ -646,7 +646,7 @@
   {
     "id": 10,
     "year": 2018,
-    "title": "Substantially enhanced front illumination photocurrent in porous SnO2 nanorods/networked BiVO4 heterojunction photoanodes",
+    "title": "Substantially enhanced front illumination photocurrent in porous SnO<sub>2</sub> nanorods/networked BiVO<sub>4</sub> heterojunction photoanodes",
     "authors": "S. S. M. Bhat, <b><u>J. M. Suh</u></b>, S. Choi, S.-P. Hong, S. A. Lee, C. Kim, C. W. Moon, M. G. Lee, H. W. Jang*",
     "conference": "Journal of Materials Chemistry A 6 (30), 14633-14643",
     "url": "https://doi.org/10.1039/C8TA03858A"
@@ -654,7 +654,7 @@
   {
     "id": 9,
     "year": 2018,
-    "title": "Direct Observation of Surface Potential Distribution in Insulation Resistance Degraded Acceptor-Doped BaTiO3 Multilayered Ceramic Capacitors",
+    "title": "Direct Observation of Surface Potential Distribution in Insulation Resistance Degraded Acceptor-Doped BaTiO<sub>3</sub> Multilayered Ceramic Capacitors",
     "authors": "K. Hong†, T. H. Lee†, <b><u>J. M. Suh</u></b>, J.-S. Park, H.-S. Kwon, J. Choi, H. W. Jang*",
     "conference": "Electronic Materials Letters 14 (5), 629-635",
     "url": "https://doi.org/10.1007/s13391-018-0066-6"
@@ -662,7 +662,7 @@
   {
     "id": 8,
     "year": 2018,
-    "title": "Highly selective and sensitive chemoresistive humidity sensors based on rGO/MoS2 van der Waals composites",
+    "title": "Highly selective and sensitive chemoresistive humidity sensors based on rGO/MoS<sub>2</sub> van der Waals composites",
     "authors": "S. Y. Park, Y. H. Kim, S. Y. Lee, W. Sohn, J. E. Lee, D. H. Kim, Y.-S. Shim, K. C. Kwon, K. S. Choi, H. J. Yoo, <b><u>J. M. Suh</u></b>, M. Ko, J.-H. Lee, M. J. Lee, S. Y. Kim, M. H. Lee*, H. W. Jang*",
     "conference": "Journal of Materials Chemistry A 6 (12), 5016-5024",
     "url": "https://doi.org/10.1039/C7TA11375G"
