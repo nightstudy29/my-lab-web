@@ -51,58 +51,66 @@ export default function PublicationsPage() {
             />
 
             {/* [저널/학회 + 연도] */}
-            <div style={{ fontSize: '0.95rem', color: '#666', marginBottom: '10px' }}>
+            <div style={{ fontSize: '0.95rem', color: '#666', marginBottom: '12px' }}>
               <span style={{ fontStyle: 'italic', fontWeight: '600', color: '#222' }}>
                 {paper.conference}
               </span>
               <span>, {paper.year}</span>
             </div>
 
-            {/* [뉴스 링크 영역] */}
+            {/* [뉴스 링크 영역] - 디자인 변경: 태그 스타일 */}
             {paper.news && paper.news.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '10px' }}>
+                
+                {/* Press 라벨 (선택 사항 - 필요 없으면 이 span 삭제 가능) */}
                 <span style={{ 
                   fontSize: '0.8rem', 
-                  color: '#004094', 
                   fontWeight: 'bold', 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '0.5px',
-                  backgroundColor: '#eef4ff',
-                  padding: '2px 6px',
-                  borderRadius: '4px'
+                  color: '#004094', 
+                  alignSelf: 'center',
+                  marginRight: '5px'
                 }}>
-                  Press
+                  MEDIA COVERAGE |
                 </span>
-                
-                {/* 최대 6개까지만 표시 */}
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {paper.news.slice(0, 6).map((newsItem, index) => (
-                    <a 
-                      key={index} 
-                      href={newsItem.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      title={`Media coverage: ${newsItem.name}`} 
-                      style={{ 
-                        color: '#666', 
-                        fontSize: '1.2rem', 
-                        display: 'flex', 
-                        alignItems: 'center',
-                        transition: 'color 0.2s, transform 0.1s'
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.color = '#004094'; 
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.color = '#666';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                      }}
-                    >
-                      <FaNewspaper />
-                    </a>
-                  ))}
-                </div>
+
+                {/* 뉴스 리스트 (아이콘 + 이름) */}
+                {paper.news.slice(0, 6).map((newsItem, index) => (
+                  <a 
+                    key={index} 
+                    href={newsItem.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ 
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '4px 12px',
+                      backgroundColor: '#f0f7ff', // 아주 연한 하늘색 배경
+                      border: '1px solid #cce0ff', // 연한 파란 테두리
+                      borderRadius: '20px',       // 둥근 알약 모양
+                      textDecoration: 'none',
+                      color: '#004094',           // 글자색: SMID 네이비
+                      fontSize: '0.85rem',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease'
+                    }}
+                    // 마우스 올렸을 때 효과
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = '#004094';
+                      e.currentTarget.style.color = '#ffffff'; // 글자가 흰색으로 반전
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    // 마우스 뗐을 때 원상복구
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f0f7ff';
+                      e.currentTarget.style.color = '#004094';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    <FaNewspaper style={{ fontSize: '0.9rem' }} /> {/* 아이콘 */}
+                    <span>{newsItem.name}</span> {/* 언론사 이름 */}
+                  </a>
+                ))}
               </div>
             )}
 
