@@ -7,8 +7,24 @@ import { FaBars, FaTimes } from "react-icons/fa";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // [수정됨] 메뉴 순서 변경: Publications -> Equipment
-  const menuItems = ['Home', 'Research', 'Members', 'Publications', 'Equipment', 'News', 'Contact'];
+  // [수정 1] 메뉴 목록에 'Lab Portal' 추가 (맨 뒤에 배치)
+  const menuItems = [
+    'Home', 
+    'Research', 
+    'Members', 
+    'Publications', 
+    'Equipment', 
+    'News', 
+    'Contact', 
+    'Lab Portal'
+  ];
+
+  // [수정 2] 경로 생성 헬퍼 함수
+  // 'Lab Portal' -> '/labportal' (공백 제거)로 변환하기 위해 필요
+  const getPath = (item) => {
+    if (item === 'Home') return '/';
+    return `/${item.toLowerCase().replace(/\s+/g, '')}`; 
+  };
 
   return (
     <nav style={{ 
@@ -60,13 +76,15 @@ export default function Navbar() {
           {menuItems.map((item) => (
             <Link 
               key={item} 
-              href={item === 'Home' ? '/' : `/${item.toLowerCase()}`} 
+              href={getPath(item)} // 위에서 만든 함수 사용
               style={{ 
                 color: '#fff', 
                 textDecoration: 'none', 
                 fontWeight: '500', 
                 fontSize: '1rem',
-                transition: 'opacity 0.2s'
+                transition: 'opacity 0.2s',
+                // Lab Portal은 약간 다르게 보이게 하고 싶다면 아래 주석 해제
+                // opacity: item === 'Lab Portal' ? 0.7 : 1 
               }}
               className="nav-link"
             >
@@ -95,7 +113,7 @@ export default function Navbar() {
           {menuItems.map((item) => (
             <Link 
               key={item} 
-              href={item === 'Home' ? '/' : `/${item.toLowerCase()}`} 
+              href={getPath(item)} // 위에서 만든 함수 사용
               onClick={() => setIsOpen(false)}
               style={{ color: '#fff', textDecoration: 'none', fontSize: '1.1rem' }}
             >
@@ -109,7 +127,7 @@ export default function Navbar() {
         .nav-link:hover {
           opacity: 0.8;
         }
-        @media (max-width: 900px) {
+        @media (max-width: 1000px) { /* 메뉴가 많아져서 브레이크포인트를 조금 늘렸습니다 (900->1000) */
           .desktop-menu { display: none !important; }
           .mobile-menu-icon { display: block !important; }
         }
