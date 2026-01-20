@@ -40,10 +40,19 @@ export default function Home() {
         </p>
 
         {/* 연구실 이름 */}
-        <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '25px', letterSpacing: '-0.5px', lineHeight: '1.2' }}>
+        <h1 style={{ 
+          // [수정 핵심] clamp 함수 적용 (최소 1.8rem ~ 최대 3rem 사이 자동 조절)
+          fontSize: 'clamp(1.8rem, 6vw, 3rem)', 
+          fontWeight: '800', 
+          marginBottom: '25px', 
+          letterSpacing: '-0.5px', 
+          lineHeight: '1.2',
+          wordBreak: 'keep-all', // 단어 중간에 끊기지 않도록
+          padding: '0 10px'      // 모바일에서 좌우 여백 확보
+        }}>
           Semiconductor Materials & <br/>Intelligent Devices Lab
         </h1>
-        
+                
         {/* 슬로건: 3대 키워드 강조 */}
         <p style={{ fontSize: '1.3rem', maxWidth: '850px', opacity: '0.9', marginBottom: '45px', lineHeight: '1.6' }}>
           Pioneering the future of electronics through <br/>

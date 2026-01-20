@@ -195,104 +195,94 @@ export default function PublicationsPage() {
                   )}
 
                   {/* ================================================= */}
-                  {/* [CASE 2] 특허(Patents)일 때 보여줄 UI */}
+                  {/* [CASE 2] 특허(Patents) - 슬림형 디자인 */}
                   {/* ================================================= */}
                   {activeTab === 'patents' && (
                     <div style={{ 
-                      paddingLeft: '15px', 
+                      padding: '15px 20px', // 패딩 축소
                       borderLeft: `4px solid ${item.type === 'Registered' ? '#27ae60' : '#e67e22'}`, 
                       backgroundColor: '#fafafa',
-                      padding: '25px',
                       borderRadius: '0 8px 8px 0',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                      borderTop: '1px solid #eee', // 위아래 구분선 살짝 추가
+                      borderBottom: '1px solid #eee',
+                      borderRight: '1px solid #eee'
                     }}>
-                      {/* 1. 상단 뱃지 */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                        <FaLightbulb style={{ color: '#f39c12', fontSize: '1.1rem' }} />
+                      
+                      {/* 1. 제목 + 배지 (한 줄 배치) */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '15px', marginBottom: '5px' }}>
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: '700', margin: 0, lineHeight: '1.3', flex: 1 }}>
+                          {item.url && item.url !== '#' ? (
+                            <a href={item.url} target="_blank" rel="noopener noreferrer" 
+                               style={{ color: '#333', textDecoration: 'none' }}
+                               onMouseOver={(e) => e.target.style.color = '#004094'}
+                               onMouseOut={(e) => e.target.style.color = '#333'}
+                            >
+                              {item.title}
+                            </a>
+                          ) : (
+                            <span style={{ color: '#333' }}>{item.title}</span>
+                          )}
+                        </h3>
+                        
+                        {/* 배지 (우측 상단 고정) */}
                         <span style={{ 
-                          fontSize: '0.75rem', 
+                          fontSize: '0.7rem', 
                           fontWeight: 'bold', 
-                          color: '#fff',
-                          backgroundColor: item.type === 'Registered' ? '#27ae60' : '#e67e22',
-                          padding: '3px 8px',
+                          color: item.type === 'Registered' ? '#27ae60' : '#e67e22',
+                          border: `1px solid ${item.type === 'Registered' ? '#27ae60' : '#e67e22'}`,
+                          padding: '2px 6px',
                           borderRadius: '4px',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
+                          whiteSpace: 'nowrap', // 줄바꿈 방지
+                          alignSelf: 'center'
                         }}>
                           {item.type}
                         </span>
                       </div>
-                      
-                      {/* 2. 영문 제목 */}
-                      <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '5px', lineHeight: '1.4' }}>
-                        {item.url && item.url !== '#' ? (
-                          <a href={item.url} target="_blank" rel="noopener noreferrer" 
-                             style={{ color: '#333', textDecoration: 'none', transition: 'color 0.2s' }}
-                             onMouseOver={(e) => e.target.style.color = '#004094'}
-                             onMouseOut={(e) => e.target.style.color = '#333'}
-                          >
-                            {item.title}
-                          </a>
-                        ) : (
-                          <span style={{ color: '#333' }}>{item.title}</span>
-                        )}
-                      </h3>
 
-                      {/* 3. 한글 제목 */}
+                      {/* 2. 한글 제목 (있으면) - 작게 표시 */}
                       {item.koreanTitle && (
-                        <p style={{ margin: '0 0 15px 0', fontSize: '1rem', color: '#555', fontWeight: '500' }}>
-                          KO: {item.koreanTitle}
-                        </p>
+                        <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '8px' }}>
+                          {item.koreanTitle}
+                        </div>
                       )}
                       
-                      {/* 4. 발명자 */}
-                      <p style={{ margin: '0 0 20px 0', fontSize: '1rem', color: '#444' }}>
-                        <strong>Inventors:</strong> {item.inventors}
-                      </p>
+                      {/* 3. 발명자 */}
+                      <div style={{ fontSize: '0.95rem', color: '#444', marginBottom: '10px' }}>
+                        <span style={{ fontWeight: '600', marginRight: '5px' }}>Inv.</span> 
+                        {item.inventors}
+                      </div>
                       
-                      {/* 5. 상세 정보 박스 (출원/등록 정보) */}
+                      {/* 4. 상세 정보 (번호/날짜) - 회색 박스로 한 줄 처리 */}
                       <div style={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', // 공간 있으면 가로 배치, 좁으면 세로 배치
+                        backgroundColor: '#eee', 
+                        padding: '6px 12px', 
+                        borderRadius: '4px', 
+                        fontSize: '0.85rem', 
+                        color: '#555',
+                        display: 'flex',
+                        flexWrap: 'wrap',
                         gap: '15px',
-                        backgroundColor: '#fff',
-                        border: '1px solid #eee',
-                        borderRadius: '8px',
-                        padding: '15px'
+                        alignItems: 'center'
                       }}>
-                        
-                        {/* (A) 출원 정보 (항상 있음) */}
-                        <div>
-                          <p style={{ margin: '0 0 4px 0', fontSize: '0.8rem', color: '#888', fontWeight: 'bold', textTransform: 'uppercase' }}>
-                            Application (출원)
-                          </p>
-                          <p style={{ margin: '0', fontSize: '0.95rem', color: '#333' }}>
-                            <span style={{ fontWeight: '600' }}>Date:</span> {item.applicationDate}
-                          </p>
-                          <p style={{ margin: '0', fontSize: '0.95rem', color: '#333' }}>
-                            <span style={{ fontWeight: '600' }}>No:</span> {item.applicationNumber}
-                          </p>
-                        </div>
+                        {/* 출원 정보 */}
+                        <span style={{ display: 'flex', gap: '5px' }}>
+                          <strong>App:</strong> {item.applicationNumber} ({item.applicationDate})
+                        </span>
 
-                        {/* (B) 등록 정보 (Registered일 때만 표시) */}
+                        {/* 등록 정보 (있을 때만 구분선 | 과 함께 표시) */}
                         {item.type === 'Registered' && (
-                          <div style={{ borderLeft: '2px solid #eee', paddingLeft: '15px' }}> {/* 구분선 효과 */}
-                            <p style={{ margin: '0 0 4px 0', fontSize: '0.8rem', color: '#27ae60', fontWeight: 'bold', textTransform: 'uppercase' }}>
-                              Registration (등록)
-                            </p>
-                            <p style={{ margin: '0', fontSize: '0.95rem', color: '#333' }}>
-                              <span style={{ fontWeight: '600' }}>Date:</span> {item.registrationDate}
-                            </p>
-                            <p style={{ margin: '0', fontSize: '0.95rem', color: '#333' }}>
-                              <span style={{ fontWeight: '600' }}>No:</span> {item.registrationNumber}
-                            </p>
-                          </div>
+                          <>
+                            <span style={{ color: '#ccc' }}>|</span>
+                            <span style={{ display: 'flex', gap: '5px', color: '#006400' }}>
+                              <strong>Reg:</strong> {item.registrationNumber} ({item.registrationDate})
+                            </span>
+                          </>
                         )}
                       </div>
 
                     </div>
                   )}
-                  
+               
                 </li>
               ))}
             </ul>
