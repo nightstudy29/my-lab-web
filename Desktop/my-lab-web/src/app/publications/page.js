@@ -57,10 +57,15 @@ export default function PublicationsPage() {
       margin: '0 auto',      
       boxSizing: 'border-box' 
     }}>
-      
+
       {/* 1. 페이지 헤더 + 탭 + 검색창 */}
       <div style={{ marginBottom: '50px' }}>
-        <h1 style={{ fontSize: '2.5rem', color: '#333', marginBottom: '20px' }}>
+        <h1 style={{ 
+          // [수정] 폰트 크기 자동 조절
+          fontSize: 'clamp(2rem, 5vw, 2.5rem)', 
+          color: '#333', 
+          marginBottom: '20px' 
+        }}>
           Research Output
         </h1>
 
@@ -137,21 +142,21 @@ export default function PublicationsPage() {
       {groupedData.sortedYears.length > 0 ? (
         groupedData.sortedYears.map((year) => (
           <div key={year} style={{ marginBottom: '60px' }}>
-            
+
             {/* Sticky Year Header */}
             <div style={{ 
               position: 'sticky', 
-              top: '70px',
-              backgroundColor: '#fff',
-              padding: '10px 0',
-              borderBottom: '3px solid #004094', 
-              marginBottom: '30px',
-              zIndex: 10,
-              display: 'flex',
-              alignItems: 'baseline',
+              /* ... 기존 스타일 유지 ... */
               gap: '15px'
             }}>
-              <h2 style={{ fontSize: '2rem', color: '#004094', margin: 0 }}>{year}</h2>
+              <h2 style={{ 
+                // [수정] 연도 폰트 크기 조절
+                fontSize: 'clamp(1.5rem, 4vw, 2rem)', 
+                color: '#004094', 
+                margin: 0 
+              }}>
+                {year}
+              </h2>
               <span style={{ color: '#888', fontWeight: '500' }}>
                 ({groupedData.groups[year].length})
               </span>
@@ -163,12 +168,21 @@ export default function PublicationsPage() {
                   
                   {/* ================================================= */}
                   {/* [CASE 1] 논문(Papers)일 때 보여줄 UI */}
-                  {/* ================================================= */}
                   {activeTab === 'papers' && (
                     <>
                       <Link href={item.url || "#"} target="_blank" style={{ textDecoration: 'none' }}>
                         <h3 
-                          style={{ fontSize: '1.2rem', color: '#222', fontWeight: '700', marginBottom: '8px', lineHeight: '1.4', cursor: 'pointer', transition: 'color 0.2s' }}
+                          style={{ 
+                            // [수정] 폰트 크기 조절 및 단어 단위 줄바꿈
+                            fontSize: 'clamp(1.1rem, 4vw, 1.2rem)', 
+                            color: '#222', 
+                            fontWeight: '700', 
+                            marginBottom: '8px', 
+                            lineHeight: '1.4', 
+                            cursor: 'pointer', 
+                            transition: 'color 0.2s',
+                            wordBreak: 'break-word' // [추가] 긴 영어 단어가 튀어나가지 않게 함
+                          }}
                           onMouseOver={(e) => e.target.style.color = '#004094'}
                           onMouseOut={(e) => e.target.style.color = '#222'}
                           dangerouslySetInnerHTML={{ __html: item.title }} 
@@ -207,10 +221,18 @@ export default function PublicationsPage() {
                       borderBottom: '1px solid #eee',
                       borderRight: '1px solid #eee'
                     }}>
-                      
+
                       {/* 1. 제목 + 배지 (한 줄 배치) */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '15px', marginBottom: '5px' }}>
-                        <h3 style={{ fontSize: '1.1rem', fontWeight: '700', margin: 0, lineHeight: '1.3', flex: 1 }}>
+                        <h3 style={{ 
+                          // [수정] 폰트 크기 조절 및 줄바꿈 처리
+                          fontSize: 'clamp(1rem, 4vw, 1.1rem)', 
+                          fontWeight: '700', 
+                          margin: 0, 
+                          lineHeight: '1.3', 
+                          flex: 1,
+                          wordBreak: 'break-word' // [추가]
+                        }}>
                           {item.url && item.url !== '#' ? (
                             <a href={item.url} target="_blank" rel="noopener noreferrer" 
                                style={{ color: '#333', textDecoration: 'none' }}
