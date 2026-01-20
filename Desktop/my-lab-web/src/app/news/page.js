@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef } from 'react'; // useRef 추가
+import { useState, useRef } from 'react';
 import newsData from '../../data/news.json';
-import { FaCalendarAlt, FaTag, FaImages, FaChevronLeft, FaChevronRight } from "react-icons/fa"; // 화살표 아이콘 추가
+import { FaCalendarAlt, FaTag, FaImages, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export default function NewsPage() {
   const sortedNews = [...(newsData || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -53,11 +53,11 @@ export default function NewsPage() {
 // 개별 뉴스 카드 컴포넌트
 function NewsCard({ item, getCategoryColor }) {
   const [imgIndex, setImgIndex] = useState(1);
-  const scrollRef = useRef(null); // [추가] 스크롤 컨테이너 제어용 ref
+  const scrollRef = useRef(null);
 
   const hasMultipleImages = item.images && item.images.length > 1;
 
-  // 스크롤 이벤트로 현재 페이지 번호 계산
+  // 스크롤 이벤트 핸들러
   const handleScroll = () => {
     if (scrollRef.current) {
       const scrollLeft = scrollRef.current.scrollLeft;
@@ -67,7 +67,7 @@ function NewsCard({ item, getCategoryColor }) {
     }
   };
 
-  // [추가] 버튼 클릭 시 좌우로 부드럽게 스크롤 이동 함수
+  // 버튼 클릭 스크롤 핸들러
   const scroll = (direction) => {
     if (scrollRef.current) {
       const width = scrollRef.current.offsetWidth;
@@ -76,6 +76,41 @@ function NewsCard({ item, getCategoryColor }) {
         behavior: 'smooth' 
       });
     }
+  };
+
+  // [핵심 추가] 텍스트 내의 URL을 찾아서 <a href> 태그로 변환해주는 함수
+  const renderDescriptionWithLinks = (text) => {
+    if (!text) return null;
+    
+    // URL 패턴 정규식 (http 또는 https로 시작하고 공백 전까지)
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    
+    // 정규식으로 텍스트를 분리해서 배열로 만듦
+    const parts = text.split(urlRegex);
+
+    return parts.map((part, index) => {
+      // 분리된 부분이 URL 형식이면 링크 태그로 감싸서 반환
+      if (part.match(urlRegex)) {
+        return (
+          <a 
+            key={index} 
+            href={part} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ 
+              color: '#007bff',       // 링크 색상 (파란색)
+              textDecoration: 'underline', 
+              wordBreak: 'break-all', // 긴 주소는 강제 줄바꿈
+              cursor: 'pointer'
+            }}
+          >
+            {part}
+          </a>
+        );
+      }
+      // 아니면 그냥 텍스트 반환
+      return part;
+    });
   };
 
   return (
@@ -116,129 +151,79 @@ function NewsCard({ item, getCategoryColor }) {
           {item.title}
         </h2>
         
+        {/* 설명글 영역: 함수 호출로 변경 */}
         <p style={{ 
           fontSize: '1rem', 
           color: '#444', 
           lineHeight: '1.6', 
           margin: '0 0 15px 0', 
-          whiteSpace: 'pre-line',
-          wordBreak: 'break-word',
+          whiteSpace: 'pre-line',     // 줄바꿈 문자(\n) 인식
+          wordBreak: 'break-word',    // 긴 단어 줄바꿈
           overflowWrap: 'anywhere'
         }}>
-          {item.description}
+          {renderDescriptionWithLinks(item.description)}
         </p>
       </div>
 
-      {/* 2. 이미지 영역 */}
+      {/* 2. 이미지 영역 (슬라이드 기능 유지) */}
       {item.images && item.images.length > 0 && (
         <div style={{ position: 'relative', width: '100%', backgroundColor: '#000' }}>
           
-          {/* [추가] 왼쪽 화살표 버튼 (첫 번째 사진이 아닐 때만 표시) */}
           {hasMultipleImages && imgIndex > 1 && (
             <button 
               onClick={() => scroll(-1)}
               style={{
-                position: 'absolute',
-                top: '50%',
-                left: '10px',
-                transform: 'translateY(-50%)',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 검정
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '36px',
-                height: '36px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer',
-                zIndex: 10,
-                transition: 'background-color 0.2s'
+                position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)', color: 'white', border: 'none', borderRadius: '50%',
+                width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', zIndex: 10
               }}
-              aria-label="Previous image"
             >
               <FaChevronLeft size={16} />
             </button>
           )}
 
-          {/* [추가] 오른쪽 화살표 버튼 (마지막 사진이 아닐 때만 표시) */}
           {hasMultipleImages && imgIndex < item.images.length && (
             <button 
               onClick={() => scroll(1)}
               style={{
-                position: 'absolute',
-                top: '50%',
-                right: '10px',
-                transform: 'translateY(-50%)',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 검정
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '36px',
-                height: '36px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer',
-                zIndex: 10,
-                transition: 'background-color 0.2s'
+                position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)', color: 'white', border: 'none', borderRadius: '50%',
+                width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', zIndex: 10
               }}
-              aria-label="Next image"
             >
               <FaChevronRight size={16} />
             </button>
           )}
 
-          {/* 가로 스크롤 컨테이너 */}
           <div 
-            ref={scrollRef} // [추가] ref 연결
+            ref={scrollRef}
             onScroll={handleScroll}
             style={{ 
-              display: 'flex', 
-              overflowX: 'auto', 
-              scrollSnapType: 'x mandatory',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              width: '100%',
-              aspectRatio: '4/3',
+              display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory',
+              scrollbarWidth: 'none', msOverflowStyle: 'none', width: '100%', aspectRatio: '4/3',
             }}
             className="hide-scrollbar"
           >
             {item.images.map((imgSrc, index) => (
               <div key={index} style={{ 
-                flex: '0 0 100%',
-                scrollSnapAlign: 'start',
-                position: 'relative',
-                width: '100%',
-                height: '100%'
+                flex: '0 0 100%', scrollSnapAlign: 'start', position: 'relative', width: '100%', height: '100%'
               }}>
                 <img 
                   src={imgSrc} 
                   alt={`news-${index}`} 
-                  style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'cover',
-                    display: 'block'
-                  }} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} 
                 />
               </div>
             ))}
           </div>
 
-          {/* 사진 번호 뱃지 (1/3) */}
           {hasMultipleImages && (
             <div style={{ 
-              position: 'absolute', 
-              top: '15px', 
-              right: '15px', 
-              backgroundColor: 'rgba(0, 0, 0, 0.6)', 
-              color: 'white', 
-              padding: '4px 10px', 
-              borderRadius: '12px', 
-              fontSize: '0.8rem',
-              fontWeight: '600',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              backdropFilter: 'blur(4px)',
-              pointerEvents: 'none' // 뱃지가 클릭을 방해하지 않도록
+              position: 'absolute', top: '15px', right: '15px', 
+              backgroundColor: 'rgba(0, 0, 0, 0.6)', color: 'white', padding: '4px 10px', borderRadius: '12px', 
+              fontSize: '0.8rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px', backdropFilter: 'blur(4px)', pointerEvents: 'none'
             }}>
               <FaImages size={10} />
               {imgIndex} / {item.images.length}
@@ -248,9 +233,7 @@ function NewsCard({ item, getCategoryColor }) {
       )}
 
       <style jsx global>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
       `}</style>
     </article>
   );
