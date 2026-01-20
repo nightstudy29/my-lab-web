@@ -1,4 +1,5 @@
-[ {
+[
+  {
     "id": 20250301,
     "date": "2025-03-01",
     "category": "Announcement",
@@ -10,7 +11,8 @@
     "date": "2025-12-17",
     "category": "Paper Accepted",
     "title": "곽채현, 박근표 인턴 Review Paper 게재",
-    "description": "본 연구실의 곽채현, 박근표 인턴 학생이 재료공학부 하계 인턴십 기간 동안 수행한 연구 결과를 바탕으로 작성한 리뷰 논문이 'Neuromorphic Computing and Engineering (IF=6.1, Q1)'에 게재되었습니다.\n\n논문 링크: https://doi.org/10.1088/2634-4386/ae294e"
+    "description": "본 연구실의 곽채현, 박근표 인턴 학생이 재료공학부 하계 인턴십 기간 동안 수행한 연구 결과를 바탕으로 작성한 리뷰 논문이 'Neuromorphic Computing and Engineering (IF=6.1, Q1)'에 게재되었습니다.",
+    "link": "https://doi.org/10.1088/2634-4386/ae294e"
   },
   {
     "id": 20251222,
@@ -27,12 +29,12 @@
     "date": "2026-01-06",
     "category": "Award",
     "title": "아모레퍼시픽-MIT 공동연구 성과, CES 혁신상 수상",
-    "description": "서준민 교수가 MIT 박사후연구원(Postdoc) 재직 시절, 아모레퍼시픽과 공동으로 개발한 전자 피부 Skinsight 및 피부 진단 기술이 CES 혁신상(Innovation Award)을 수상했습니다.\n\n 관련 뉴스: https://www.joongangenews.com/news/articleView.html?idxno=463833",
+    "description": "서준민 교수가 MIT 박사후연구원(Postdoc) 재직 시절, 아모레퍼시픽과 공동으로 개발한 전자 피부 Skinsight 및 피부 진단 기술이 CES 혁신상(Innovation Award)을 수상했습니다.",
+    "link": "https://www.joongangenews.com/news/articleView.html?idxno=463833",
     "images": [
       "/images/news/2026-01-06 15.57.00.jpg",
       "/images/news/2026-01-06 14.52.39.jpg",
       "/images/news/2026-01-06 14.52.45.jpg"
     ]
   }
-
 ]

@@ -2,7 +2,8 @@
 
 import { useState, useRef } from 'react';
 import newsData from '../../data/news.json';
-import { FaCalendarAlt, FaTag, FaImages, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+// [추가] 링크 아이콘(FaLink) 추가
+import { FaCalendarAlt, FaTag, FaImages, FaChevronLeft, FaChevronRight, FaLink } from "react-icons/fa"; 
 
 export default function NewsPage() {
   const sortedNews = [...(newsData || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -76,36 +77,6 @@ function NewsCard({ item, getCategoryColor }) {
     }
   };
 
-  // [수정됨] 링크 스타일을 본문과 동일하게 변경
-  const renderDescriptionWithLinks = (text) => {
-    if (!text) return null;
-    
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = text.split(urlRegex);
-
-    return parts.map((part, index) => {
-      if (part.match(urlRegex)) {
-        return (
-          <a 
-            key={index} 
-            href={part} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={{ 
-              color: 'inherit',       // [변경] 부모 텍스트 색상(#444) 그대로 상속
-              textDecoration: 'none', // [변경] 밑줄 제거
-              cursor: 'pointer',      // 마우스 올리면 손가락 모양은 유지
-              wordBreak: 'break-all'  // 긴 주소 줄바꿈
-            }}
-          >
-            {part}
-          </a>
-        );
-      }
-      return part;
-    });
-  };
-
   return (
     <article style={{ 
       backgroundColor: '#fff', 
@@ -116,7 +87,7 @@ function NewsCard({ item, getCategoryColor }) {
     }}>
       
       {/* 1. 상단 정보 */}
-      <div style={{ padding: '25px 25px 10px 25px' }}>
+      <div style={{ padding: '25px 25px 20px 25px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
           <span style={{ 
             backgroundColor: getCategoryColor(item.category), 
@@ -144,7 +115,7 @@ function NewsCard({ item, getCategoryColor }) {
           {item.title}
         </h2>
         
-        {/* 설명글 영역 */}
+        {/* 설명글 */}
         <p style={{ 
           fontSize: '1rem', 
           color: '#444', 
@@ -154,8 +125,37 @@ function NewsCard({ item, getCategoryColor }) {
           wordBreak: 'break-word',
           overflowWrap: 'anywhere'
         }}>
-          {renderDescriptionWithLinks(item.description)}
+          {item.description}
         </p>
+
+        {/* [새로 추가된 부분] 관련 링크 버튼 */}
+        {item.link && (
+          <div style={{ marginTop: '10px' }}>
+            <a 
+              href={item.link} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                backgroundColor: '#f8f9fa', // 아주 연한 회색 배경
+                border: '1px solid #dee2e6',
+                borderRadius: '20px',       // 둥근 알약 모양
+                color: '#495057',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                textDecoration: 'none',
+                transition: 'all 0.2s ease',
+              }}
+              // 마우스 올렸을 때 효과를 위한 클래스 (아래 style jsx 참조)
+              className="news-link-btn"
+            >
+              <FaLink size={12} /> 관련 링크
+            </a>
+          </div>
+        )}
       </div>
 
       {/* 2. 이미지 영역 */}
@@ -225,8 +225,16 @@ function NewsCard({ item, getCategoryColor }) {
         </div>
       )}
 
+      {/* 스타일 정의: 스크롤바 숨김 + 버튼 호버 효과 */}
       <style jsx global>{`
         .hide-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .news-link-btn:hover {
+          background-color: #e9ecef !important;
+          color: #212529 !important;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
       `}</style>
     </article>
   );
