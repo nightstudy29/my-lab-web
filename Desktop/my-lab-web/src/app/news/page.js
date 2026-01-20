@@ -28,10 +28,17 @@ export default function NewsPage() {
       margin: '0 auto',
       boxSizing: 'border-box'
     }}>
-      
+
       {/* 헤더 */}
       <div style={{ marginBottom: '60px', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '10px', color: '#333' }}>Lab News</h1>
+        <h1 style={{ 
+          // [수정] 폰트 크기 자동 조절
+          fontSize: 'clamp(2rem, 5vw, 2.5rem)', 
+          marginBottom: '10px', 
+          color: '#333' 
+        }}>
+          Lab News
+        </h1>
         <p style={{ color: '#666', fontSize: '1.1rem' }}>
           SMID Lab의 최신 소식과 일상을 공유합니다.
         </p>
@@ -76,7 +83,15 @@ export default function NewsPage() {
             </div>
 
             {/* 2. 제목 및 내용 */}
-            <h2 style={{ fontSize: '1.5rem', color: '#222', marginBottom: '12px', lineHeight: '1.3' }}>
+            <h2 style={{ 
+              // [수정] 모바일에서 너무 크지 않게 조절 (1.2rem ~ 1.5rem)
+              fontSize: 'clamp(1.2rem, 4vw, 1.5rem)', 
+              color: '#222', 
+              marginBottom: '12px', 
+              lineHeight: '1.3',
+              // [추가] 단어 중간에 줄바꿈 되지 않도록 설정 (한글 제목에 필수)
+              wordBreak: 'keep-all' 
+            }}>
               {item.title}
             </h2>
             <p style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.7', margin: '0 0 20px 0', whiteSpace: 'pre-line' }}>

@@ -21,10 +21,19 @@ export default function MembersPage() {
       
       {/* ==================== 1. Current Members ==================== */}
       <section style={{ marginBottom: '80px' }}>
-        <h1 style={{ marginBottom: '40px', borderBottom: '2px solid #333', paddingBottom: '10px' }}>
+        {/* 제목 수정 */}
+        <h1 style={{ 
+          marginBottom: '40px', 
+          borderBottom: '2px solid #333', 
+          paddingBottom: '10px',
+          // [수정] 폰트 크기 자동 조절
+          fontSize: 'clamp(2rem, 5vw, 2.5rem)'
+        }}>
           Current Members
         </h1>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '30px' }}>
+        
+        {/* [수정] minmax(400px -> 280px 또는 300px)로 변경해야 모바일에서 안 잘림 */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' }}>
           {currentMembers.map((member) => (
             <div key={member.id} style={{ 
               border: '1px solid #eee', borderRadius: '12px', padding: '25px',
@@ -42,7 +51,14 @@ export default function MembersPage() {
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
-                  <h2 style={{ margin: 0, fontSize: '1.3rem', color: '#333' }}>{member.name}</h2>
+                  <h2 style={{ 
+                    margin: 0, 
+                    color: '#333',
+                    // [수정] 이름 크기 조절
+                    fontSize: 'clamp(1.1rem, 4vw, 1.3rem)'
+                  }}>
+                    {member.name}
+                  </h2>                
                   <div style={{ display: 'flex', gap: '6px', marginLeft: 'auto' }}>
                     {member.links?.cv && <a href={member.links.cv} target="_blank" rel="noopener noreferrer"><FaFilePdf size={18} color="#cc0000" /></a>}
                     {member.links?.googleScholar && <a href={member.links.googleScholar} target="_blank" rel="noopener noreferrer"><SiGooglescholar size={18} color="#4285F4" /></a>}
@@ -66,7 +82,15 @@ export default function MembersPage() {
 
       {/* ==================== 2. Alumni ==================== */}
       <section style={{ marginBottom: '60px' }}>
-        <h2 style={{ fontSize: '1.8rem', marginBottom: '20px', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Alumni</h2>
+        <h2 style={{ 
+          marginBottom: '20px', 
+          borderBottom: '1px solid #ddd', 
+          paddingBottom: '10px',
+          // [수정] 섹션 제목 크기 조절
+          fontSize: 'clamp(1.5rem, 4vw, 1.8rem)'
+        }}>
+          Alumni
+        </h2>
         {alumni.length > 0 ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
             {alumni.map((alum) => <div key={alum.id}><strong>{alum.name}</strong></div>)}
@@ -78,8 +102,15 @@ export default function MembersPage() {
 
       {/* ==================== 3. Former Interns ==================== */}
       <section>
-        <h2 style={{ fontSize: '1.8rem', marginBottom: '20px', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Former Interns</h2>
-        
+        <h2 style={{ 
+          marginBottom: '20px', 
+          borderBottom: '1px solid #ddd', 
+          paddingBottom: '10px',
+          // [수정] 섹션 제목 크기 조절
+          fontSize: 'clamp(1.5rem, 4vw, 1.8rem)'
+        }}>
+          Former Interns
+        </h2>     
         {interns.length > 0 ? (
           <ul style={{ listStyle: 'none', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
             {interns.map((intern) => (

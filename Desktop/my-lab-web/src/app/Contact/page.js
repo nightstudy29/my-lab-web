@@ -11,10 +11,17 @@ export default function ContactPage() {
       margin: '0 auto', 
       boxSizing: 'border-box' 
     }}>
-      
+
       {/* 1. 헤더 영역 */}
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '20px', color: '#333' }}>Contact Us</h1>
+        <h1 style={{ 
+          // [수정] clamp 적용
+          fontSize: 'clamp(2rem, 5vw, 2.5rem)', 
+          marginBottom: '20px', 
+          color: '#333' 
+        }}>
+          Contact Us
+        </h1>
       </div>
 
       {/* 2. [강조] 학생 모집 공고 (Graduate Students Only) */}
