@@ -2,40 +2,33 @@
 
 import Link from "next/link";
 import { useState, useMemo } from "react";
-// 1. 아이콘 추가 (FaLightbulb: 특허 아이콘)
 import { FaNewspaper, FaMagnifyingGlass, FaLightbulb } from "react-icons/fa6"; 
 import papers from '../../data/papers.json';
-import patents from '../../data/patents.json'; // 2. 특허 데이터 임포트
+import patents from '../../data/patents.json';
 
 export default function PublicationsPage() {
   const [searchTerm, setSearchTerm] = useState(""); 
-  const [activeTab, setActiveTab] = useState("papers"); // 3. 탭 상태 관리 ('papers' 또는 'patents')
+  const [activeTab, setActiveTab] = useState("papers");
 
-  // 4. 현재 탭에 맞는 데이터 선택
   const currentData = activeTab === 'papers' ? papers : patents;
 
-  // 데이터 안전장치
   if (!currentData) {
     return <div style={{ padding: '40px', textAlign: 'center' }}>No data found.</div>;
   }
 
-  // 5. 검색 및 그룹화 로직 (papers와 patents 공용)
   const groupedData = useMemo(() => {
-    // (1) 먼저 검색어로 필터링
     const filtered = currentData.filter((item) => {
       const query = searchTerm.toLowerCase();
-      // 논문/특허 공통 및 개별 필드 검색
       return (
         item.title.toLowerCase().includes(query) ||
-        (item.authors && item.authors.toLowerCase().includes(query)) ||   // 논문 저자
-        (item.inventors && item.inventors.toLowerCase().includes(query)) || // 특허 발명자
-        (item.conference && item.conference.toLowerCase().includes(query)) || // 논문 저널
-        (item.number && item.number.toLowerCase().includes(query)) ||     // 특허 번호
+        (item.authors && item.authors.toLowerCase().includes(query)) ||
+        (item.inventors && item.inventors.toLowerCase().includes(query)) ||
+        (item.conference && item.conference.toLowerCase().includes(query)) ||
+        (item.number && item.number.toLowerCase().includes(query)) ||
         String(item.year).includes(query)
       );
     });
 
-    // (2) 필터링된 데이터를 연도별로 그룹화
     const groups = filtered.reduce((acc, item) => {
       const year = item.year;
       if (!acc[year]) acc[year] = [];
@@ -43,11 +36,10 @@ export default function PublicationsPage() {
       return acc;
     }, {});
 
-    // (3) 연도 내림차순 정렬
     const sortedYears = Object.keys(groups).sort((a, b) => b - a);
 
     return { groups, sortedYears, totalCount: filtered.length };
-  }, [currentData, searchTerm]); // 데이터나 검색어가 바뀔 때 재계산
+  }, [currentData, searchTerm]);
 
   return (
     <div style={{ 
@@ -60,19 +52,18 @@ export default function PublicationsPage() {
 
       {/* 1. 페이지 헤더 + 탭 + 검색창 */}
       <div style={{ marginBottom: '50px' }}>
+        {/* [수정 1] Research Output -> Publications 로 변경 */}
         <h1 style={{ 
-          // [수정] 폰트 크기 자동 조절
           fontSize: 'clamp(2rem, 5vw, 2.5rem)', 
           color: '#333', 
           marginBottom: '20px' 
         }}>
-          Research Output
+          Publications
         </h1>
 
-        {/* [추가됨] 탭 버튼 영역 */}
         <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', borderBottom: '2px solid #eee' }}>
           <button 
-            onClick={() => { setActiveTab('papers'); setSearchTerm(''); }} // 탭 바꿀때 검색어 초기화
+            onClick={() => { setActiveTab('papers'); setSearchTerm(''); }}
             style={{
               padding: '10px 15px',
               fontSize: '1.1rem',
@@ -110,7 +101,6 @@ export default function PublicationsPage() {
           {searchTerm && ` (Found: ${groupedData.totalCount})`}
         </p>
 
-        {/* 검색창 UI */}
         <div style={{ 
           position: 'relative', 
           maxWidth: '500px',
@@ -138,26 +128,36 @@ export default function PublicationsPage() {
         </div>
       </div>
 
-      {/* 2. 리스트 출력 (논문/특허 공통 구조 사용) */}
+      {/* 2. 리스트 출력 */}
       {groupedData.sortedYears.length > 0 ? (
         groupedData.sortedYears.map((year) => (
           <div key={year} style={{ marginBottom: '60px' }}>
 
-            {/* Sticky Year Header */}
+            {/* [수정 2] 연도와 카운트 같은 줄에 표시 (Flexbox & baseline 정렬) */}
             <div style={{ 
               position: 'sticky', 
-              /* ... 기존 스타일 유지 ... */
-              gap: '15px'
+              top: '0',
+              zIndex: 10,
+              backgroundColor: '#fff', // 스크롤 시 겹침 방지용 배경색
+              padding: '20px 0',
+              borderBottom: '2px solid #eee',
+              marginBottom: '30px',
+              display: 'flex',         // Flexbox 사용
+              alignItems: 'baseline',  // 텍스트 베이스라인 정렬
+              gap: '12px'              // 연도와 숫자 사이 간격
             }}>
               <h2 style={{ 
-                // [수정] 연도 폰트 크기 조절
                 fontSize: 'clamp(1.5rem, 4vw, 2rem)', 
                 color: '#004094', 
                 margin: 0 
               }}>
                 {year}
               </h2>
-              <span style={{ color: '#888', fontWeight: '500' }}>
+              <span style={{ 
+                color: '#888', 
+                fontWeight: '500', 
+                fontSize: '1.1rem' 
+              }}>
                 ({groupedData.groups[year].length})
               </span>
             </div>
@@ -166,14 +166,12 @@ export default function PublicationsPage() {
               {groupedData.groups[year].map((item) => (
                 <li key={item.id} style={{ marginBottom: '40px' }}>
                   
-                  {/* ================================================= */}
-                  {/* [CASE 1] 논문(Papers)일 때 보여줄 UI */}
+                  {/* [CASE 1] 논문(Papers) UI */}
                   {activeTab === 'papers' && (
                     <>
                       <Link href={item.url || "#"} target="_blank" style={{ textDecoration: 'none' }}>
                         <h3 
                           style={{ 
-                            // [수정] 폰트 크기 조절 및 단어 단위 줄바꿈
                             fontSize: 'clamp(1.1rem, 4vw, 1.2rem)', 
                             color: '#222', 
                             fontWeight: '700', 
@@ -181,7 +179,7 @@ export default function PublicationsPage() {
                             lineHeight: '1.4', 
                             cursor: 'pointer', 
                             transition: 'color 0.2s',
-                            wordBreak: 'break-word' // [추가] 긴 영어 단어가 튀어나가지 않게 함
+                            wordBreak: 'break-word'
                           }}
                           onMouseOver={(e) => e.target.style.color = '#004094'}
                           onMouseOut={(e) => e.target.style.color = '#222'}
@@ -208,30 +206,27 @@ export default function PublicationsPage() {
                     </>
                   )}
 
-                  {/* ================================================= */}
-                  {/* [CASE 2] 특허(Patents) - 슬림형 디자인 */}
-                  {/* ================================================= */}
+                  {/* [CASE 2] 특허(Patents) UI */}
                   {activeTab === 'patents' && (
                     <div style={{ 
-                      padding: '15px 20px', // 패딩 축소
+                      padding: '15px 20px',
                       borderLeft: `4px solid ${item.type === 'Registered' ? '#27ae60' : '#e67e22'}`, 
                       backgroundColor: '#fafafa',
                       borderRadius: '0 8px 8px 0',
-                      borderTop: '1px solid #eee', // 위아래 구분선 살짝 추가
+                      borderTop: '1px solid #eee',
                       borderBottom: '1px solid #eee',
                       borderRight: '1px solid #eee'
                     }}>
 
-                      {/* 1. 제목 + 배지 (한 줄 배치) */}
+                      {/* 1. 제목 + 배지 */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '15px', marginBottom: '5px' }}>
                         <h3 style={{ 
-                          // [수정] 폰트 크기 조절 및 줄바꿈 처리
                           fontSize: 'clamp(1rem, 4vw, 1.1rem)', 
                           fontWeight: '700', 
                           margin: 0, 
                           lineHeight: '1.3', 
                           flex: 1,
-                          wordBreak: 'break-word' // [추가]
+                          wordBreak: 'break-word'
                         }}>
                           {item.url && item.url !== '#' ? (
                             <a href={item.url} target="_blank" rel="noopener noreferrer" 
@@ -246,7 +241,6 @@ export default function PublicationsPage() {
                           )}
                         </h3>
                         
-                        {/* 배지 (우측 상단 고정) */}
                         <span style={{ 
                           fontSize: '0.7rem', 
                           fontWeight: 'bold', 
@@ -254,14 +248,14 @@ export default function PublicationsPage() {
                           border: `1px solid ${item.type === 'Registered' ? '#27ae60' : '#e67e22'}`,
                           padding: '2px 6px',
                           borderRadius: '4px',
-                          whiteSpace: 'nowrap', // 줄바꿈 방지
+                          whiteSpace: 'nowrap',
                           alignSelf: 'center'
                         }}>
                           {item.type}
                         </span>
                       </div>
 
-                      {/* 2. 한글 제목 (있으면) - 작게 표시 */}
+                      {/* 2. 한글 제목 */}
                       {item.koreanTitle && (
                         <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '8px' }}>
                           {item.koreanTitle}
@@ -274,7 +268,7 @@ export default function PublicationsPage() {
                         {item.inventors}
                       </div>
                       
-                      {/* 4. 상세 정보 (번호/날짜) - 회색 박스로 한 줄 처리 */}
+                      {/* 4. 상세 정보 */}
                       <div style={{ 
                         backgroundColor: '#eee', 
                         padding: '6px 12px', 
@@ -286,12 +280,10 @@ export default function PublicationsPage() {
                         gap: '15px',
                         alignItems: 'center'
                       }}>
-                        {/* 출원 정보 */}
                         <span style={{ display: 'flex', gap: '5px' }}>
                           <strong>App:</strong> {item.applicationNumber} ({item.applicationDate})
                         </span>
 
-                        {/* 등록 정보 (있을 때만 구분선 | 과 함께 표시) */}
                         {item.type === 'Registered' && (
                           <>
                             <span style={{ color: '#ccc' }}>|</span>
@@ -301,10 +293,9 @@ export default function PublicationsPage() {
                           </>
                         )}
                       </div>
-
                     </div>
                   )}
-               
+                
                 </li>
               ))}
             </ul>
