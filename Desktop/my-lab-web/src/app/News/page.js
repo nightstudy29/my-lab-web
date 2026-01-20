@@ -57,7 +57,6 @@ function NewsCard({ item, getCategoryColor }) {
 
   const hasMultipleImages = item.images && item.images.length > 1;
 
-  // 스크롤 이벤트 핸들러
   const handleScroll = () => {
     if (scrollRef.current) {
       const scrollLeft = scrollRef.current.scrollLeft;
@@ -67,7 +66,6 @@ function NewsCard({ item, getCategoryColor }) {
     }
   };
 
-  // 버튼 클릭 스크롤 핸들러
   const scroll = (direction) => {
     if (scrollRef.current) {
       const width = scrollRef.current.offsetWidth;
@@ -78,18 +76,14 @@ function NewsCard({ item, getCategoryColor }) {
     }
   };
 
-  // [핵심 추가] 텍스트 내의 URL을 찾아서 <a href> 태그로 변환해주는 함수
+  // [수정됨] 링크 스타일을 본문과 동일하게 변경
   const renderDescriptionWithLinks = (text) => {
     if (!text) return null;
     
-    // URL 패턴 정규식 (http 또는 https로 시작하고 공백 전까지)
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    
-    // 정규식으로 텍스트를 분리해서 배열로 만듦
     const parts = text.split(urlRegex);
 
     return parts.map((part, index) => {
-      // 분리된 부분이 URL 형식이면 링크 태그로 감싸서 반환
       if (part.match(urlRegex)) {
         return (
           <a 
@@ -98,17 +92,16 @@ function NewsCard({ item, getCategoryColor }) {
             target="_blank" 
             rel="noopener noreferrer"
             style={{ 
-              color: '#007bff',       // 링크 색상 (파란색)
-              textDecoration: 'underline', 
-              wordBreak: 'break-all', // 긴 주소는 강제 줄바꿈
-              cursor: 'pointer'
+              color: 'inherit',       // [변경] 부모 텍스트 색상(#444) 그대로 상속
+              textDecoration: 'none', // [변경] 밑줄 제거
+              cursor: 'pointer',      // 마우스 올리면 손가락 모양은 유지
+              wordBreak: 'break-all'  // 긴 주소 줄바꿈
             }}
           >
             {part}
           </a>
         );
       }
-      // 아니면 그냥 텍스트 반환
       return part;
     });
   };
@@ -151,21 +144,21 @@ function NewsCard({ item, getCategoryColor }) {
           {item.title}
         </h2>
         
-        {/* 설명글 영역: 함수 호출로 변경 */}
+        {/* 설명글 영역 */}
         <p style={{ 
           fontSize: '1rem', 
           color: '#444', 
           lineHeight: '1.6', 
           margin: '0 0 15px 0', 
-          whiteSpace: 'pre-line',     // 줄바꿈 문자(\n) 인식
-          wordBreak: 'break-word',    // 긴 단어 줄바꿈
+          whiteSpace: 'pre-line',
+          wordBreak: 'break-word',
           overflowWrap: 'anywhere'
         }}>
           {renderDescriptionWithLinks(item.description)}
         </p>
       </div>
 
-      {/* 2. 이미지 영역 (슬라이드 기능 유지) */}
+      {/* 2. 이미지 영역 */}
       {item.images && item.images.length > 0 && (
         <div style={{ position: 'relative', width: '100%', backgroundColor: '#000' }}>
           
