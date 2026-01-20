@@ -12,7 +12,7 @@ export default function MembersPage() {
   return (
     <div style={{ 
       padding: '60px 20px', 
-      maxWidth: '1100px', // [수정] 3열 배치를 여유롭게 하기 위해 폭을 1000 -> 1100으로 살짝 늘림
+      maxWidth: '1100px', 
       width: '100%',        
       margin: '0 auto',     
       boxSizing: 'border-box' 
@@ -31,10 +31,11 @@ export default function MembersPage() {
           Current Members
         </h1>
         
-        {/* [수정] minmax를 300px로 조정하여 정보가 너무 찌그러지면 자동으로 줄이 바뀜 */}
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+          // [핵심 수정 1] minmax를 300px -> 400px로 대폭 늘림.
+          // PC 화면(1100px) 기준 3열 -> 2열로 바뀌면서 카드 내부 공간이 넓어짐.
+          gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', 
           gap: '25px' 
         }}>
           {currentMembers.map((member) => (
@@ -46,15 +47,15 @@ export default function MembersPage() {
               boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
               display: 'flex', 
               gap: '15px', 
-              alignItems: 'flex-start',
+              alignItems: 'center', // [수정] 세로 중앙 정렬로 변경하여 안정감 확보
               transition: 'transform 0.2s',
             }}>
               {/* 이미지 영역 */}
               <div style={{ flexShrink: 0 }}>
                 {member.image ? (
                   <img src={member.image} alt={member.name} style={{ 
-                    width: '85px', 
-                    height: '85px', 
+                    width: '90px',  // 이미지를 조금 더 키워 균형 맞춤
+                    height: '90px', 
                     borderRadius: '50%', 
                     objectFit: 'cover', 
                     border: '3px solid #f8f9fa',
@@ -62,8 +63,8 @@ export default function MembersPage() {
                   }} />
                 ) : (
                   <div style={{ 
-                    width: '85px', 
-                    height: '85px', 
+                    width: '90px', 
+                    height: '90px', 
                     borderRadius: '50%', 
                     backgroundColor: '#f1f3f5', 
                     display: 'flex', 
@@ -77,60 +78,70 @@ export default function MembersPage() {
               </div>
 
               {/* 텍스트 정보 영역 */}
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 
-                {/* [수정] 이름 + 아이콘을 한 줄(Flex Row)에 배치 */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
-                  {/* 이름 & 직함 */}
-                  <div>
-                    <h2 style={{ 
-                      margin: '0', 
-                      color: '#222',
-                      fontSize: '1.2rem',
-                      fontWeight: '700',
-                      wordBreak: 'keep-all',
-                      lineHeight: '1.2'
-                    }}>
-                      {member.name}
-                    </h2>
-                    <p style={{ 
-                      fontWeight: '600', 
-                      color: '#004094', 
-                      margin: '4px 0 0 0', 
-                      fontSize: '0.9rem' 
-                    }}>
-                      {member.role}
-                    </p>
-                  </div>
+                {/* [핵심 수정 2] 이름과 아이콘을 한 줄에 강제 배치 */}
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  marginBottom: '4px',
+                  flexWrap: 'nowrap' // 절대 줄바꿈 하지 않음
+                }}>
+                  {/* 이름: 공간 부족 시 말줄임표(...) 처리 대신 폰트 크기 조절 */}
+                  <h2 style={{ 
+                    margin: '0', 
+                    color: '#222',
+                    // [핵심 수정 3] 폰트 크기를 유동적으로 (최소 1rem ~ 최대 1.25rem)
+                    // 이름이 길어지면 자동으로 조금 작아져서 한 줄 유지
+                    fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', 
+                    fontWeight: '700',
+                    whiteSpace: 'nowrap', // 한 줄 유지
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    marginRight: '8px' // 아이콘과의 최소 간격
+                  }}>
+                    {member.name}
+                  </h2>
 
-                  {/* 아이콘 (이름 오른쪽 고정) */}
-                  <div style={{ display: 'flex', gap: '6px', marginLeft: '8px', flexShrink: 0 }}>
+                  {/* 아이콘: 크기 고정 (압축되지 않음) */}
+                  <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
                     {member.links?.cv && (
                       <a href={member.links.cv} target="_blank" rel="noopener noreferrer" title="CV">
-                        <FaFilePdf size={16} color="#d32f2f" />
+                        <FaFilePdf size={18} color="#d32f2f" />
                       </a>
                     )}
                     {member.links?.googleScholar && (
                       <a href={member.links.googleScholar} target="_blank" rel="noopener noreferrer" title="Google Scholar">
-                        <SiGooglescholar size={16} color="#4285F4" />
+                        <SiGooglescholar size={18} color="#4285F4" />
                       </a>
                     )}
                     {member.links?.linkedin && (
                       <a href={member.links.linkedin} target="_blank" rel="noopener noreferrer" title="LinkedIn">
-                        <FaLinkedin size={16} color="#0077b5" />
+                        <FaLinkedin size={18} color="#0077b5" />
                       </a>
                     )}
                     {member.links?.orcid && (
                       <a href={member.links.orcid} target="_blank" rel="noopener noreferrer" title="ORCID">
-                        <SiOrcid size={16} color="#A6CE39" />
+                        <SiOrcid size={18} color="#A6CE39" />
                       </a>
                     )}
                   </div>
                 </div>
 
-                <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '10px 0' }} />
+                {/* 직함 (Role) */}
+                <p style={{ 
+                  fontWeight: '600', 
+                  color: '#004094', 
+                  margin: '0 0 6px 0', 
+                  fontSize: '0.9rem' 
+                }}>
+                  {member.role}
+                </p>
 
-                {/* 세부 정보 (이메일 줄바꿈 허용) */}
+                <hr style={{ border: 'none', borderTop: '1px solid #f1f3f5', margin: '6px 0' }} />
+
+                {/* 세부 정보 */}
                 <div style={{ fontSize: '0.85rem', color: '#555', lineHeight: '1.5' }}>
                   {member.joined && <div style={{ color: '#888', marginBottom: '2px' }}>Joined {member.joined}</div>}
                   
@@ -138,7 +149,6 @@ export default function MembersPage() {
                     textDecoration: 'none', 
                     color: '#555', 
                     display: 'block', 
-                    // [수정] 이메일이 길면 줄바꿈 되도록 설정 (잘림 방지)
                     wordBreak: 'break-all', 
                     marginBottom: '2px'
                   }}>
