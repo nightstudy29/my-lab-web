@@ -12,7 +12,7 @@ export default function MembersPage() {
   return (
     <div style={{ 
       padding: '60px 20px', 
-      maxWidth: '1000px',   
+      maxWidth: '1100px', // [수정] 3열 배치를 여유롭게 하기 위해 폭을 1000 -> 1100으로 살짝 늘림
       width: '100%',        
       margin: '0 auto',     
       boxSizing: 'border-box' 
@@ -31,21 +31,21 @@ export default function MembersPage() {
           Current Members
         </h1>
         
-        {/* [수정] 카드 최소 너비를 280px로 줄여 작은 폰에서도 안 잘리게 함 */}
+        {/* [수정] minmax를 300px로 조정하여 정보가 너무 찌그러지면 자동으로 줄이 바뀜 */}
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
           gap: '25px' 
         }}>
           {currentMembers.map((member) => (
             <div key={member.id} style={{ 
               border: '1px solid #e0e0e0', 
               borderRadius: '16px', 
-              padding: '20px', // [수정] 패딩을 25 -> 20으로 줄여 내부 공간 확보
+              padding: '20px',
               backgroundColor: '#fff', 
               boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
               display: 'flex', 
-              gap: '20px', 
+              gap: '15px', 
               alignItems: 'flex-start',
               transition: 'transform 0.2s',
             }}>
@@ -53,8 +53,8 @@ export default function MembersPage() {
               <div style={{ flexShrink: 0 }}>
                 {member.image ? (
                   <img src={member.image} alt={member.name} style={{ 
-                    width: '90px', // [수정] 모바일 고려하여 100 -> 90으로 미세 조정
-                    height: '90px', 
+                    width: '85px', 
+                    height: '85px', 
                     borderRadius: '50%', 
                     objectFit: 'cover', 
                     border: '3px solid #f8f9fa',
@@ -62,8 +62,8 @@ export default function MembersPage() {
                   }} />
                 ) : (
                   <div style={{ 
-                    width: '90px', 
-                    height: '90px', 
+                    width: '85px', 
+                    height: '85px', 
                     borderRadius: '50%', 
                     backgroundColor: '#f1f3f5', 
                     display: 'flex', 
@@ -71,71 +71,81 @@ export default function MembersPage() {
                     justifyContent: 'center', 
                     border: '3px solid #f8f9fa' 
                   }}>
-                    <FaUser size={35} color="#adb5bd" />
+                    <FaUser size={30} color="#adb5bd" />
                   </div>
                 )}
               </div>
 
               {/* 텍스트 정보 영역 */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 
-                {/* 1. 이름 & 직함 */}
-                <h2 style={{ 
-                  margin: '0 0 4px 0', 
-                  color: '#222',
-                  fontSize: 'clamp(1.2rem, 4vw, 1.35rem)',
-                  fontWeight: '700',
-                  wordBreak: 'keep-all' // 한글 이름 줄바꿈 방지
-                }}>
-                  {member.name}
-                </h2>
-                <p style={{ 
-                  fontWeight: '600', 
-                  color: '#004094', 
-                  margin: '0 0 10px 0', 
-                  fontSize: '0.95rem' 
-                }}>
-                  {member.role}
-                </p>
+                {/* [수정] 이름 + 아이콘을 한 줄(Flex Row)에 배치 */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
+                  {/* 이름 & 직함 */}
+                  <div>
+                    <h2 style={{ 
+                      margin: '0', 
+                      color: '#222',
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      wordBreak: 'keep-all',
+                      lineHeight: '1.2'
+                    }}>
+                      {member.name}
+                    </h2>
+                    <p style={{ 
+                      fontWeight: '600', 
+                      color: '#004094', 
+                      margin: '4px 0 0 0', 
+                      fontSize: '0.9rem' 
+                    }}>
+                      {member.role}
+                    </p>
+                  </div>
 
-                {/* 2. 세부 정보 (이메일 등) */}
-                <div style={{ fontSize: '0.85rem', color: '#555', lineHeight: '1.6', marginBottom: '12px' }}>
-                  {member.joined && <div style={{ color: '#888' }}>Joined {member.joined}</div>}
+                  {/* 아이콘 (이름 오른쪽 고정) */}
+                  <div style={{ display: 'flex', gap: '6px', marginLeft: '8px', flexShrink: 0 }}>
+                    {member.links?.cv && (
+                      <a href={member.links.cv} target="_blank" rel="noopener noreferrer" title="CV">
+                        <FaFilePdf size={16} color="#d32f2f" />
+                      </a>
+                    )}
+                    {member.links?.googleScholar && (
+                      <a href={member.links.googleScholar} target="_blank" rel="noopener noreferrer" title="Google Scholar">
+                        <SiGooglescholar size={16} color="#4285F4" />
+                      </a>
+                    )}
+                    {member.links?.linkedin && (
+                      <a href={member.links.linkedin} target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                        <FaLinkedin size={16} color="#0077b5" />
+                      </a>
+                    )}
+                    {member.links?.orcid && (
+                      <a href={member.links.orcid} target="_blank" rel="noopener noreferrer" title="ORCID">
+                        <SiOrcid size={16} color="#A6CE39" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '10px 0' }} />
+
+                {/* 세부 정보 (이메일 줄바꿈 허용) */}
+                <div style={{ fontSize: '0.85rem', color: '#555', lineHeight: '1.5' }}>
+                  {member.joined && <div style={{ color: '#888', marginBottom: '2px' }}>Joined {member.joined}</div>}
+                  
                   <a href={`mailto:${member.email}`} style={{ 
                     textDecoration: 'none', 
                     color: '#555', 
                     display: 'block', 
-                    overflow: 'hidden', 
-                    textOverflow: 'ellipsis', 
-                    whiteSpace: 'nowrap' // 이메일 길어도 한 줄로
+                    // [수정] 이메일이 길면 줄바꿈 되도록 설정 (잘림 방지)
+                    wordBreak: 'break-all', 
+                    marginBottom: '2px'
                   }}>
                     ✉️ {member.email}
                   </a>
+                  
                   {member.area && <div style={{ color: '#777', fontStyle: 'italic', marginTop: '4px' }}>{member.area}</div>}
-                </div>
-
-                {/* 3. 아이콘 (맨 아래로 이동하여 공간 간섭 해결) */}
-                <div style={{ display: 'flex', gap: '10px', marginTop: 'auto', flexWrap: 'wrap' }}>
-                  {member.links?.cv && (
-                    <a href={member.links.cv} target="_blank" rel="noopener noreferrer" title="CV" style={{ transition: 'opacity 0.2s' }}>
-                      <FaFilePdf size={20} color="#d32f2f" />
-                    </a>
-                  )}
-                  {member.links?.googleScholar && (
-                    <a href={member.links.googleScholar} target="_blank" rel="noopener noreferrer" title="Google Scholar">
-                      <SiGooglescholar size={20} color="#4285F4" />
-                    </a>
-                  )}
-                  {member.links?.linkedin && (
-                    <a href={member.links.linkedin} target="_blank" rel="noopener noreferrer" title="LinkedIn">
-                      <FaLinkedin size={20} color="#0077b5" />
-                    </a>
-                  )}
-                  {member.links?.orcid && (
-                    <a href={member.links.orcid} target="_blank" rel="noopener noreferrer" title="ORCID">
-                      <SiOrcid size={20} color="#A6CE39" />
-                    </a>
-                  )}
                 </div>
 
               </div>
@@ -158,7 +168,7 @@ export default function MembersPage() {
         {alumni.length > 0 ? (
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', // [수정] 모바일 대응
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
             gap: '15px' 
           }}>
             {alumni.map((alum) => (
