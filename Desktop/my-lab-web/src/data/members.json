@@ -23,12 +23,7 @@
       "email": "jhp2910@snu.ac.kr",
       "area": "Co-advisor: Prof. Tae Heon Kim (KIST)",
       "image": "/members/junhyeongpark.jpeg",
-      "links": {
-        "cv": "https://drive.google.com/file/d/1nqO-AdhA58G_-yAlR3d9bwc0l_-rs9Fb/view?usp=sharing",
-        "googleScholar": "https://scholar.google.com/citations?user=M3-oMsgAAAAJ&hl=ko",
-        "linkedin": "http://www.linkedin.com/in/jun-min-suh",
-        "orcid": "https://orcid.org/0000-0001-8506-0739"
-      }
+      "links": { "cv": "", "googleScholar": "", "linkedin": "", "orcid": "" }
     },
     {
       "id": 3,
