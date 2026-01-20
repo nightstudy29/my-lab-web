@@ -7,7 +7,6 @@ import { FaBars, FaTimes } from "react-icons/fa";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // [수정 1] 메뉴 목록에 'Lab Portal' 추가 (맨 뒤에 배치)
   const menuItems = [
     'Home', 
     'Research', 
@@ -19,10 +18,15 @@ export default function Navbar() {
     'Lab Portal'
   ];
 
-  // [수정 2] 경로 생성 헬퍼 함수
-  // 'Lab Portal' -> '/labportal' (공백 제거)로 변환하기 위해 필요
+  // [수정된 부분] 경로 생성 헬퍼 함수
   const getPath = (item) => {
     if (item === 'Home') return '/';
+    
+    // 🚨 [핵심] Lab Portal을 누르면 곧바로 '/labportal'로 가지 않고
+    // 일단 '/login' (로그인 페이지)으로 보내줍니다.
+    if (item === 'Lab Portal') return '/login'; 
+    
+    // 나머지는 기존 규칙대로 (예: Research -> /research)
     return `/${item.toLowerCase().replace(/\s+/g, '')}`; 
   };
 
@@ -76,15 +80,13 @@ export default function Navbar() {
           {menuItems.map((item) => (
             <Link 
               key={item} 
-              href={getPath(item)} // 위에서 만든 함수 사용
+              href={getPath(item)} // 수정된 getPath 사용
               style={{ 
                 color: '#fff', 
                 textDecoration: 'none', 
                 fontWeight: '500', 
                 fontSize: '1rem',
                 transition: 'opacity 0.2s',
-                // Lab Portal은 약간 다르게 보이게 하고 싶다면 아래 주석 해제
-                // opacity: item === 'Lab Portal' ? 0.7 : 1 
               }}
               className="nav-link"
             >
@@ -113,7 +115,7 @@ export default function Navbar() {
           {menuItems.map((item) => (
             <Link 
               key={item} 
-              href={getPath(item)} // 위에서 만든 함수 사용
+              href={getPath(item)} 
               onClick={() => setIsOpen(false)}
               style={{ color: '#fff', textDecoration: 'none', fontSize: '1.1rem' }}
             >
@@ -127,7 +129,7 @@ export default function Navbar() {
         .nav-link:hover {
           opacity: 0.8;
         }
-        @media (max-width: 1000px) { /* 메뉴가 많아져서 브레이크포인트를 조금 늘렸습니다 (900->1000) */
+        @media (max-width: 1000px) {
           .desktop-menu { display: none !important; }
           .mobile-menu-icon { display: block !important; }
         }
