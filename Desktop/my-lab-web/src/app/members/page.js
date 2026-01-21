@@ -163,15 +163,13 @@ export default function MembersPage() {
                 <div style={{ fontSize: '0.85rem', color: '#555', lineHeight: '1.5' }}>
                   {member.joined && <div style={{ color: '#888', marginBottom: '2px' }}>Joined {member.joined}</div>}
                   
-                  <a href={`mailto:${member.email}`} style={{ 
-                    textDecoration: 'none', 
+                  <div style={{ 
                     color: '#555', 
-                    display: 'block', 
                     wordBreak: 'break-all', 
                     marginBottom: '2px'
                   }}>
                     ✉️ {member.email}
-                  </a>
+                  </div>
                   
                   {member.area && <div style={{ color: '#777', fontStyle: 'italic', marginTop: '4px' }}>{member.area}</div>}
                 </div>
