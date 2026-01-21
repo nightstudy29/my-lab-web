@@ -230,34 +230,33 @@ export default function MembersPage() {
             listStyle: 'none', 
             padding: 0, 
             display: 'grid', 
-            /* [수정] 너비를 280px -> 210px로 줄여서 한 줄에 더 많이 배치 */
-            gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', 
-            gap: '10px' /* 간격도 15px -> 10px로 축소 */
+            /* [핵심 수정] 210px -> 155px로 변경 (모바일에서 2개 들어가게) */
+            gridTemplateColumns: 'repeat(auto-fill, minmax(155px, 1fr))', 
+            gap: '8px' /* 간격도 10px -> 8px로 미세 조정 */
           }}>
             {interns.map((intern) => (
               <li key={intern.id} style={{ 
                 display: 'flex', 
                 flexDirection: 'column',
                 justifyContent: 'center',
-                /* [수정] 패딩을 줄이고 심플한 박스 형태로 변경 */
-                padding: '10px 12px', 
+                /* [수정] 박스가 좁아지므로 패딩을 12px -> 10px로 축소 */
+                padding: '10px', 
                 backgroundColor: '#fff', 
-                borderRadius: '6px',
+                borderRadius: '8px',
                 border: '1px solid #eee',
-                /* 그림자 제거 혹은 아주 옅게 */
-                // boxShadow: '0 1px 3px rgba(0,0,0,0.05)' 
               }}>
                 
                 {/* 윗줄: 이름 + 성과 아이콘 */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontWeight: '700', fontSize: '0.95rem', color: '#333' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                    {/* [수정] 이름 글씨 크기를 0.95rem -> 0.9rem로 조정하여 줄바꿈 방지 */ }
+                    <span style={{ fontWeight: '700', fontSize: '0.9rem', color: '#333', letterSpacing: '-0.3px' }}>
                       {intern.name}
                     </span>
                     
-                    {/* 성과 아이콘 (있을 경우 이름 바로 옆에 작게 표시) */}
+                    {/* 성과 아이콘 */}
                     {intern.achievements && intern.achievements.length > 0 && (
-                      <div style={{ display: 'flex', gap: '4px' }}>
+                      <div style={{ display: 'flex', gap: '3px' }}>
                         {intern.achievements.map((ach, idx) => (
                           <a 
                             key={idx} 
@@ -267,8 +266,9 @@ export default function MembersPage() {
                             style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
                             title={ach.type === 'award' ? 'Award' : 'Paper'}
                           >
-                            {ach.type === 'award' && <FaTrophy size={12} color="#f1c40f" />}
-                            {ach.type === 'paper' && <FaFileLines size={12} color="#3498db" />}
+                            {/* 아이콘 크기도 살짝 조절 12 -> 11 */}
+                            {ach.type === 'award' && <FaTrophy size={11} color="#f1c40f" />}
+                            {ach.type === 'paper' && <FaFileLines size={11} color="#3498db" />}
                           </a>
                         ))}
                       </div>
@@ -276,18 +276,20 @@ export default function MembersPage() {
                   </div>
                 </div>
 
-                {/* 아랫줄: 프로그램명 + 기간 (작은 글씨로 한 줄 처리) */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem' }}>
+                {/* 아랫줄: 프로그램명 + 기간 */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                     <span style={{ 
+                      alignSelf: 'flex-start',
                       color: '#555', 
                       backgroundColor: '#f1f3f5', 
-                      padding: '1px 6px', 
+                      padding: '2px 6px', 
                       borderRadius: '4px',
-                      whiteSpace: 'nowrap'
+                      fontSize: '0.7rem', /* 폰트 사이즈 축소 */
+                      fontWeight: '600'
                     }}>
                       {intern.program || 'Intern'}
                     </span>
-                    <span style={{ color: '#999', marginLeft: '6px' }}>
+                    <span style={{ color: '#999', fontSize: '0.7rem', marginTop: '2px' }}>
                       {intern.period}
                     </span>
                 </div>
