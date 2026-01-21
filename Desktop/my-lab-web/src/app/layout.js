@@ -1,7 +1,3 @@
-"use client"; // 👈 [추가 1] GA는 브라우저에서 실행되어야 하므로 추가 필수
-
-import { useEffect } from "react"; // 👈 [추가 2]
-import ReactGA from "react-ga4"; // 👈 [추가 3] (사전에 npm install react-ga4 완료 필요)
 import { Inter } from "next/font/google";
 import Navbar from "../components/Navbar"; 
 import ScrollToTop from "../components/ScrollToTop";
@@ -24,12 +20,6 @@ export const viewport = {
 };
 
 export default function RootLayout({ children }) {
-  // 👈 [추가 4] GA 초기화 로직
-  useEffect(() => {
-    ReactGA.initialize("G-XXXXXXXXXX"); // 본인의 측정 ID로 변경하세요
-    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
-  }, []);
-
   return (
     <html lang="en">
       {/* [수정 1] body의 overflowX를 'clip'으로 변경
