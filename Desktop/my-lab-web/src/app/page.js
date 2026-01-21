@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FaArrowRight, FaAtom, FaLayerGroup, FaBrain } from "react-icons/fa6"; // 아이콘 로드
+import { FaArrowRight, FaAtom, FaLayerGroup, FaMicrochip } from "react-icons/fa6"; // 아이콘 로드
 import newsData from "../data/news.json"; // 뉴스 데이터
 
 export default function Home() {
@@ -52,13 +52,21 @@ export default function Home() {
         }}>
           Semiconductor Materials & <br/>Intelligent Devices Lab
         </h1>
-                
+
         {/* 슬로건: 3대 키워드 강조 */}
-        <p style={{ fontSize: '1.3rem', maxWidth: '850px', opacity: '0.9', marginBottom: '45px', lineHeight: '1.6' }}>
+        <p style={{ 
+          // [수정 핵심] 여기도 clamp 적용
+          fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', 
+          maxWidth: '850px', 
+          opacity: '0.9', 
+          marginBottom: '45px', 
+          lineHeight: '1.6',
+          padding: '0 10px' // 여백 추가
+        }}>
           Pioneering the future of electronics through <br/>
           <strong>Atomic-Scale Materials</strong>, <strong>3D Integration</strong>, and <strong>In-Sensor AI</strong>.
         </p>
-        
+
         <div style={{ display: 'flex', gap: '20px' }}>
           <Link href="/research" style={{ 
             padding: '14px 35px', backgroundColor: '#fff', color: '#004094', 
@@ -116,7 +124,8 @@ export default function Home() {
           {/* Topic 3: Intelligent Sensors */}
           <div style={{ padding: '40px 30px', backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div style={{ width: '80px', height: '80px', backgroundColor: '#eef4ff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '25px' }}>
-              <FaBrain size={36} color="#004094" />
+              {/* [수정] 뇌(Brain) 대신 칩(Microchip) 아이콘으로 변경 */}
+              <FaMicrochip size={36} color="#004094" />
             </div>
             <h3 style={{ fontSize: '1.4rem', marginBottom: '15px', fontWeight: '700', color: '#111' }}>
               Intelligent Sensors<br/>& Free-Form Electronics
@@ -157,9 +166,21 @@ export default function Home() {
                 }}>
                   {news.title}
                 </h3>
-                <Link href={`/news`} style={{ color: '#666', textDecoration: 'none', fontSize: '1rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Link 
+                  href={`/news#news-${news.id}`} 
+                  style={{ 
+                    color: '#666', 
+                    textDecoration: 'none', 
+                    fontSize: '1rem', 
+                    fontWeight: '500', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '5px' 
+                  }}
+                >
                   Read more <span style={{ fontSize: '0.8rem' }}>▶</span>
                 </Link>
+                
               </div>
             ))}
           </div>

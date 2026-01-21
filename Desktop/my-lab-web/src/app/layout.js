@@ -10,30 +10,35 @@ export const metadata = {
   description: "Laboratory of Semiconductor Materials for Intelligent Devices",
 };
 
-// 2. 뷰포트 설정 (아이폰 노치 대응 'cover' 추가)
+// 2. 뷰포트 설정
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  viewportFit: "cover", // 👈 [추가] 아이폰 노치 영역까지 배경색 채우기
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/* body에 overflowX: 'hidden'을 주어 가로 스크롤 원천 차단 */}
+      {/* [수정 1] body의 overflowX를 'clip'으로 변경
+         'hidden'은 sticky를 고장낼 수 있지만, 'clip'은 최신 브라우저에서 안전하게 자릅니다.
+      */}
       <body className={inter.className} style={{ 
         display: 'flex', 
         flexDirection: 'column', 
         minHeight: '100vh',
-        overflowX: 'hidden', // 👈 [중요] 가로 스크롤 방지
-        width: '100%'        // 👈 [중요] 폭을 100%로 고정
+        overflowX: 'clip', // 👈 hidden 대신 clip 사용 (안전함)
+        width: '100%'
       }}>
         
         <Navbar />
 
-        <main style={{ flex: 1, width: '100%', maxWidth: '100%', overflowX: 'hidden' }}>
+        {/* [수정 2] main 태그에서 overflowX 속성 삭제 (⭐⭐⭐ 제일 중요!)
+          여기 overflow가 있으면 sticky가 절대 작동하지 않습니다.
+        */}
+        <main style={{ flex: 1, width: '100%', maxWidth: '100%' }}>
           {children}
         </main>
 
