@@ -1,0 +1,76 @@
+[
+  {
+    "id": 1,
+    "date": "2026-01-21",
+    "category": "Equipment",
+    "title": "사용 가능 시설 및 장비 목록 안내",
+    "content": "사전에 입소 교육 및 장비 교육 필요 여부를 확인한 후, 지도교수 허락 하에 교육을 진행하시기 바랍니다.\n- 신소재공동연구소: 각종 재료 분석 기기 (SEM, TEM, XRD 등)\n- 공동기기원: 각종 재료 분석 기기 (보통 의뢰 맡김)\n- 반도체공동연구소: 클린룸 및 반도체 공정 장비 (자유도 낮음)\n- 소프트파운드리연구소: 반도체 공정 장비 (자유도 높음)\n- 응용물리연구소: 각종 재료 분석 기기\n- 농생명과학공동기기원: 각종 재료 분석 기기\n- 첨단융합학부: 프로브스테이션, ALD, Maskless Aligner 등 학부 실험 기자재를 일부 연구용으로 활용 가능\n- 해동아이디어팩토리: 3D 프린터 및 머신샵",
+    "important": true,
+    "pinned": true
+  },
+  {
+    "id": 2,
+    "date": "2026-01-21",
+    "category": "Research",
+    "title": "논문 검색 및 열람 방법 가이드",
+    "content": "검색은 일반적으로 Google Scholar를 활용하며, 교내 IP 접속 시 구독 중인 Publisher 논문 열람이 가능합니다. 학외 접속 시 방법은 다음과 같습니다.\n1. 본인 PC 학내 고정 IP에 대해 원격 접속용 서비스 포트 신청 후 윈도우 '원격 데스크톱 연결' 앱으로 열람\n2. Chrome Remote Desktop, Teamviewer 등 원격 접속 프로그램 활용\n3. 서울대 중앙도서관 홈페이지 메인의 '학외접속' 클릭 후 주소 복사하여 활용\n4. sci-hub 사이트 이용 (최신 논문은 열람 불가 확률 높음)",
+    "important": false,
+    "pinned": false
+  },
+  {
+    "id": 3,
+    "date": "2026-01-21",
+    "category": "Admin",
+    "title": "연구 관련 도서 구매 신청 제도",
+    "content": "서울대학교 중앙도서관은 교수 연 200만원, 대학원생 연 60만원 한도 내에서 희망도서 구입 신청을 받아줍니다. 연구 관련 희망도서가 있는 경우 위 제도를 적극 활용하시기 바랍니다.",
+    "link": "https://lib.snu.ac.kr/using/purchase-textbook/p-guide/",
+    "important": false,
+    "pinned": false
+  },
+  {
+    "id": 4,
+    "date": "2026-01-21",
+    "category": "Admin",
+    "title": "실험실 물품 및 소모품 구매처 정보",
+    "content": "서울대학교 산학협력연구 연구비 산정기준을 참고하시기 바랍니다.\n- 화인사이언스: 실험실 물품/소모품 공유 시트 활용하여 주문 (2026.01. 기준)\n- 신진가스: 실험실 가스 주문\n* 추가 사항은 추후 업데이트 예정입니다.",
+    "important": false,
+    "pinned": false
+  },
+  {
+    "id": 5,
+    "date": "2026-01-21",
+    "category": "Admin",
+    "title": "연구실 행정 및 담당자 안내",
+    "content": "행정 담당: 최미경 선생님 (mkchoi@snu.ac.kr)\n* 주의사항: 주차할인권은 방문업체에게 제공하는 용도 외에 개인적으로 사용하는 것을 절대 금지합니다.",
+    "important": true,
+    "pinned": false
+  },
+  {
+    "id": 6,
+    "date": "2026-01-21",
+    "category": "Ethics",
+    "title": "연구 및 업무 내 AI 활용 원칙",
+    "content": "AI tool의 보조적 활용은 장려하지만, 절대로 AI가 주가 되어 업무를 하지 않으며 의존하지 않도록 합니다.\n- 예1) 논문 작성을 AI에게 시키는 것이 아니라(X), 본인이 작성한 내용을 AI를 활용해 다듬는다(O).\n- 예2) AI 제안 아이디어를 그대로 진행하는 것이 아니라(X), 본인 아이디어의 실현 가능성을 AI 도움으로 이론적 검증해본다(O).\n- Google Gemini: 서울대 메일 계정으로 로그인 시 유료 모델 사용 가능\n- ChatGPT, Perplexity, ClaudePro 등 다양한 AI tool 사용이 가능하며, 해당 도구들의 유료 구독은 연구실에서 지원하지 않습니다.",
+    "link": "https://ist.snu.ac.kr/%EA%B5%AC%EA%B8%80%EB%A9%94%EC%9D%BC/",
+    "important": true,
+    "pinned": true
+  },
+  {
+    "id": 7,
+    "date": "2026-01-21",
+    "category": "Software",
+    "title": "권장 그래픽 및 모델링 작업 도구",
+    "content": "- 공정마스크 도면: AutoCAD (서울대 라이선스 제공)\n- 3D 모델링: Rhinoceros 권장\n- 3D 렌더링: Keyshot 권장",
+    "important": false,
+    "pinned": false
+  },
+  {
+    "id": 8,
+    "date": "2026-01-21",
+    "category": "Data",
+    "title": "데이터 정리 및 분석 자동화 권장",
+    "content": "실험 장비를 통해 얻는 데이터는 주로 엑셀(csv) 형식입니다. 그래프 Plot에는 Origin을 활용하며, 효율적인 연구를 위해 Python을 활용하여 개인별로 데이터 정리 자동화 시스템을 구축하기를 강력히 권장합니다.",
+    "important": false,
+    "pinned": false
+  }
+]
