@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
         overflowX: 'clip', // 👈 hidden 대신 clip 사용 (안전함)
         width: '100%'
       }}>
-      <GoogleAnalytics trackingId="G-MTQGJC7ZNH" />
+      <GoogleAnalytics trackingId="G-W80BRMHHYT" />
         
         <Navbar />
 
