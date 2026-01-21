@@ -1,3 +1,4 @@
+import GoogleAnalytics from "../components/GoogleAnalytics"; // 👈 추가
 import { Inter } from "next/font/google";
 import Navbar from "../components/Navbar"; 
 import ScrollToTop from "../components/ScrollToTop";
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
         overflowX: 'clip', // 👈 hidden 대신 clip 사용 (안전함)
         width: '100%'
       }}>
+      <GoogleAnalytics trackingId="G-W80BRMHHYT" />
         
         <Navbar />
 
