@@ -11,7 +11,7 @@ import { SiGoogle, SiLinkedin, SiOrcid, SiKakaotalk, SiSlack } from "react-icons
 const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZFKBBsoaoqe9PV4aOz92jS-k5yMr6ynih1NBSFr7490KdMFkRHKsSwyBRha0CTgP-_WlvIiOoUwwh/pub?gid=0&single=true&output=csv"; 
 
 // 2. Apps Script URL
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxUzUoh_-l3TiciccM0WM3_hsZNl1HpZ8zWcgr0yQHL3lDUPx7-AKaDCNe6gF_OC452Zg/exec"; 
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwdgyNJ2J6L1nxiCy5DIIfNmsaFRiwg6uwTlWrbY3nnYvufz-wbN4vsWhoj71hWlM_Z7w/exec"; 
 
 export default function LabPortalPage() {
   const router = useRouter();
@@ -181,16 +181,23 @@ export default function LabPortalPage() {
       </div>
 
       <div style={{ minHeight: '500px' }}>
-        
+
         {/* [Tab 1] Newbie Guide */}
         {activeTab === 'manual' && (
           <div style={{ animation: 'fadeIn 0.4s ease-out' }}>
             <h2 style={{ display:'flex', alignItems:'center', gap:'10px', color:'#333', marginBottom:'20px' }}>👋 Newbie Guide</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '15px' }}>
+            {/* gap을 15px -> 20px로 증가 */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px' }}>
               {guideData.map((item) => (
                   <div key={item.id} style={guideCardStyle}>
-                    <div style={{ marginRight: '15px', color: '#004094', fontSize: '1.2rem', paddingTop:'2px' }}><FaIcons.FaCheckSquare /></div>
-                    <div><h4 style={{ margin: '0 0 5px 0', color: '#333', fontSize:'1.05rem' }}>{item.title}</h4><p style={{ margin: 0, fontSize: '0.9rem', color: '#666', lineHeight: '1.4' }}>{item.desc}</p></div>
+                    {/* 아이콘 크기 확대, 여백 증가, flexShrink 고정 */}
+                    <div style={{ marginRight: '18px', color: '#004094', fontSize: '1.35rem', paddingTop:'3px', flexShrink: 0 }}><FaIcons.FaCheckSquare /></div>
+                    <div>
+                        {/* 제목 크기 확대, 하단 여백 증가, 색상 진하게 */}
+                        <h4 style={{ margin: '0 0 12px 0', color: '#212529', fontSize:'1.15rem', fontWeight:'700' }}>{item.title}</h4>
+                        {/* 본문 글씨 크기 확대(0.9->1rem), 줄 간격 대폭 확대(1.4->1.7), 색상 변경 */}
+                        <p style={{ margin: 0, fontSize: '1rem', color: '#555', lineHeight: '1.7', letterSpacing: '-0.02em' }} dangerouslySetInnerHTML={{ __html: item.desc }} />
+                    </div>
                   </div>
               ))}
             </div>
@@ -361,6 +368,6 @@ const getDegreeStyle = (degree) => {
 };
 
 const cardLinkStyle = { display: 'flex', alignItems: 'center', padding: '25px', backgroundColor: '#fff', borderRadius: '12px', textDecoration: 'none', border: '1px solid #eee', boxShadow: '0 2px 8px rgba(0,0,0,0.03)', transition: 'transform 0.2s, boxShadow 0.2s', cursor: 'pointer' };
-const guideCardStyle = { display: 'flex', alignItems: 'flex-start', padding: '20px', background: '#fff', border: '1px solid #eee', borderRadius: '12px', boxShadow: '0 2px 5px rgba(0,0,0,0.02)' };
+const guideCardStyle = { display: 'flex', alignItems: 'flex-start', padding: '25px', background: '#fff', border: '1px solid #e9ecef', borderRadius: '12px', boxShadow: '0 3px 10px rgba(0,0,0,0.03)' };
 const contactRow = { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px', color: '#495057' };
 const iconBtnStyle = (bg) => ({ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', background: bg, color: '#fff', borderRadius: '6px', fontSize: '1rem', textDecoration: 'none', transition: 'opacity 0.2s' });

@@ -1,22 +1,62 @@
 [
   {
     "id": 1,
-    "title": "개인용 컴퓨터 지원",
-    "desc": "신입생 150만원 한도 내 컴퓨터 풀세트 지원 (본체, 모니터, 주변기기 포함)"
+    "title": "Lab Portal 및 소통 채널 가입",
+    "desc": "1. <b>Lab Portal 가입:</b> 이름/ID/PW 기입 후 신청 (지도교수 승인 대기)<br>2. <b>2단계 인증:</b> 승인 후 Google Authenticator OTP 등록<br>3. <b>소통 채널:</b> 상단 아이콘을 눌러 <b>Slack</b> 및 <b>Kakao</b> 입장<br>4. <b>주소록:</b> 상단 엑셀 아이콘 클릭 후 본인 정보(연락처 등) 기입"
   },
   {
     "id": 2,
-    "title": "예절 및 정숙",
-    "desc": "학부 교수님들께 인사 및 33동 교수님 연구실 통행 시 절대 정숙 유지"
+    "title": "자리 배정 및 PC/네트워크 셋업",
+    "desc": "방장 안내에 따라 개인 좌석을 배정받습니다.<br>PC 및 유선랜 설정은 아래 가이드를 참조하세요.<br>• <b><a href='https://drive.google.com/file/d/1XnH0JpFeGYQAHCOE8TaXjTi8-pOdP75X/view?usp=sharing' target='_blank' style='color:#004094; text-decoration:underline;'>[유선랜 셋업 가이드 1 (PDF)]</a></b><br>• <b><a href='https://drive.google.com/file/d/14zHCcZN7L8m2jtNWfnV2uRzm2V3rWX1Q/view?usp=sharing' target='_blank' style='color:#004094; text-decoration:underline;'>[유선랜 셋업 가이드 2 (PDF)]</a></b><br>(※ 무선랜 ID/PW는 연구실원에게 문의)"
   },
   {
     "id": 3,
-    "title": "소통 채널 가입",
-    "desc": "Slack 가입 및 이메일 발송 시 지도교수 참조(cc) 원칙 필수 준수"
+    "title": "공용 소프트웨어 라이선스",
+    "desc": "- <b>마이스누(mySNU):</b> 상단 메뉴 <b>[소프트웨어 다운로드]</b> <br>- <b>공과대학 라이선스:</b> <b><a href='https://eng.snu.ac.kr/snu/bbs/BMSR00010/list.do?menuNo=200170' target='_blank' style='color:#004094; text-decoration:underline;'>[공대 S/W 게시판]</a></b>"
   },
   {
     "id": 4,
-    "title": "출입 등록",
-    "desc": "301동 행정실 방문 및 지문 등록, 데이터베이스 정보 최신화"
+    "title": "법정 환경안전교육 이수",
+    "desc": "서울대학교 <b><a href='https://rsis.snu.ac.kr/' target='_blank' style='color:#004094; text-decoration:underline;'>환경안전원(rsis.snu.ac.kr)</a></b> 및 학부 안내에 따라 대학원 신입생 환경안전교육을 수료하고, 수료증을 실험실 입구에 게재합니다."
+  },
+  {
+    "id": 5,
+    "title": "연구실 자체 안전교육 및 투어",
+    "desc": "방장 주관 하에 SMID 연구실/실험실 공간 투어를 진행합니다.<br>우리 연구실 특성에 맞는 <b>자체 안전 교육(Specific Safety Training)</b>을 실시하며, 비상 시 대피 경로와 안전 장비 위치를 숙지합니다."
+  },
+  {
+    "id": 6,
+    "title": "강의실 및 세미나실 예약",
+    "desc": "미팅 공간 예약 방법입니다.<br>- <b>재료공학부 공간 예약:</b> <b><a href='https://bk21mse.snu.ac.kr/reservation/' target='_blank' style='color:#004094; text-decoration:underline;'>[학부 예약 시스템]</a></b> (ID: <b>mse64</b> / PW: <b>3Dchip!@#$</b>)<br>- <b>서울대 예약하샤:</b> <b><a href='https://ssims.snu.ac.kr/' target='_blank' style='color:#004094; text-decoration:underline;'>[공식 예약 시스템]</a></b>"
+  },
+  {
+    "id": 7,
+    "title": "공용 장비 및 인프라 교육",
+    "desc": "지도교수 및 방장 안내에 따라 필요한 기관의 장비 교육을 신청/이수합니다.<br>- 신소재공동연구소, 반도체공동연구소, 소프트파운드리연구소, 응용물리연구소, 첨단융합학부, 농생명과학공동기기원, 해동아이디어팩토리 등"
+  },
+  {
+    "id": 8,
+    "title": "문구 구매 및 인쇄 서비스",
+    "desc": "- <b>대형 출력:</b> <b><a href='https://eng.snu.ac.kr/snu/main/contents.do?menuNo=200074' target='_blank' style='color:#004094; text-decoration:underline;'>신양학술정보관 2층</a></b> (학회용 포스터 등 출력 가능)<br>- <b>문구 구매:</b> 오피스디포(38동 B1층), 학생회관 문구점 이용<br>- <b>인쇄/제본:</b> <b><a href='https://snuco.snu.ac.kr/%eb%b3%b5%ec%82%ac%ec%8b%a4/' target='_blank' style='color:#004094; text-decoration:underline;'>학내 복사실</a></b> (교내 곳곳 위치, 홈페이지에서 지점 확인)"
+  },
+  {
+    "id": 9,
+    "title": "학술 세미나 정보",
+    "desc": "<b>재료공학부 세미나:</b> <b><a href='https://mse.snu.ac.kr/snumse-main/notice/seminar-colloquium/' target='_blank' style='color:#004094; text-decoration:underline;'>[세미나 공지 바로가기]</a></b><br>정기적으로 업데이트되는 세미나 일정을 확인하여 관심 분야의 최신 연구 동향을 파악하고 참여하시기 바랍니다."
+  },
+  {
+    "id": 10,
+    "title": "교내 보건 및 의료 서비스",
+    "desc": "<b>서울대 보건진료소:</b> <b><a href='https://health4u.snu.ac.kr/index.do' target='_blank' style='color:#004094; text-decoration:underline;'>[홈페이지 바로가기]</a></b><br><b>기본 진료:</b> 내과, 가정의학과, 정신건강의학과, 치과 등 <b>1차 진료 및 투약</b> 가능<br><b>건강 검진:</b> 매년 학생/연구원 대상 <b>무료 건강검진</b> 실시"
+  },
+  {
+    "id": 11,
+    "title": "건강 관리 및 여가 생활",
+    "desc": "<b>체육 시설:</b> <b><a href='https://spolex.snu.ac.kr/index.php' target='_blank' style='color:#004094; text-decoration:underline;'>포스코 센터</a></b>(종합) 및 <b><a href='https://spolex.snu.ac.kr/outside/outside01.php' target='_blank' style='color:#004094; text-decoration:underline;'>단과대 헬스장(공대/자연대/300동/기숙사)</a></b> 이용 가능<br><b>프로그램:</b> <b><a href='https://athletics.snu.ac.kr/sports-programs' target='_blank' style='color:#004094; text-decoration:underline;'>스포츠진흥원 강좌</a></b> 및 <b><a href='https://extra.snu.ac.kr/index.do' target='_blank' style='color:#004094; text-decoration:underline;'>비교과 프로그램(Extra)</a></b> 신청<br>"
+  },
+  {
+    "id": 12,
+    "title": "교통편 및 셔틀버스 안내",
+    "desc": "<b><a href='https://www.snu.ac.kr/about/gwanak/shuttles/shuttle_stops' target='_blank' style='color:#004094; text-decoration:underline;'>[학교 셔틀 정보 확인하기]</a></b><br>- <b>서울대입구역:</b> 5511, 5513, 학교셔틀<br>- <b>낙성대역:</b> 관악02-1, 관악02-2, 학교셔틀<br>- <b>대학동:</b> 5516<br>- <b>사당역:</b> 학교셔틀"
   }
 ]
