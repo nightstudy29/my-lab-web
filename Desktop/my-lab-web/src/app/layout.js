@@ -41,7 +41,7 @@ export default function RootLayout({ children }) {
         <footer style={{ 
           backgroundColor: '#002b5e', 
           color: '#fff', 
-          padding: '40px 20px', 
+          padding: '40px 15px', // 모바일 여백을 고려해 좌우 패딩 살짝 축소
           borderTop: '1px solid rgba(255,255,255,0.1)',
           marginTop: 'auto' 
         }}>
@@ -49,11 +49,11 @@ export default function RootLayout({ children }) {
             maxWidth: '1200px', 
             margin: '0 auto', 
             display: 'flex', 
-            flexDirection: 'row',     // 가로 배치
+            flexDirection: 'row',     // 무조건 가로 유지
             alignItems: 'center',     // 세로축 중앙
-            justifyContent: 'center',  // 전체 덩어리를 화면 중앙으로
-            gap: '30px',              // 로고와 텍스트 사이 간격
-            flexWrap: 'wrap'          // 모바일 대응
+            justifyContent: 'center',  // 전체 중앙 정렬
+            gap: '20px',              // 모바일에서 너무 벌어지지 않게 간격 살짝 축소
+            flexWrap: 'nowrap'        // [중요] 절대 줄바꿈 되지 않도록 설정
           }}>
             
             {/* [왼쪽] 서울대학교 로고 */}
@@ -62,54 +62,51 @@ export default function RootLayout({ children }) {
                 src="/images/logo/snu_logo_white.png" 
                 alt="SNU Logo" 
                 style={{ 
-                  height: '100px',      // 푸터용 적당한 크기
+                  height: 'clamp(50px, 10vw, 80px)', // 화면 크기에 따라 로고 크기가 유동적으로 조절됨
                   width: 'auto', 
-                  opacity: '0.95' 
+                  opacity: '0.95',
+                  display: 'block'
                 }} 
               />
             </div>
 
-            {/* [중간] 세로 구분선 (선택 사항: 원치 않으시면 이 div를 지우셔도 됩니다) */}
-            <div style={{ 
-              width: '1px', 
-              height: '40px', 
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              display: 'none', // 기본적으로 숨김 (화면이 넓을 때만 보이게 하려면 미디어쿼리 필요)
-            }} className="footer-divider" /> 
-
             {/* [오른쪽] 연구실 및 소속 정보 */}
             <div style={{ 
-              textAlign: 'left', 
-              minWidth: '280px' 
+              textAlign: 'left',
+              flexShrink: 1,  // 공간이 부족하면 텍스트 영역이 줄어듦
+              minWidth: 0     // flexbox 안에서 텍스트 줄바꿈이 정상 작동하게 함
             }}>
               <p style={{ 
-                fontSize: '1rem', 
+                fontSize: 'clamp(0.85rem, 2vw, 1rem)', // 폰트 크기도 유동적 조절
                 fontWeight: '700', 
-                marginBottom: '4px',
-                letterSpacing: '0.5px'
+                marginBottom: '2px',
+                letterSpacing: '0.5px',
+                whiteSpace: 'nowrap' // 'SMID Lab'은 한 줄 유지
               }}>
                 SMID Lab
               </p>
               <p style={{ 
-                fontSize: '0.85rem', 
+                fontSize: 'clamp(0.7rem, 1.5vw, 0.85rem)', // 본문 크기 유동적 조절
                 color: '#ccd6f6', 
-                lineHeight: '1.5',
-                margin: 0
+                lineHeight: '1.4',
+                margin: 0,
+                wordBreak: 'keep-all' // 단어 단위로 줄바꿈되어 깔끔하게 유지
               }}>
                 <strong>Semiconductor Materials & Intelligent Devices Lab</strong><br />
-                Department of Materials Science & Engineering, Seoul National University
+                <span style={{ fontSize: '0.9em' }}>Dept. of Materials Science & Engineering, SNU</span>
               </p>
               <p style={{ 
-                fontSize: '0.75rem', 
+                fontSize: 'clamp(0.6rem, 1.2vw, 0.75rem)', 
                 color: 'rgba(255,255,255,0.4)', 
-                marginTop: '10px' 
+                marginTop: '6px' 
               }}>
-                © {new Date().getFullYear()} SMID Lab. All rights reserved.
+                © {new Date().getFullYear()} SMID Lab.
               </p>
             </div>
 
           </div>
         </footer>
+
         {/* footer 수정 끝 */}
 
         <ScrollToTop />
