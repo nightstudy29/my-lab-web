@@ -179,7 +179,7 @@ function NewsCard({ item, getCategoryColor, anchorId }) {
   const hasMultipleImages = item.images && item.images.length > 1;
 
   // 글자 수가 일정 이상일 때만 Read More 버튼을 보여주기 위한 기준
-  const isLongText = item.description && item.description.length > 120;
+  const isLongText = item.description && item.description.length > 80;
 
   const handleScroll = () => {
     if (scrollRef.current) {
