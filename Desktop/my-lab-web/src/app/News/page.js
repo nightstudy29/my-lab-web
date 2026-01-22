@@ -172,14 +172,26 @@ export default function NewsPage() {
 // === NewsCard 컴포넌트 (슬림 가로 레이아웃 버전) ===
 function NewsCard({ item, getCategoryColor, anchorId }) {
   const [imgIndex, setImgIndex] = useState(1);
-  const [isExpanded, setIsExpanded] = useState(false); // [추가] 확장 상태 관리
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isClamped, setIsClamped] = useState(false); // [추가] 실제로 글이 잘렸는지 여부
   const scrollRef = useRef(null);
-  
-  const hasImages = item.images && item.images.length > 0;
-  const hasMultipleImages = item.images && item.images.length > 1;
+  const textRef = useRef(null); // [추가] 텍스트 높이 측정을 위한 ref
 
-  // 글자 수가 일정 이상일 때만 Read More 버튼을 보여주기 위한 기준
-  const isLongText = item.description && item.description.length > 80;
+  // 실제 텍스트가 잘렸는지 체크하는 로직
+  useEffect(() => {
+    const checkClamped = () => {
+      if (textRef.current) {
+        const { scrollHeight, clientHeight } = textRef.current;
+        // 전체 높이가 현재 보이는 높이보다 크면 글이 잘린 것임
+        setIsClamped(scrollHeight > clientHeight);
+      }
+    };
+
+    checkClamped();
+    // 창 크기가 바뀔 때마다 다시 체크 (반응형 대응)
+    window.addEventListener('resize', checkClamped);
+    return () => window.removeEventListener('resize', checkClamped);
+  }, [item.description]);
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -200,29 +212,17 @@ function NewsCard({ item, getCategoryColor, anchorId }) {
     <article 
       id={anchorId} 
       style={{ 
-        backgroundColor: '#fff', 
-        borderRadius: '16px', 
-        boxShadow: '0 2px 8px rgba(0,0,0,0.04)', 
-        border: '1px solid #f0f0f0',
-        overflow: 'hidden', 
-        scrollMarginTop: '110px',
-        display: 'flex',
-        flexDirection: 'row',
-        minHeight: isExpanded ? 'auto' : '220px', // [수정] 확장 시 높이 자동 조절
+        backgroundColor: '#fff', borderRadius: '16px', 
+        boxShadow: '0 2px 8px rgba(0,0,0,0.04)', border: '1px solid #f0f0f0',
+        overflow: 'hidden', scrollMarginTop: '110px',
+        display: 'flex', flexDirection: 'row',
+        minHeight: isExpanded ? 'auto' : '220px',
         transition: 'all 0.3s ease'
     }} className="news-card-mobile">
       
-      {/* 1. 이미지 영역 */}
+      {/* 1. 이미지 영역 (기존과 동일) */}
       {hasImages && (
-        <div style={{ 
-          position: 'relative', 
-          width: '280px', 
-          minWidth: '280px',
-          backgroundColor: '#f8f9fa',
-          borderRight: '1px solid #f0f0f0',
-          alignSelf: isExpanded ? 'stretch' : 'auto' // [추가] 글이 길어져도 이미지는 영역 유지
-        }} className="news-image-container">
-          {/* ... 슬라이더 버튼 및 로직 기존과 동일 ... */}
+        <div style={{ position: 'relative', width: '280px', minWidth: '280px', backgroundColor: '#f8f9fa', borderRight: '1px solid #f0f0f0' }} className="news-image-container">
           <div ref={scrollRef} onScroll={handleScroll} className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', width: '100%', height: '100%' }}>
             {item.images.map((imgSrc, idx) => (
               <div key={idx} style={{ flex: '0 0 100%', scrollSnapAlign: 'start', width: '100%', height: '100%' }}>
@@ -230,56 +230,42 @@ function NewsCard({ item, getCategoryColor, anchorId }) {
               </div>
             ))}
           </div>
+          {/* ... 슬라이더 버튼 로직 ... */}
         </div>
       )}
 
       {/* 2. 텍스트 영역 */}
       <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-          <span style={{ backgroundColor: getCategoryColor(item.category), color: '#fff', padding: '3px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '700' }}>
-            {item.category}
-          </span>
-          <span style={{ color: '#999', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <FaCalendarAlt size={10} /> {item.date}
-          </span>
+          <span style={{ backgroundColor: getCategoryColor(item.category), color: '#fff', padding: '3px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '700' }}>{item.category}</span>
+          <span style={{ color: '#999', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}><FaCalendarAlt size={10} /> {item.date}</span>
         </div>
 
-        <h2 style={{ fontSize: '1.2rem', color: '#222', marginBottom: '12px', fontWeight: '700', lineHeight: '1.4' }}>
-          {item.title}
-        </h2>
+        <h2 style={{ fontSize: '1.2rem', color: '#222', marginBottom: '12px', fontWeight: '700', lineHeight: '1.4' }}>{item.title}</h2>
         
-        {/* [수정] 설명 텍스트 영역 */}
         <div style={{ position: 'relative' }}>
-          <p style={{ 
-            fontSize: '0.95rem', 
-            color: '#444', 
-            lineHeight: '1.6', 
-            margin: '0',
-            whiteSpace: 'pre-line', // 줄바꿈 허용
-            display: isExpanded ? 'block' : '-webkit-box', // [핵심] 확장 여부에 따라 박스 모델 변경
-            WebkitLineClamp: isExpanded ? 'none' : '3', 
-            WebkitBoxOrient: 'vertical', 
-            overflow: 'hidden'
-          }}>
+          <p 
+            ref={textRef} // [추가] 높이 측정을 위해 ref 연결
+            style={{ 
+              fontSize: '0.95rem', color: '#444', lineHeight: '1.6', margin: '0',
+              whiteSpace: 'pre-line',
+              display: isExpanded ? 'block' : '-webkit-box',
+              WebkitLineClamp: isExpanded ? 'none' : '3', 
+              WebkitBoxOrient: 'vertical', 
+              overflow: 'hidden'
+            }}
+          >
             {item.description}
           </p>
 
-          {/* [추가] Read More 버튼 */}
-          {isLongText && (
+          {/* [수정] 실제로 글이 잘렸을 때(isClamped) 혹은 이미 펼쳐졌을 때만 버튼 노출 */}
+          {(isClamped || isExpanded) && (
             <button 
               onClick={() => setIsExpanded(!isExpanded)}
               style={{
-                background: 'none',
-                border: 'none',
-                color: '#004094',
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                padding: '8px 0',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                marginTop: '5px'
+                background: 'none', border: 'none', color: '#004094', 
+                fontSize: '0.85rem', fontWeight: '600', padding: '8px 0', 
+                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '5px'
               }}
             >
               {isExpanded ? "Show Less" : "Read More..."}
@@ -287,7 +273,7 @@ function NewsCard({ item, getCategoryColor, anchorId }) {
           )}
         </div>
 
-        {/* 링크 버튼 (확장 시에 더 잘 보이게 위치 조정) */}
+        {/* 링크 버튼 */}
         {item.link && (
           <div style={{ marginTop: '15px' }}>
             <a href={item.link} target="_blank" rel="noopener noreferrer" className="news-link-btn"
