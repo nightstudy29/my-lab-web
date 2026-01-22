@@ -173,24 +173,33 @@ export default function NewsPage() {
 function NewsCard({ item, getCategoryColor, anchorId }) {
   const [imgIndex, setImgIndex] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isClamped, setIsClamped] = useState(false); // [추가] 실제로 글이 잘렸는지 여부
+  const [isClamped, setIsClamped] = useState(false); 
   const scrollRef = useRef(null);
-  const textRef = useRef(null); // [추가] 텍스트 높이 측정을 위한 ref
+  const textRef = useRef(null);
 
-  // 실제 텍스트가 잘렸는지 체크하는 로직
+  // === [추가] 이미지 관련 변수 정의 ===
+  const hasImages = item.images && item.images.length > 0;
+  const hasMultipleImages = item.images && item.images.length > 1;
+
+  // 실제 텍스트가 잘렸는지 체크
   useEffect(() => {
     const checkClamped = () => {
       if (textRef.current) {
+        // 클램프 상태가 아닐 때(전체 공개 상태)는 체크가 어려우므로 
+        // 렌더링 직후나 창 크기 조절 시에만 체크합니다.
         const { scrollHeight, clientHeight } = textRef.current;
-        // 전체 높이가 현재 보이는 높이보다 크면 글이 잘린 것임
         setIsClamped(scrollHeight > clientHeight);
       }
     };
 
-    checkClamped();
-    // 창 크기가 바뀔 때마다 다시 체크 (반응형 대응)
+    // 데이터 로딩 및 렌더링 후 실행
+    const timer = setTimeout(checkClamped, 100); 
     window.addEventListener('resize', checkClamped);
-    return () => window.removeEventListener('resize', checkClamped);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', checkClamped);
+    };
   }, [item.description]);
 
   const handleScroll = () => {
@@ -212,17 +221,33 @@ function NewsCard({ item, getCategoryColor, anchorId }) {
     <article 
       id={anchorId} 
       style={{ 
-        backgroundColor: '#fff', borderRadius: '16px', 
-        boxShadow: '0 2px 8px rgba(0,0,0,0.04)', border: '1px solid #f0f0f0',
-        overflow: 'hidden', scrollMarginTop: '110px',
-        display: 'flex', flexDirection: 'row',
+        backgroundColor: '#fff', 
+        borderRadius: '16px', 
+        boxShadow: '0 2px 8px rgba(0,0,0,0.04)', 
+        border: '1px solid #f0f0f0',
+        overflow: 'hidden', 
+        scrollMarginTop: '110px',
+        display: 'flex',
+        flexDirection: 'row',
         minHeight: isExpanded ? 'auto' : '220px',
         transition: 'all 0.3s ease'
     }} className="news-card-mobile">
       
-      {/* 1. 이미지 영역 (기존과 동일) */}
+      {/* 1. 이미지 영역 */}
       {hasImages && (
-        <div style={{ position: 'relative', width: '280px', minWidth: '280px', backgroundColor: '#f8f9fa', borderRight: '1px solid #f0f0f0' }} className="news-image-container">
+        <div style={{ 
+          position: 'relative', 
+          width: '280px', 
+          minWidth: '280px',
+          backgroundColor: '#f8f9fa',
+          borderRight: '1px solid #f0f0f0'
+        }} className="news-image-container">
+          {hasMultipleImages && (
+            <>
+              <button onClick={() => scroll(-1)} style={{ position: 'absolute', top: '50%', left: '5px', transform: 'translateY(-50%)', width: '28px', height: '28px', borderRadius: '50%', border: 'none', backgroundColor: 'rgba(0,0,0,0.3)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}><FaChevronLeft size={12}/></button>
+              <button onClick={() => scroll(1)} style={{ position: 'absolute', top: '50%', right: '5px', transform: 'translateY(-50%)', width: '28px', height: '28px', borderRadius: '50%', border: 'none', backgroundColor: 'rgba(0,0,0,0.3)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}><FaChevronRight size={12}/></button>
+            </>
+          )}
           <div ref={scrollRef} onScroll={handleScroll} className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', width: '100%', height: '100%' }}>
             {item.images.map((imgSrc, idx) => (
               <div key={idx} style={{ flex: '0 0 100%', scrollSnapAlign: 'start', width: '100%', height: '100%' }}>
@@ -230,24 +255,37 @@ function NewsCard({ item, getCategoryColor, anchorId }) {
               </div>
             ))}
           </div>
-          {/* ... 슬라이더 버튼 로직 ... */}
+          {hasMultipleImages && (
+            <div style={{ position: 'absolute', bottom: '10px', right: '10px', backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', padding: '2px 8px', borderRadius: '10px', fontSize: '0.7rem', pointerEvents: 'none' }}>
+              {imgIndex} / {item.images.length}
+            </div>
+          )}
         </div>
       )}
 
       {/* 2. 텍스트 영역 */}
       <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-          <span style={{ backgroundColor: getCategoryColor(item.category), color: '#fff', padding: '3px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '700' }}>{item.category}</span>
-          <span style={{ color: '#999', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}><FaCalendarAlt size={10} /> {item.date}</span>
+          <span style={{ backgroundColor: getCategoryColor(item.category), color: '#fff', padding: '3px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '700' }}>
+            {item.category}
+          </span>
+          <span style={{ color: '#999', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <FaCalendarAlt size={10} /> {item.date}
+          </span>
         </div>
 
-        <h2 style={{ fontSize: '1.2rem', color: '#222', marginBottom: '12px', fontWeight: '700', lineHeight: '1.4' }}>{item.title}</h2>
+        <h2 style={{ fontSize: '1.2rem', color: '#222', marginBottom: '12px', fontWeight: '700', lineHeight: '1.4' }}>
+          {item.title}
+        </h2>
         
         <div style={{ position: 'relative' }}>
           <p 
-            ref={textRef} // [추가] 높이 측정을 위해 ref 연결
+            ref={textRef} 
             style={{ 
-              fontSize: '0.95rem', color: '#444', lineHeight: '1.6', margin: '0',
+              fontSize: '0.95rem', 
+              color: '#444', 
+              lineHeight: '1.6', 
+              margin: '0',
               whiteSpace: 'pre-line',
               display: isExpanded ? 'block' : '-webkit-box',
               WebkitLineClamp: isExpanded ? 'none' : '3', 
@@ -258,7 +296,6 @@ function NewsCard({ item, getCategoryColor, anchorId }) {
             {item.description}
           </p>
 
-          {/* [수정] 실제로 글이 잘렸을 때(isClamped) 혹은 이미 펼쳐졌을 때만 버튼 노출 */}
           {(isClamped || isExpanded) && (
             <button 
               onClick={() => setIsExpanded(!isExpanded)}
@@ -273,7 +310,6 @@ function NewsCard({ item, getCategoryColor, anchorId }) {
           )}
         </div>
 
-        {/* 링크 버튼 */}
         {item.link && (
           <div style={{ marginTop: '15px' }}>
             <a href={item.link} target="_blank" rel="noopener noreferrer" className="news-link-btn"
