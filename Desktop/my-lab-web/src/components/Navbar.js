@@ -57,8 +57,8 @@ export default function Navbar() {
           gap: '15px'
         }}>
           <img 
-            src="/images/snu_logo_white.png" 
-            alt="SNU Logo" 
+            src="/images/logo/lab_logo_trans.png" 
+            alt="Lab Logo" 
             style={{ 
               height: '45px', 
               width: 'auto',
