@@ -12,7 +12,7 @@ export default function Navbar() {
     'Research', 
     'Members', 
     'Publications', 
-    'Equipment', 
+    //'Equipment',// 
     'News', 
     'Contact', 
     'Lab Portal'

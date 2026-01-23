@@ -54,9 +54,9 @@ export default function LabPortalPage() {
   // --- 데이터 로딩 ---
   useEffect(() => {
     // 1. 기존 디렉토리/휴가 로딩 (기존 로직 100% 동일)
-    if (activeTab === 'directory' || activeTab === 'vacation') {
-      if (members.length > 0) return; 
-
+    if (activeTab === 'directory' || (activeTab === 'admin' && user?.role === 'admin')) {
+    if (members.length > 0) return;
+    
       setIsLoading(true);
       fetch(GOOGLE_SHEET_CSV_URL)
         .then(res => res.text())
@@ -276,7 +276,6 @@ export default function LabPortalPage() {
         {[
           { id: 'manual', label: 'Newbie Guide', icon: <FaIcons.FaBookOpen /> },
           { id: 'rules', label: 'Lab Rules', icon: <FaIcons.FaGavel /> },
-          { id: 'vacation', label: 'Vacation', icon: <FaIcons.FaPlane /> },
           { id: 'wiki', label: 'Lab Wiki', icon: <FaIcons.FaBook /> },
           { id: 'directory', label: 'Member Directory', icon: <FaIcons.FaAddressBook /> },
         ].map(t => (
@@ -345,57 +344,6 @@ export default function LabPortalPage() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {/* [Tab 3] Vacation (기존 동일) */}
-        {activeTab === 'vacation' && (
-          <div style={{ animation: 'fadeIn 0.4s ease-out' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '20px' }}>
-                <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
-                    <h2 style={{ color: '#333', margin: 0 }}>✈️ Vacation Manager</h2>
-                    {isSaving && <span style={{fontSize:'0.9rem', color:'#004094', fontWeight:'bold', animation:'blink 1s infinite'}}>💾 Saving...</span>}
-                </div>
-                <span style={{ fontSize: '0.9rem', color: '#666', background: '#f8f9fa', padding: '5px 10px', borderRadius: '8px', border: '1px solid #eee' }}>
-                    📅 기준 연도: {new Date().getFullYear()}
-                </span>
-            </div>
-
-            {isLoading ? <div style={{textAlign:'center', padding:'40px', color:'#888'}}>휴가 데이터를 불러오는 중입니다...</div> : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
-                {members.filter(m => m.status === 'Active').map((m, mIdx) => {
-                    const originalIndex = members.findIndex(orig => orig.nameKor === m.nameKor);
-                    const usedCount = m.vacation.checks.filter(Boolean).length;
-                    const remain = 7 - usedCount;
-                    
-                    return (
-                        <div key={mIdx} style={{...guideCardStyle, display:'block', borderTop: remain === 0 ? '4px solid #d32f2f' : '4px solid #4dabf7'}}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                                <div><span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#333' }}>{m.nameKor}</span><span style={{ fontSize: '0.85rem', color: '#888', marginLeft: '6px' }}>{m.position}</span></div>
-                                <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: remain === 0 ? '#d32f2f' : '#004094' }}>{remain}일 남음 <span style={{fontWeight:'normal', color:'#999', fontSize:'0.8rem'}}>({usedCount}/7)</span></div>
-                            </div>
-                            <div style={{ display: 'flex', gap: '5px', marginBottom: '15px', justifyContent:'space-between' }}>
-                                {m.vacation.checks.map((isChecked, dayIdx) => (
-                                    <div key={dayIdx} 
-                                        onClick={() => handleCheckUpdate(originalIndex, dayIdx, isChecked)}
-                                        style={{ 
-                                            flex: 1, height: '32px', 
-                                            backgroundColor: isChecked ? '#4dabf7' : '#fff',
-                                            border: isChecked ? '1px solid #4dabf7' : '1px solid #dee2e6',
-                                            borderRadius: '4px', cursor: 'pointer',
-                                            display:'flex', alignItems:'center', justifyContent:'center',
-                                            color:'white', fontSize:'0.8rem', transition: 'all 0.2s'
-                                        }}>
-                                        {isChecked && <FaIcons.FaCheck />}
-                                    </div>
-                                ))}
-                            </div>
-                            <input type="text" placeholder="휴가일자 기록 (예: 8/15-18)" value={m.vacation.memo} onChange={(e) => handleMemoChange(e, originalIndex)} onBlur={(e) => handleMemoSave(originalIndex, e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #eee', background: '#f8f9fa', fontSize: '0.85rem', outline: 'none', boxSizing:'border-box', color:'#555' }} />
-                        </div>
-                    );
-                })}
-              </div>
-            )}
           </div>
         )}
 
@@ -585,6 +533,55 @@ export default function LabPortalPage() {
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* 3. [이식됨] Vacation Manager (Admin 전용 관리) */}
+                <div style={{ marginTop: '40px', background: '#fff', border: '1px solid #eee', borderRadius: '12px', padding: '25px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                        <h3 style={{ margin: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <FaIcons.FaPlane size={22} color="#004094" /> 연구원 휴가 관리 (Admin Only)
+                        </h3>
+                        {isSaving && <span style={{fontSize:'0.9rem', color:'#004094', fontWeight:'bold', animation:'blink 1s infinite'}}>💾 Saving...</span>}
+                    </div>
+
+                    {isLoading ? (
+                        <div style={{textAlign:'center', padding:'40px', color:'#888'}}>데이터 로딩 중...</div>
+                    ) : (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+                            {members.filter(m => m.status === 'Active').map((m, mIdx) => {
+                                const originalIndex = members.findIndex(orig => orig.nameKor === m.nameKor);
+                                const usedCount = m.vacation.checks.filter(Boolean).length;
+                                const remain = 7 - usedCount;
+                                
+                                return (
+                                    <div key={mIdx} style={{...guideCardStyle, display:'block', borderTop: remain === 0 ? '4px solid #d32f2f' : '4px solid #4dabf7'}}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                                            <div><span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#333' }}>{m.nameKor}</span><span style={{ fontSize: '0.85rem', color: '#888', marginLeft: '6px' }}>{m.position}</span></div>
+                                            <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: remain === 0 ? '#d32f2f' : '#004094' }}>{remain}일 남음 <span style={{fontWeight:'normal', color:'#999', fontSize:'0.8rem'}}>({usedCount}/7)</span></div>
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '5px', marginBottom: '15px', justifyContent:'space-between' }}>
+                                            {m.vacation.checks.map((isChecked, dayIdx) => (
+                                                <div key={dayIdx} 
+                                                    onClick={() => handleCheckUpdate(originalIndex, dayIdx, isChecked)}
+                                                    style={{ 
+                                                        flex: 1, height: '32px', 
+                                                        backgroundColor: isChecked ? '#4dabf7' : '#fff',
+                                                        border: isChecked ? '1px solid #4dabf7' : '1px solid #dee2e6',
+                                                        borderRadius: '4px', cursor: 'pointer',
+                                                        display:'flex', alignItems:'center', justifyContent:'center',
+                                                        color:'white', fontSize:'0.8rem', transition: 'all 0.2s'
+                                                    }}>
+                                                    {isChecked && <FaIcons.FaCheck />}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <input type="text" placeholder="휴가일자 기록 (예: 8/15-18)" value={m.vacation.memo} onChange={(e) => handleMemoChange(e, originalIndex)} onBlur={(e) => handleMemoSave(originalIndex, e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #eee', background: '#f8f9fa', fontSize: '0.85rem', outline: 'none', boxSizing:'border-box', color:'#555' }} />
+                                    </div>
+                                );
+                            })}
+                            
                         </div>
                     )}
                 </div>
