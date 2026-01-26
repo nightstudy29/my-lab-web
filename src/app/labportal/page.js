@@ -255,19 +255,31 @@ export default function LabPortalPage() {
         </div>
       </div>
 
-      {/* Shortcuts (기존 동일) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '40px' }}>
+      {/* Shortcuts (수정됨: 4칸 배열) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '40px' }}>
+        
+        {/* 1. Slack */}
         <a href="https://smidlab.slack.com" target="_blank" style={cardLinkStyle}>
             <div style={{ fontSize: '2.5rem', color: '#444', marginRight:'15px', display:'flex', alignItems:'center' }}><SiSlack /></div>
-            <div><div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#333', marginBottom:'4px' }}>Slack Workspace</div><div style={{ fontSize: '0.9rem', color: '#777' }}>연구실 공식 소통 채널</div></div>
+            <div><div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#333', marginBottom:'4px' }}>Slack</div><div style={{ fontSize: '0.9rem', color: '#777' }}>공식 소통 채널</div></div>
         </a>
+
+        {/* 2. Kakao (With Prof) */}
         <a href="https://open.kakao.com/o/gYhxuwci" target="_blank" style={cardLinkStyle}>
             <div style={{ fontSize: '2.5rem', color: '#444', marginRight:'15px', display:'flex', alignItems:'center' }}><SiKakaotalk /></div>
-            <div><div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#333', marginBottom:'4px' }}>Kakao Open Chat</div><div style={{ fontSize: '0.9rem', color: '#777' }}>연구실 단체 채팅방</div></div>
+            <div><div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#333', marginBottom:'4px' }}>Kakao (전체)</div><div style={{ fontSize: '0.9rem', color: '#777' }}>교수님 포함 톡방</div></div>
         </a>
+
+        {/* 3. Kakao (Students Only) - 새로 추가됨 */}
+        <a href="#" target="_blank" style={cardLinkStyle}> {/* ⚠️ 여기에 새 링크를 넣으세요 */}
+            <div style={{ fontSize: '2.5rem', color: '#444', marginRight:'15px', display:'flex', alignItems:'center' }}><SiKakaotalk /></div>
+            <div><div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#333', marginBottom:'4px' }}>Kakao (학생)</div><div style={{ fontSize: '0.9rem', color: '#777' }}>교수님 미포함 톡방</div></div>
+        </a>
+
+        {/* 4. Google Sheets */}
         <a href="https://docs.google.com/spreadsheets/d/1AwKmN6tcea_8_CDlvfwTEtAiBNQFiAiR6tRQVOgdMQM/edit" target="_blank" style={cardLinkStyle}>
             <div style={{ fontSize: '2.5rem', color: '#444', marginRight:'15px', display:'flex', alignItems:'center' }}><FaIcons.FaFileExcel /></div>
-            <div><div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#333', marginBottom:'4px' }}>Address Book (Edit)</div><div style={{ fontSize: '0.9rem', color: '#777' }}>주소록 업데이트</div></div>
+            <div><div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#333', marginBottom:'4px' }}>Address Book</div><div style={{ fontSize: '0.9rem', color: '#777' }}>주소록 업데이트</div></div>
         </a>
       </div>
 

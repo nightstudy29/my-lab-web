@@ -74,5 +74,12 @@
     "category": "Admin",
     "title": "연구실 행정 및 담당자 안내",
     "content": "행정 담당: TBD\n* 주의사항: 주차할인권은 방문업체에게 제공하는 용도 외에 개인적으로 사용하는 것을 절대 금지합니다. 학부사무실에서 장부 작성 후 수령 가능."
+  },
+  {
+    "id": 13,
+    "category": "Admin",
+    "title": "연구실 로고 (Lab Logo) 다운로드",
+    "content": "학회 포스터, 발표 자료(PPT) 등에 사용할 수 있는 연구실 공식 로고 파일입니다.",
+    "link": "https://drive.google.com/file/d/1tL_R6CE6SCYywS3GAy8J0274U5e9J6vC/view?usp=sharing"
   }
 ]
