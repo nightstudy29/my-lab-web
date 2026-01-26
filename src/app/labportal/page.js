@@ -347,34 +347,57 @@ export default function LabPortalPage() {
           </div>
         )}
 
-        {/* [Tab 4] Lab Wiki */}
+        {/* [Tab 4] Lab Wiki - 카테고리 아이콘 적용 버전 */}
         {activeTab === 'wiki' && (
-             <div style={{ animation: 'fadeIn 0.4s ease-out' }}>
-                {/* [추가] 수정 요청 버튼 */}
+              <div style={{ animation: 'fadeIn 0.4s ease-out' }}>
+                {/* 상단 헤더 */}
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px' }}>
                     <h2 style={{color:'#333', margin:0}}>📚 Lab Wiki</h2>
                     <button onClick={() => openRequestModal('Lab Wiki')} style={requestBtnStyle}>✏️ 수정 요청</button>
                 </div>
+
+                {/* 카드 그리드 */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px' }}>
-                  {wikiData.map((item) => (
-                     <div key={item.id} style={{ ...guideCardStyle, display: 'flex', flexDirection: 'column' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                           <div style={{ color: '#004094', fontSize: '1.2rem', marginRight: '10px' }}><FaIcons.FaInfoCircle /></div>
-                           <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#333' }}>{item.title}</h3>
+                  {wikiData.map((item) => {
+                      
+                      // 1. 카테고리에 따라 아이콘 결정하는 로직
+                      let categoryIcon;
+                      switch (item.category) {
+                        case 'Equipment': categoryIcon = <FaIcons.FaTools />; break;        // 장비 -> 도구 아이콘
+                        case 'Research':  categoryIcon = <FaIcons.FaBookOpen />; break;     // 연구 -> 펼친 책
+                        case 'Admin':     categoryIcon = <FaIcons.FaClipboardList />; break;// 행정 -> 클립보드
+                        case 'Ethics':    categoryIcon = <FaIcons.FaBalanceScale />; break; // 윤리 -> 저울
+                        case 'Software':  categoryIcon = <FaIcons.FaLaptopCode />; break;   // SW -> 노트북
+                        case 'Data':      categoryIcon = <FaIcons.FaChartBar />; break;     // 데이터 -> 차트
+                        default:          categoryIcon = <FaIcons.FaInfoCircle />;          // 그 외 -> 정보(i)
+                      }
+
+                      return (
+                        <div key={item.id} style={{ ...guideCardStyle, display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                              {/* 2. 결정된 아이콘 렌더링 */}
+                              <div style={{ color: '#004094', fontSize: '1.2rem', marginRight: '10px' }}>
+                                  {categoryIcon}
+                              </div>
+                              <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#333' }}>{item.title}</h3>
+                            </div>
+                            
+                            <div style={{ fontSize: '0.95rem', color: '#555', lineHeight: '1.6', whiteSpace: 'pre-wrap', flex: 1 }}>
+                              {item.content}
+                            </div>
+                            
+                            {item.link && (
+                              <a href={item.link} target="_blank" style={{ marginTop: '15px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem', color: '#004094', textDecoration: 'none', fontWeight: 'bold' }}>
+                                  🔗 바로가기 <FaIcons.FaExternalLinkAlt size={12} />
+                              </a>
+                            )}
                         </div>
-                        <div style={{ fontSize: '0.95rem', color: '#555', lineHeight: '1.6', whiteSpace: 'pre-wrap', flex: 1 }}>
-                           {item.content}
-                        </div>
-                        {item.link && (
-                           <a href={item.link} target="_blank" style={{ marginTop: '15px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem', color: '#004094', textDecoration: 'none', fontWeight: 'bold' }}>
-                              🔗 바로가기 <FaIcons.FaExternalLinkAlt size={12} />
-                           </a>
-                        )}
-                     </div>
-                  ))}
+                      );
+                  })}
                 </div>
-             </div>
+              </div>
         )}
+
 
         {/* [Tab 5] Member Directory (기존 동일) */}
         {activeTab === 'directory' && (

@@ -1,76 +1,78 @@
 [
   {
     "id": 1,
-    "date": "2026-01-21",
-    "category": "Equipment",
-    "title": "사용 가능 시설 및 장비 목록 안내",
-    "content": "사전에 입소 교육 및 장비 교육 필요 여부를 확인한 후, 지도교수 허락 하에 교육을 진행하시기 바랍니다.\n- 신소재공동연구소: 각종 재료 분석 기기 (SEM, TEM, XRD 등)\n- 공동기기원: 각종 재료 분석 기기 (보통 의뢰 맡김)\n- 반도체공동연구소: 클린룸 및 반도체 공정 장비 (자유도 낮음)\n- 소프트파운드리연구소: 반도체 공정 장비 (자유도 높음)\n- 응용물리연구소: 각종 재료 분석 기기\n- 농생명과학공동기기원: 각종 재료 분석 기기\n- 첨단융합학부: 프로브스테이션, ALD, Maskless Aligner 등 학부 실험 기자재를 일부 연구용으로 활용 가능\n- 해동아이디어팩토리: 3D 프린터 및 머신샵",
-    "important": true,
-    "pinned": true
-  },
-  {
-    "id": 2,
-    "date": "2026-01-21",
-    "category": "Research",
-    "title": "논문 검색 및 열람 방법 가이드",
-    "content": "검색은 일반적으로 Google Scholar를 활용하며, 교내 IP 접속 시 구독 중인 Publisher 논문 열람이 가능합니다. 학외 접속 시 방법은 다음과 같습니다.\n1. 본인 PC 학내 고정 IP에 대해 원격 접속용 서비스 포트 신청 후 윈도우 '원격 데스크톱 연결' 앱으로 열람\n2. Chrome Remote Desktop, Teamviewer 등 원격 접속 프로그램 활용\n3. 서울대 중앙도서관 홈페이지 메인의 '학외접속' 클릭 후 주소 복사하여 활용\n4. sci-hub 사이트 이용 (최신 논문은 열람 불가 확률 높음)",
-    "important": false,
-    "pinned": false
-  },
-  {
-    "id": 3,
-    "date": "2026-01-21",
-    "category": "Admin",
-    "title": "연구 관련 도서 구매 신청 제도",
-    "content": "서울대학교 중앙도서관은 교수 연 200만원, 대학원생 연 60만원 한도 내에서 희망도서 구입 신청을 받아줍니다. 연구 관련 희망도서가 있는 경우 위 제도를 적극 활용하시기 바랍니다.",
-    "link": "https://lib.snu.ac.kr/using/purchase-textbook/p-guide/",
-    "important": false,
-    "pinned": false
-  },
-  {
-    "id": 4,
-    "date": "2026-01-21",
-    "category": "Admin",
-    "title": "실험실 물품 및 소모품 구매처 정보",
-    "content": "서울대학교 산학협력연구 연구비 산정기준을 참고하시기 바랍니다.\n- 화인사이언스: 실험실 물품/소모품 공유 시트 활용하여 주문 (2026.01. 기준)\n- 신진가스: 실험실 가스 주문\n* 추가 사항은 추후 업데이트 예정입니다.",
-    "important": false,
-    "pinned": false
-  },
-  {
-    "id": 5,
-    "date": "2026-01-21",
-    "category": "Admin",
-    "title": "연구실 행정 및 담당자 안내",
-    "content": "행정 담당: 최미경 선생님 (mkchoi@snu.ac.kr)\n* 주의사항: 주차할인권은 방문업체에게 제공하는 용도 외에 개인적으로 사용하는 것을 절대 금지합니다.",
-    "important": true,
-    "pinned": false
-  },
-  {
-    "id": 6,
-    "date": "2026-01-21",
     "category": "Ethics",
     "title": "연구 및 업무 내 AI 활용 원칙",
     "content": "AI tool의 보조적 활용은 장려하지만, 절대로 AI가 주가 되어 업무를 하지 않으며 의존하지 않도록 합니다.\n- 예1) 논문 작성을 AI에게 시키는 것이 아니라(X), 본인이 작성한 내용을 AI를 활용해 다듬는다(O).\n- 예2) AI 제안 아이디어를 그대로 진행하는 것이 아니라(X), 본인 아이디어의 실현 가능성을 AI 도움으로 이론적 검증해본다(O).\n- Google Gemini: 서울대 메일 계정으로 로그인 시 유료 모델 사용 가능\n- ChatGPT, Perplexity, ClaudePro 등 다양한 AI tool 사용이 가능하며, 해당 도구들의 유료 구독은 연구실에서 지원하지 않습니다.",
-    "link": "https://ist.snu.ac.kr/%EA%B5%AC%EA%B8%80%EB%A9%94%EC%9D%BC/",
-    "important": true,
-    "pinned": true
+    "link": "https://ist.snu.ac.kr/%EA%B5%AC%EA%B8%80%EB%A9%94%EC%9D%BC/"
+  },
+  {
+    "id": 2,
+    "category": "Research",
+    "title": "논문 검색 및 열람 방법 가이드",
+    "content": "검색은 일반적으로 Google Scholar를 활용하며, 교내 IP 접속 시 구독 중인 Publisher 논문 열람이 가능합니다. 학외 접속 시 방법은 다음과 같습니다.\n1. 본인 PC 학내 고정 IP에 대해 원격 접속용 서비스 포트 신청 후 윈도우 '원격 데스크톱 연결' 앱 원격 접속 후 열람\n2. Chrome Remote Desktop, Teamviewer 등 원격 접속 프로그램 활용하여 원격 접속 후 열람\n3. 서울대 중앙도서관 홈페이지 메인의 '학외접속' 클릭 후 주소 복사하여 활용\n4. sci-hub 사이트 이용 (최신 논문은 열람 불가 확률 높음)"
+  },
+  {
+    "id": 3,
+    "category": "Research",
+    "title": "최신 논문 트래킹 및 Alert 설정 방법",
+    "content": "본인 연구 분야의 최신 논문을 놓치지 않도록 Alert 기능을 적극 활용하시기 바랍니다.\n- Google Scholar Alerts: 좌측 메뉴 'Alerts' 클릭 > 'Create Alert' 버튼을 통해 키워드를 설정하면 관련 신규 논문이 이메일로 전송됩니다.\n- 주요 저널 모니터링: Nature 및 자매지(Nanotechnology, Electronics, Materials, Sensors 등)와 Science는 발간 빈도가 높지 않으므로, 직접 주기적으로 접속하여 최신 트렌드를 파악하는 것을 권장합니다."
+  },
+  {
+    "id": 4,
+    "category": "Research",
+    "title": "JCR Ranking 및 Impact Factor(IF) 확인 가이드",
+    "content": "- 접속: https://jcr.clarivate.com/jcr/home (구독형 서비스로 학내 인터넷 망에서만 접속 가능)\n- 확인 방법: 사이트 접속 후 저널명을 검색하면 연도별 IF 확인이 가능합니다.\n- 발표 시기: 보통 매년 6~7월에 전년도 IF가 발표됩니다. (예: 2025년 IF는 2026년 6월 말 발표)\n- 순위 확인: 페이지 하단 'Rank by Journal Impact Factor'에서 카테고리별 순위와 Percentile을 확인합니다. 여러 카테고리 중 가장 유리하게 해석되는 카테고리의 Percentile을 참고하면 됩니다.",
+    "link": "https://jcr.clarivate.com/jcr/home"
+  },
+  {
+    "id": 5,
+    "category": "Data",
+    "title": "데이터 정리 및 분석 자동화 권장",
+    "content": "실험 장비를 통해 얻는 데이터는 주로 엑셀(csv) 형식입니다. 그래프 Plot에는 Origin을 활용하며, 효율적인 연구를 위해 Python을 활용하여 개인별로 데이터 정리 자동화 시스템을 구축하기를 강력히 권장합니다."
+  },
+  {
+    "id": 6,
+    "category": "Software",
+    "title": "권장 그래픽 및 모델링 작업 도구",
+    "content": "- 공정마스크 도면: AutoCAD (서울대 라이선스 제공)\n- 3D 모델링: Rhinoceros 권장\n- 3D 렌더링: Keyshot 권장"
   },
   {
     "id": 7,
-    "date": "2026-01-21",
-    "category": "Software",
-    "title": "권장 그래픽 및 모델링 작업 도구",
-    "content": "- 공정마스크 도면: AutoCAD (서울대 라이선스 제공)\n- 3D 모델링: Rhinoceros 권장\n- 3D 렌더링: Keyshot 권장",
-    "important": false,
-    "pinned": false
+    "category": "Equipment",
+    "title": "사용 가능 시설 및 장비 목록 안내",
+    "content": "사전에 입소 교육 및 장비 교육 필요 여부를 확인한 후, 지도교수 허락 하에 교육을 진행하시기 바랍니다.\n- 신소재공동연구소: 각종 재료 분석 기기 (SEM, TEM, XRD 등)\n- 공동기기원: 각종 재료 분석 기기 (보통 의뢰 맡김)\n- 반도체공동연구소: 클린룸 및 반도체 공정 장비 (자유도 낮음)\n- 소프트파운드리연구소: 반도체 공정 장비 (자유도 높음)\n- 응용물리연구소: 각종 재료 분석 기기\n- 농생명과학공동기기원: 각종 재료 분석 기기\n- 첨단융합학부: 프로브스테이션, ALD, Maskless Aligner 등 학부 실험 기자재를 일부 연구용으로 활용 가능\n- 해동아이디어팩토리: 3D 프린터 및 머신샵"
   },
   {
     "id": 8,
-    "date": "2026-01-21",
-    "category": "Data",
-    "title": "데이터 정리 및 분석 자동화 권장",
-    "content": "실험 장비를 통해 얻는 데이터는 주로 엑셀(csv) 형식입니다. 그래프 Plot에는 Origin을 활용하며, 효율적인 연구를 위해 Python을 활용하여 개인별로 데이터 정리 자동화 시스템을 구축하기를 강력히 권장합니다.",
-    "important": false,
-    "pinned": false
+    "category": "Equipment",
+    "title": "연구실 장비 예약 및 로그 작성 원칙",
+    "content": "- 장비 예약: 구글 캘린더(Google Calendar)를 활용하여 사전에 예약 후 사용합니다.\n- 매뉴얼 및 로그: 장비별 매뉴얼 숙지 및 사용 로그(Log) 작성은 연구실 공유 구글 시트(Google Sheets)를 사용합니다."
+  },
+  {
+    "id": 9,
+    "category": "Admin",
+    "title": "수강신청 사이트 및 타과 수강 권장",
+    "content": "- 공식 홈페이지: https://sugang.snu.ac.kr\n- 시간표 작성 도움(SNUTT): https://snutt.kr\n- 권장 사항: 재료공학부 외 타과(전기공학부, 기계공학부, 물리학부 등) 개설 과목도 연구 주제와 관련이 있다면 적극적으로 찾아보고 수강하기를 권장합니다.",
+    "link": "https://sugang.snu.ac.kr"
+  },
+  {
+    "id": 10,
+    "category": "Admin",
+    "title": "연구 관련 도서 구매 신청 제도",
+    "content": "서울대학교 중앙도서관은 교수 연 200만원, 대학원생 연 60만원 한도 내에서 희망도서 구입 신청을 받아줍니다. 연구 관련 희망도서가 있는 경우 위 제도를 적극 활용하시기 바랍니다.",
+    "link": "https://lib.snu.ac.kr/using/purchase-textbook/p-guide/"
+  },
+  {
+    "id": 11,
+    "category": "Admin",
+    "title": "실험실 물품 및 소모품 구매처 정보",
+    "content": "서울대학교 산학협력연구 연구비 산정기준을 참고하시기 바랍니다.\n- 화인사이언스: 실험실 물품/소모품 공유 시트 활용하여 주문 (2026.01. 기준)\n- 신진가스: 실험실 가스 주문\n* 추가 사항은 추후 업데이트 예정입니다."
+  },
+  {
+    "id": 12,
+    "category": "Admin",
+    "title": "연구실 행정 및 담당자 안내",
+    "content": "행정 담당: TBD\n* 주의사항: 주차할인권은 방문업체에게 제공하는 용도 외에 개인적으로 사용하는 것을 절대 금지합니다. 학부사무실에서 장부 작성 후 수령 가능."
   }
 ]
