@@ -26,37 +26,37 @@
   },
   {
     "id": 6,
+    "title": "연구실 구글캘린더 추가",
+    "desc": "지도교수 및 연구실 일정 공유를 위한 연구실 구글캘린더를 본인 구글 계정 (@gmail.com or @snu.ac.kr)에 추가합니다. <br> <b><a href='https://calendar.google.com/calendar/u/0?cid=N2E2ZWI1YzViYThjN2FhZjI4ZTFkMTYzYjQ0MmExYTMwYWVmMDdjNTA0MDQ2ODExMjYzN2Y2OTUzZTAxNTRjMEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t'  target='_blank' style='color:#004094; text-decoration:underline;'>[구글 캘린더 초대 링크]</a></b>"
+  },
+  {
+    "id": 7,
     "title": "강의실 및 세미나실 예약",
     "desc": "미팅 공간 예약 방법입니다.<br>- <b>재료공학부 공간 예약:</b> <b><a href='https://bk21mse.snu.ac.kr/reservation/' target='_blank' style='color:#004094; text-decoration:underline;'>[학부 예약 시스템]</a></b> (ID: <b>mse64</b> / PW: <b>3Dchip!@#$</b>)<br>- <b>서울대 예약하샤:</b> <b><a href='https://ssims.snu.ac.kr/' target='_blank' style='color:#004094; text-decoration:underline;'>[공식 예약 시스템]</a></b>"
   },
   {
-    "id": 7,
+    "id": 8,
     "title": "공용 장비 및 인프라 교육",
     "desc": "지도교수 및 방장 안내에 따라 필요한 기관의 장비 교육을 신청/이수합니다.<br>- 신소재공동연구소, 반도체공동연구소, 소프트파운드리연구소, 응용물리연구소, 첨단융합학부, 농생명과학공동기기원, 해동아이디어팩토리 등"
   },
   {
-    "id": 8,
+    "id": 9,
     "title": "문구 구매 및 인쇄 서비스",
     "desc": "- <b>대형 출력:</b> <b><a href='https://eng.snu.ac.kr/snu/main/contents.do?menuNo=200074' target='_blank' style='color:#004094; text-decoration:underline;'>신양학술정보관 2층</a></b> (학회용 포스터 등 출력 가능)<br>- <b>문구 구매:</b> 오피스디포(38동 B1층), 학생회관 문구점 이용<br>- <b>인쇄/제본:</b> <b><a href='https://snuco.snu.ac.kr/%eb%b3%b5%ec%82%ac%ec%8b%a4/' target='_blank' style='color:#004094; text-decoration:underline;'>학내 복사실</a></b> (교내 곳곳 위치, 홈페이지에서 지점 확인)"
   },
   {
-    "id": 9,
+    "id": 10,
     "title": "학술 세미나 정보",
     "desc": "<b>재료공학부 세미나:</b> <b><a href='https://mse.snu.ac.kr/snumse-main/notice/seminar-colloquium/' target='_blank' style='color:#004094; text-decoration:underline;'>[세미나 공지 바로가기]</a></b><br>정기적으로 업데이트되는 세미나 일정을 확인하여 관심 분야의 최신 연구 동향을 파악하고 참여하시기 바랍니다."
   },
   {
-    "id": 10,
+    "id": 11,
     "title": "교내 보건 및 의료 서비스",
     "desc": "<b>서울대 보건진료소:</b> <b><a href='https://health4u.snu.ac.kr/index.do' target='_blank' style='color:#004094; text-decoration:underline;'>[홈페이지 바로가기]</a></b><br><b>기본 진료:</b> 내과, 가정의학과, 정신건강의학과, 치과 등 <b>1차 진료 및 투약</b> 가능<br><b>건강 검진:</b> 매년 학생/연구원 대상 <b>무료 건강검진</b> 실시"
   },
   {
-    "id": 11,
+    "id": 12,
     "title": "건강 관리 및 여가 생활",
     "desc": "<b>체육 시설:</b> <b><a href='https://spolex.snu.ac.kr/index.php' target='_blank' style='color:#004094; text-decoration:underline;'>포스코 센터</a></b>(종합) 및 <b><a href='https://spolex.snu.ac.kr/outside/outside01.php' target='_blank' style='color:#004094; text-decoration:underline;'>단과대 헬스장(공대/자연대/300동/기숙사)</a></b> 이용 가능<br><b>프로그램:</b> <b><a href='https://athletics.snu.ac.kr/sports-programs' target='_blank' style='color:#004094; text-decoration:underline;'>스포츠진흥원 강좌</a></b> 및 <b><a href='https://extra.snu.ac.kr/index.do' target='_blank' style='color:#004094; text-decoration:underline;'>비교과 프로그램(Extra)</a></b> 신청<br>"
-  },
-  {
-    "id": 12,
-    "title": "교통편 및 셔틀버스 안내",
-    "desc": "<b><a href='https://www.snu.ac.kr/about/gwanak/shuttles/shuttle_stops' target='_blank' style='color:#004094; text-decoration:underline;'>[학교 셔틀 정보 확인하기]</a></b><br>- <b>서울대입구역:</b> 5511, 5513, 학교셔틀<br>- <b>낙성대역:</b> 관악02-1, 관악02-2, 학교셔틀<br>- <b>대학동:</b> 5516<br>- <b>사당역:</b> 학교셔틀"
   }
 ]
