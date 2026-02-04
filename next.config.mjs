@@ -29,6 +29,11 @@ const nextConfig = {
             key: 'X-Frame-Options',
             value: 'DENY',
           },
+          // 5. XSS 보호 (이번에 추가된 항목) ▼
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
         ],
       },
     ];
