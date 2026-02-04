@@ -171,7 +171,7 @@ export default function LoginPage() {
               style={inputStyle} required
             />
             <input 
-              type="password" placeholder="Password" 
+              type="password" placeholder="Password" autoComplete="off"
               value={password} onChange={(e) => setPassword(e.target.value)} 
               style={inputStyle} required
             />
@@ -232,7 +232,7 @@ export default function LoginPage() {
             <h3 style={{ margin: '0 0 10px', fontSize: '1.1rem', color: '#004094' }}>연구원 등록 신청</h3>
             <input type="text" placeholder="이름 (Name)" value={regName} onChange={(e) => setRegName(e.target.value)} style={inputStyle} required />
             <input type="text" placeholder="아이디 (ID)" value={regID} onChange={(e) => setRegID(e.target.value)} style={inputStyle} required />
-            <input type="password" placeholder="비밀번호 (PW)" value={regPW} onChange={(e) => setRegPW(e.target.value)} style={inputStyle} required />
+            <input type="password" placeholder="비밀번호 (PW)" autoComplete="off" value={regPW} onChange={(e) => setRegPW(e.target.value)} style={inputStyle} required />
             <button type="submit" disabled={isLoading} style={btnStyle('#004094')}>{isLoading ? 'Processing...' : '신청하기'}</button>
             <button type="button" onClick={() => setStep('login_input')} style={btnStyle('#aaa')}>취소</button>
           </form>
