@@ -9,7 +9,7 @@ export function middleware(request) {
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com;
-    style-src 'self' 'nonce-${nonce}';
+    style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data: https://www.google-analytics.com;
     font-src 'self' data:;
     object-src 'none';
