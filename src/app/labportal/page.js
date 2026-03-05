@@ -242,14 +242,14 @@ export default function LabPortalPage() {
           { id: 'directory', label: 'Directory', icon: <FaIcons.FaAddressBook /> },
         ].map(t => (
           <button key={t.id} onClick={() => setActiveTab(t.id)} style={tabBtnStyle(activeTab === t.id, false, mobile)}>
-            {t.icon} {!mobile && t.label}
-            {mobile && <span style={{ fontSize: '0.7rem' }}>{t.label}</span>}
+            {t.icon}
+            <span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>{t.label}</span>
           </button>
         ))}
         {user.role === 'admin' && (
           <button onClick={() => setActiveTab('admin')} style={tabBtnStyle(activeTab === 'admin', true, mobile)}>
             <MdAdminPanelSettings size={18} />
-            {mobile ? <span style={{ fontSize: '0.7rem' }}>Admin</span> : 'Admin'}
+            <span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>Admin</span>
           </button>
         )}
       </div>
@@ -531,21 +531,20 @@ export default function LabPortalPage() {
                             {remain}일 남음 <span style={{ fontWeight: 'normal', color: '#999', fontSize: '0.75rem' }}>({usedCount}/7)</span>
                           </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '5px', marginBottom: '12px' }}>
+                        <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', justifyContent: 'space-between' }}>
                           {m.vacation.checks.map((isChecked, dayIdx) => (
                             <div key={dayIdx} onClick={() => handleCheckUpdate(originalIndex, dayIdx, isChecked)}
                               style={{ 
                                 flex: 1,
-                                height: mobile ? '40px' : '44px',
-                                minWidth: 0,
+                                minWidth: '32px',
+                                height: '44px',
                                 backgroundColor: isChecked ? '#4dabf7' : '#fff',
-                                border: isChecked ? '1px solid #4dabf7' : '1px solid #dee2e6',
-                                borderRadius: '6px', cursor: 'pointer',
+                                border: isChecked ? '2px solid #4dabf7' : '2px solid #dee2e6',
+                                borderRadius: '8px', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                color: 'white', fontSize: '0.9rem', transition: 'all 0.2s',
-                                flexShrink: 1,
+                                color: '#fff', fontSize: '1rem', transition: 'all 0.2s',
                               }}>
-                              {isChecked && <FaIcons.FaCheck />}
+                              {isChecked && <FaIcons.FaCheck size={14} />}
                             </div>
                           ))}
                         </div>
@@ -618,17 +617,18 @@ const cardLinkStyle = (mobile) => ({
 });
 
 const tabBtnStyle = (isActive, isAdmin, mobile) => ({
-  padding: mobile ? '10px 4px' : '12px 5px',
+  padding: mobile ? '10px 0' : '12px 5px',
   border: 'none', background: 'none', fontWeight: 'bold',
   color: isActive ? (isAdmin ? '#d32f2f' : '#004094') : '#adb5bd',
   borderBottom: isActive ? `3px solid ${isAdmin ? '#d32f2f' : '#004094'}` : '3px solid transparent',
   cursor: 'pointer', display: 'flex', alignItems: 'center',
-  flexDirection: mobile ? 'column' : 'row',
-  flex: mobile ? 1 : 'unset',           // ✅ 모바일에서 균등 배분
-  justifyContent: mobile ? 'center' : 'flex-start',
-  gap: mobile ? '3px' : '8px',
-  fontSize: mobile ? '0.7rem' : '1rem',
+  flexDirection: 'column',
+  flex: '1 1 0',
+  justifyContent: 'center',
+  gap: '4px',
+  fontSize: mobile ? '0.68rem' : '1rem',
   whiteSpace: 'nowrap', transition: 'all 0.2s',
+  minWidth: 0,
 });
 
 const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px', display: 'flex', alignItems: 'center', flexShrink: 0 };
