@@ -248,7 +248,7 @@ export default function LabPortalPage() {
         ))}
         {user.role === 'admin' && (
           <button onClick={() => setActiveTab('admin')} style={tabBtnStyle(activeTab === 'admin', true, mobile)}>
-            <MdAdminPanelSettings size={18} />
+            <MdAdminPanelSettings size={16} />
             <span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>Admin</span>
           </button>
         )}
@@ -424,7 +424,7 @@ export default function LabPortalPage() {
         {activeTab === 'admin' && user.role === 'admin' && (
           <div>
             <h2 style={{ color: '#d32f2f', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <MdAdminPanelSettings size={28} /> Admin Dashboard
+              <MdAdminPanelSettings size={24} /> Admin Dashboard
             </h2>
 
             {/* 가입 승인 대기 */}
@@ -629,13 +629,15 @@ const tabBtnStyle = (isActive, isAdmin, mobile) => ({
   color: isActive ? (isAdmin ? '#d32f2f' : '#004094') : '#adb5bd',
   borderBottom: isActive ? `3px solid ${isAdmin ? '#d32f2f' : '#004094'}` : '3px solid transparent',
   cursor: 'pointer', display: 'flex', alignItems: 'center',
-  flexDirection: 'column',
-  flex: '1 1 0',
+  flexDirection: mobile ? 'column' : 'row',
+  flex: mobile ? '1 1 0' : 'unset',
   justifyContent: 'center',
-  gap: '4px',
+  gap: mobile ? '3px' : '8px',
   fontSize: mobile ? '0.68rem' : '1rem',
   whiteSpace: 'nowrap', transition: 'all 0.2s',
   minWidth: 0,
+  lineHeight: 1,           // ✅ 줄높이 통일
+  boxSizing: 'border-box', // ✅ 패딩 포함 크기 계산
 });
 
 const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px', display: 'flex', alignItems: 'center', flexShrink: 0 };
