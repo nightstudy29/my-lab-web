@@ -234,7 +234,7 @@ export default function LabPortalPage() {
       </div>
 
       {/* ===== Tabs ===== */}
-      <div style={{ display: 'flex', gap: mobile ? '0px' : '20px', marginBottom: '30px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none', justifyContent: mobile ? 'space-between' : 'flex-start' }}>
+      <div style={{ display: 'flex', gap: mobile ? '0px' : '20px', marginBottom: '30px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none' }}>
         {[
           { id: 'manual', label: 'Newbie Guide', icon: <FaIcons.FaBookOpen /> },
           { id: 'rules', label: 'Lab Rules', icon: <FaIcons.FaGavel /> },
@@ -531,18 +531,19 @@ export default function LabPortalPage() {
                             {remain}일 남음 <span style={{ fontWeight: 'normal', color: '#999', fontSize: '0.75rem' }}>({usedCount}/7)</span>
                           </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '5px', marginBottom: '12px', flexWrap: mobile ? 'wrap' : 'nowrap' }}>
+                        <div style={{ display: 'flex', gap: '5px', marginBottom: '12px' }}>
                           {m.vacation.checks.map((isChecked, dayIdx) => (
                             <div key={dayIdx} onClick={() => handleCheckUpdate(originalIndex, dayIdx, isChecked)}
                               style={{ 
-                                flex: mobile ? '0 0 calc(25% - 4px)' : '1',
-                                minWidth: mobile ? '44px' : 'unset',
-                                height: mobile ? '44px' : '32px',
+                                flex: 1,
+                                height: mobile ? '40px' : '44px',
+                                minWidth: 0,
                                 backgroundColor: isChecked ? '#4dabf7' : '#fff',
                                 border: isChecked ? '1px solid #4dabf7' : '1px solid #dee2e6',
                                 borderRadius: '6px', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                color: 'white', fontSize: '1rem', transition: 'all 0.2s'
+                                color: 'white', fontSize: '0.9rem', transition: 'all 0.2s',
+                                flexShrink: 1,
                               }}>
                               {isChecked && <FaIcons.FaCheck />}
                             </div>
@@ -617,14 +618,16 @@ const cardLinkStyle = (mobile) => ({
 });
 
 const tabBtnStyle = (isActive, isAdmin, mobile) => ({
-  padding: mobile ? '10px 8px' : '12px 5px',
+  padding: mobile ? '10px 4px' : '12px 5px',
   border: 'none', background: 'none', fontWeight: 'bold',
   color: isActive ? (isAdmin ? '#d32f2f' : '#004094') : '#adb5bd',
   borderBottom: isActive ? `3px solid ${isAdmin ? '#d32f2f' : '#004094'}` : '3px solid transparent',
   cursor: 'pointer', display: 'flex', alignItems: 'center',
   flexDirection: mobile ? 'column' : 'row',
+  flex: mobile ? 1 : 'unset',           // ✅ 모바일에서 균등 배분
+  justifyContent: mobile ? 'center' : 'flex-start',
   gap: mobile ? '3px' : '8px',
-  fontSize: mobile ? '0.75rem' : '1rem',
+  fontSize: mobile ? '0.7rem' : '1rem',
   whiteSpace: 'nowrap', transition: 'all 0.2s',
 });
 
