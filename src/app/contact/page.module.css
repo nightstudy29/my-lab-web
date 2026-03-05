@@ -1,35 +1,259 @@
-/* ✅ 이메일 링크 hover - onMouseOver/onMouseOut 대체 */
-.emailLink {
-  font-size: 1.6rem;
+/* ===== PAGE WRAPPER ===== */
+.pageWrapper {
+  width: 100%;
+  min-height: 100vh;
+  background: #f8f9fb;
+}
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  background: linear-gradient(135deg, #001f4d 0%, #003080 50%, #004094 100%);
+  padding: 70px 40px 60px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.heroTitle {
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 14px;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+.heroSub {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.heroDot1 {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  top: -80px;
+  right: -60px;
+  z-index: 1;
+}
+
+.heroDot2 {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  bottom: -50px;
+  left: 5%;
+  z-index: 1;
+}
+
+.heroLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+}
+
+/* ===== CONTENT ===== */
+.content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 50px 24px 80px;
+}
+
+/* ===== RECRUITMENT BANNER ===== */
+.recruitBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-left: 5px solid #004094;
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 40px;
+  box-shadow: 0 2px 12px rgba(0, 64, 148, 0.06);
+}
+
+.recruitIcon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #e8f0fe, #c7d9fc);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #004094;
+  flex-shrink: 0;
+}
+
+.recruitTitle {
+  font-size: 1.1rem;
   font-weight: 800;
   color: #004094;
+  margin: 0 0 6px;
+}
+
+.recruitDesc {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.inlineEmail {
+  color: #004094;
+  font-weight: 700;
   text-decoration: none;
-  border-bottom: 2px solid transparent;
+  border-bottom: 1px solid rgba(0, 64, 148, 0.3);
   transition: border-color 0.2s;
 }
 
-.emailLink:hover {
-  border-bottom: 2px solid #004094;
+.inlineEmail:hover {
+  border-color: #004094;
 }
 
-/* ✅ Google Maps 링크 */
+/* ===== ADDRESS GRID ===== */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ===== ADDRESS CARD ===== */
+.addressCard {
+  background: #fff;
+  border: 1px solid #e8ecf2;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s;
+}
+
+.addressCard:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+.addressHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.addressDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotBlue  { background: #004094; }
+.dotGreen { background: #2e7d32; }
+
+.addressTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.addressRoom {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 8px;
+}
+
+.addressPhone {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 500;
+  margin: 0 0 14px;
+}
+
+.addressStreet {
+  font-size: 0.88rem;
+  color: #777;
+  line-height: 1.7;
+  margin: 0 0 18px;
+}
+
 .mapsLink {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: opacity 0.2s;
+  padding: 7px 14px;
+  border-radius: 20px;
+  transition: all 0.2s;
 }
 
-.mapsLink:hover {
-  opacity: 0.75;
+.mapsBlue {
+  color: #004094;
+  background: #eef4ff;
+  border: 1px solid #c7d9fc;
 }
 
-/* ===== 모바일 대응 ===== */
-@media (max-width: 480px) {
-  .emailLink {
-    font-size: 1.2rem;
+.mapsBlue:hover {
+  background: #004094;
+  color: #fff;
+  border-color: #004094;
+}
+
+.mapsGreen {
+  color: #2e7d32;
+  background: #f0faf0;
+  border: 1px solid #b8ddb8;
+}
+
+.mapsGreen:hover {
+  background: #2e7d32;
+  color: #fff;
+  border-color: #2e7d32;
+}
+
+/* ===== 모바일 ===== */
+@media (max-width: 768px) {
+  .hero {
+    padding: 50px 20px 44px;
+  }
+
+  .recruitBanner {
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px 18px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .addressCard {
+    padding: 22px 20px;
+  }
+
+  .content {
+    padding: 36px 16px 60px;
   }
 }

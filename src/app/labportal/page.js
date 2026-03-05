@@ -264,15 +264,33 @@ export default function LabPortalPage() {
               <button onClick={() => openRequestModal('Newbie Guide')} style={requestBtnStyle}>✏️ 수정 요청</button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))', gap: '16px' }}>
-              {guideData.map((item) => (
-                <div key={item.id} style={guideCardStyle}>
-                  <div style={{ marginRight: '15px', color: '#004094', fontSize: '1.2rem', paddingTop: '3px', flexShrink: 0 }}><FaIcons.FaCheckSquare /></div>
-                  <div>
-                    <h4 style={{ margin: '0 0 10px 0', color: '#212529', fontSize: '1.1rem', fontWeight: '700' }}>{item.title}</h4>
-                    <p style={{ margin: 0, fontSize: '0.95rem', color: '#555', lineHeight: '1.7' }} dangerouslySetInnerHTML={{ __html: item.desc }} />
+              {guideData.map((item) => {
+                const guideIconMap = {
+                  1: <FaIcons.FaSignInAlt />,
+                  2: <FaIcons.FaDesktop />,
+                  3: <FaIcons.FaBoxOpen />,
+                  4: <FaIcons.FaHardHat />,
+                  5: <FaIcons.FaShieldAlt />,
+                  6: <FaIcons.FaCalendarAlt />,
+                  7: <FaIcons.FaDoorOpen />,
+                  8: <FaIcons.FaFlask />,
+                  9: <FaIcons.FaPrint />,
+                  10: <FaIcons.FaChalkboardTeacher />,
+                  11: <FaIcons.FaHeartbeat />,
+                  12: <FaIcons.FaDumbbell />,
+                };
+                return (
+                  <div key={item.id} style={wikiCardStyle}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                      <div style={{ color: '#004094', fontSize: '1.1rem', marginRight: '10px', flexShrink: 0 }}>
+                        {guideIconMap[item.id] || <FaIcons.FaInfoCircle />}
+                      </div>
+                      <h3 style={{ margin: 0, fontSize: '1rem', color: '#333', fontWeight: '700' }}>{item.title}</h3>
+                    </div>
+                    <div style={{ fontSize: '0.9rem', color: '#555', lineHeight: '1.7' }} dangerouslySetInnerHTML={{ __html: item.desc }} />
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -283,11 +301,14 @@ export default function LabPortalPage() {
             <h2 style={{ color: '#333', marginBottom: '20px' }}>⚖️ Laboratory Rules</h2>
             <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(auto-fit, minmax(450px, 1fr))', gap: '16px' }}>
               {rulesData.map(rule => (
-                <div key={rule.id} style={{ padding: '25px', background: rule.highlight ? '#fff5f5' : '#fff', border: rule.highlight ? '2px solid #ffcdd2' : '1px solid #eee', borderRadius: '15px', boxShadow: '0 2px 10px rgba(0,0,0,0.03)' }}>
-                  <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: rule.highlight ? '#d32f2f' : '#004094', marginTop: 0, fontSize: mobile ? '1rem' : '1.1rem' }}>
-                    {FaIcons[rule.icon] ? React.createElement(FaIcons[rule.icon]) : <FaIcons.FaCheckCircle />} {rule.title}
-                  </h3>
-                  <ul style={{ paddingLeft: '20px', lineHeight: '1.8', color: '#444', fontSize: '0.95rem' }}>
+                <div key={rule.id} style={{ ...wikiCardStyle, borderLeft: rule.highlight ? '4px solid #d32f2f' : '4px solid #004094' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                    <div style={{ color: rule.highlight ? '#d32f2f' : '#004094', fontSize: '1.1rem', marginRight: '10px', flexShrink: 0 }}>
+                      {FaIcons[rule.icon] ? React.createElement(FaIcons[rule.icon]) : <FaIcons.FaCheckCircle />}
+                    </div>
+                    <h3 style={{ margin: 0, fontSize: '1rem', color: rule.highlight ? '#d32f2f' : '#333', fontWeight: '700' }}>{rule.title}</h3>
+                  </div>
+                  <ul style={{ paddingLeft: '18px', lineHeight: '1.8', color: '#555', fontSize: '0.9rem', margin: 0 }}>
                     {rule.items.map((item, i) => (<li key={i} dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />))}
                   </ul>
                 </div>
@@ -316,7 +337,7 @@ export default function LabPortalPage() {
                   default:          categoryIcon = <FaIcons.FaInfoCircle />;
                 }
                 return (
-                  <div key={item.id} style={{ ...guideCardStyle, flexDirection: 'column' }}>
+                  <div key={item.id} style={wikiCardStyle}>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
                       <div style={{ color: '#004094', fontSize: '1.1rem', marginRight: '10px' }}>{categoryIcon}</div>
                       <h3 style={{ margin: 0, fontSize: '1rem', color: '#333' }}>{item.title}</h3>
@@ -644,6 +665,7 @@ const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px'
 const shortcutTitleStyle = { fontWeight: 'bold', fontSize: '1rem', color: '#333', marginBottom: '3px' };
 const shortcutSubStyle = { fontSize: '0.85rem', color: '#777' };
 const guideCardStyle = { display: 'flex', alignItems: 'flex-start', padding: '20px', background: '#fff', border: '1px solid #e9ecef', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' };
+const wikiCardStyle = { display: 'flex', flexDirection: 'column', padding: '20px', background: '#fff', border: '1px solid #e9ecef', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' };
 const adminCardStyle = { marginBottom: '20px', background: '#fff', border: '1px solid #eee', borderRadius: '12px', padding: '25px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' };
 const contactRow = { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px', color: '#495057' };
 const iconBtnStyle = (bg) => ({ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', background: bg, color: '#fff', borderRadius: '6px', fontSize: '1rem', textDecoration: 'none' });
