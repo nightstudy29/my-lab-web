@@ -1,309 +1,145 @@
-"use client";
+"use client"; // isMobile useState 때문에 필요
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaArrowRight, FaAtom, FaLayerGroup, FaMicrochip } from "react-icons/fa6"; // 아이콘 로드
-import newsData from "../data/news.json"; // 뉴스 데이터
+import Image from "next/image";
+import { FaArrowRight, FaAtom, FaLayerGroup, FaMicrochip } from "react-icons/fa6";
+import newsData from "../data/news.json";
+import styles from "./page.module.css";
+
+const researchTopics = [
+  {
+    icon: <FaAtom size={30} color="#004094" />,
+    title: <>Low-Dimensional Materials<br />& Nanostructures</>,
+    desc: <>Synthesis of <strong>atomically thin membranes</strong> and <strong>functional nanostructures</strong> to engineer novel physical and chemical properties.</>,
+  },
+  {
+    icon: <FaLayerGroup size={30} color="#004094" />,
+    title: <>Heterogeneous<br />3D Integration</>,
+    desc: <>Universal platform for stacking diverse functional layers vertically using <strong>freestanding nanomembranes</strong> without lattice constraints.</>,
+  },
+  {
+    icon: <FaMicrochip size={30} color="#004094" />,
+    title: <>Intelligent Sensors<br />& Free-Form Electronics</>,
+    desc: <><strong>AI-enabled sensing platforms</strong> (In-Sensor AI) capable of conforming to any shape for next-generation applications.</>,
+  },
+];
 
 export default function Home() {
-  // 최신 뉴스 3개 가져오기 (날짜순 정렬)
+  // ✅ null로 시작 → hydration 전까지 모바일 기준 렌더링 (SSR 깜빡임 방지)
+  const [isMobile, setIsMobile] = useState(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check(); // 마운트 즉시 실행
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // ✅ hydration 전 (null): 모바일 기준으로 렌더링
+  const mobile = isMobile !== false;
+
   const latestNews = [...newsData]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 3);
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: "100%" }}>
 
-      {/* 1. Hero Section (메인 배너) */}
-      <div style={{ 
-        minHeight: '420px', 
-        backgroundColor: '#002b5e', 
-        backgroundImage: 'linear-gradient(135deg, #002b5e 0%, #004094 100%)', 
-        display: 'flex',
-        justifyContent: 'center', 
-        alignItems: 'center',
-        color: '#fff',
-        padding: '40px 20px' // 여백 살짝 조정
-      }}>
-        
-        {/* 내부 컨테이너 */}
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'row', 
-          alignItems: 'center', // 로고와 텍스트의 세로 중앙을 맞춤
-          justifyContent: 'center', 
-          gap: '60px', // [수정] 로고가 커졌으므로 간격도 조금 더 넓힘
-          flexWrap: 'wrap',
-          maxWidth: '1200px',
-          margin: '0 auto'
+      {/* 1. Hero Section */}
+      <div className={styles.hero}>
+        <div style={{
+          display: "flex",
+          flexDirection: mobile ? "column" : "row",   // ✅ JS 분기
+          alignItems: "center",
+          justifyContent: "center",
+          gap: mobile ? "20px" : "60px",
+          maxWidth: "1200px",
+          margin: "0 auto",
+          width: "100%",
+          textAlign: mobile ? "center" : "left",
         }}>
-          
-          {/* [왼쪽] 로고 이미지 - 사이즈 대폭 확대 */}
+
+          {/* 로고 이미지 - ✅ 인라인 height 제거, isMobile 분기 */}
           <div style={{ flexShrink: 0 }}>
-            <img 
-              src="/images/logo/lab_logo_trans.png" 
-              alt="SMID Lab Logo" 
-              style={{ 
-                height: '325px', // [수정] 110px -> 200px로 확 키움!
-                width: 'auto', 
-                objectFit: 'contain',
-                // 로고가 커졌으니 그림자도 조금 더 깊게 설정
-                filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.4))'
-              }} 
+            <Image
+              src="/images/logo/lab_logo_trans.png"
+              alt="SMID Lab Logo"
+              width={325}
+              height={325}
+              style={{
+                width: "auto",
+                height: mobile ? "180px" : "325px",  // ✅ JS 분기
+                objectFit: "contain",
+                filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.4))",
+              }}
+              priority
             />
           </div>
 
-          {/* [오른쪽] 텍스트 콘텐츠 */}
-          <div style={{ 
-            textAlign: 'left', 
-            maxWidth: '650px'
-          }}>
-            {/* 소속 정보 */}
-            <p style={{ 
-              fontSize: '1.05rem', 
-              fontWeight: '500', 
-              color: '#cce0ff', 
-              marginBottom: '12px', 
-              textTransform: 'uppercase', 
-              letterSpacing: '1px' 
-            }}>
+          {/* 텍스트 콘텐츠 */}
+          <div style={{ maxWidth: "650px" }}>
+            <p className={styles.heroSubtitle}>
               Dept. of Materials Science & Engineering, SNU
             </p>
-
-            {/* 연구실 이름 */}
-            <h1 style={{ 
-              fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', 
-              fontWeight: '800', 
-              marginBottom: '20px', 
-              letterSpacing: '-0.5px', 
-              lineHeight: '1.2',
-              wordBreak: 'keep-all'
-            }}>
-              Semiconductor Materials & <br/>Intelligent Devices Lab
+            {/* ✅ br 태그 → 모바일에서 조건부 렌더링 */}
+            <h1 className={styles.heroTitle}>
+              Semiconductor Materials{!mobile && <br />} & Intelligent Devices Lab
             </h1>
-
-            {/* 슬로건 */}
-            <p style={{ 
-              fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', 
-              opacity: '0.9', 
-              marginBottom: '30px', 
-              lineHeight: '1.6'
-            }}>
-              Pioneering the future of electronics through <br/>
+            <p className={styles.heroDesc}>
+              Pioneering the future of electronics through{" "}
               <strong>Atomic-Scale Materials</strong>, <strong>3D Integration</strong>, and <strong>In-Sensor AI</strong>.
             </p>
-
-            {/* 버튼들 */}
-            <div style={{ display: 'flex', gap: '15px' }}>
-              <Link href="/research" style={{ 
-                padding: '12px 30px', 
-                backgroundColor: '#fff', color: '#004094', 
-                borderRadius: '30px', fontWeight: 'bold', textDecoration: 'none',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
-              }}>
+            <div style={{
+              display: "flex",
+              gap: "15px",
+              justifyContent: mobile ? "center" : "flex-start",
+              flexWrap: "wrap",
+            }}>
+              <Link href="/research" className={styles.btnPrimary}>
                 Our Research
               </Link>
-              <Link href="/contact" style={{ 
-                padding: '12px 30px', 
-                border: '2px solid #fff', 
-                color: '#fff', 
-                borderRadius: '30px', fontWeight: 'bold', textDecoration: 'none'
-              }}>
+              <Link href="/contact" className={styles.btnOutline}>
                 Join Us
               </Link>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* 2. Research Highlights (슬림 버전) */}
-      <div style={{ 
-        padding: '60px 20px', // [수정] 상하 여백 90px -> 60px 축소
-        maxWidth: '1200px', 
-        margin: '0 auto', 
-        textAlign: 'center' 
-      }}>
-        <h2 style={{ 
-          fontSize: '2rem', // [수정] 크기 살짝 축소
-          marginBottom: '40px', // [수정] 제목 하단 여백 60px -> 40px 축소
-          color: '#333', 
-          fontWeight: '800' 
-        }}>
-          Research Highlights
-        </h2>
-        
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', // 최소폭 살짝 조정
-          gap: '30px' // [수정] 카드 사이 간격 40px -> 30px 축소
-        }}>
-          
-          {/* Topic 1 */}
-          <div style={{ 
-            padding: '30px 25px', // [수정] 카드 내부 여백 40px -> 30px 축소
-            backgroundColor: '#fff', 
-            borderRadius: '16px', 
-            border: '1px solid #eee', 
-            boxShadow: '0 8px 25px rgba(0,0,0,0.04)', 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center' 
-          }}>
-            <div style={{ 
-              width: '65px', height: '65px', // [수정] 아이콘 배경 크기 80px -> 65px 축소
-              backgroundColor: '#eef4ff', 
-              borderRadius: '50%', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              marginBottom: '18px' // [수정] 25px -> 18px 축소
-            }}>
-              <FaAtom size={30} color="#004094" /> {/* 아이콘 크기도 살짝 축소 */}
-            </div>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '10px', fontWeight: '700', color: '#111', lineHeight: '1.3' }}>
-              Low-Dimensional Materials<br/>& Nanostructures
-            </h3>
-            <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.95rem' }}>
-              Synthesis of <strong>atomically thin membranes</strong> and <strong>functional nanostructures</strong> to engineer novel physical and chemical properties.
-            </p>
-          </div>
-
-          {/* Topic 2 */}
-          <div style={{ 
-            padding: '30px 25px', 
-            backgroundColor: '#fff', 
-            borderRadius: '16px', 
-            border: '1px solid #eee', 
-            boxShadow: '0 8px 25px rgba(0,0,0,0.04)', 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center' 
-          }}>
-            <div style={{ 
-              width: '65px', height: '65px', 
-              backgroundColor: '#eef4ff', 
-              borderRadius: '50%', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              marginBottom: '18px' 
-            }}>
-              <FaLayerGroup size={30} color="#004094" />
-            </div>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '10px', fontWeight: '700', color: '#111', lineHeight: '1.3' }}>
-              Heterogeneous<br/>3D Integration
-            </h3>
-            <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.95rem' }}>
-              Universal platform for stacking diverse functional layers vertically using <strong>freestanding nanomembranes</strong> without lattice constraints.
-            </p>
-          </div>
-
-          {/* Topic 3 */}
-          <div style={{ 
-            padding: '30px 25px', 
-            backgroundColor: '#fff', 
-            borderRadius: '16px', 
-            border: '1px solid #eee', 
-            boxShadow: '0 8px 25px rgba(0,0,0,0.04)', 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center' 
-          }}>
-            <div style={{ 
-              width: '65px', height: '65px', 
-              backgroundColor: '#eef4ff', 
-              borderRadius: '50%', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              marginBottom: '18px' 
-            }}>
-              <FaMicrochip size={30} color="#004094" />
-            </div>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '10px', fontWeight: '700', color: '#111', lineHeight: '1.3' }}>
-              Intelligent Sensors<br/>& Free-Form Electronics
-            </h3>
-            <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.95rem' }}>
-              <strong>AI-enabled sensing platforms</strong> (In-Sensor AI) capable of conforming to any shape for next-generation applications.
-            </p>
-          </div>
 
         </div>
       </div>
 
-      {/* 3. Latest News (슬림 버전) */}
-      <div style={{ backgroundColor: '#f8fafc', padding: '60px 20px' }}> {/* [수정] 90px -> 60px 패딩 축소 */}
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          
-          {/* 헤더 부분 여백 조정 */}
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            marginBottom: '30px' // [수정] 50px -> 30px 여백 축소
-          }}>
-            <h2 style={{ fontSize: '1.8rem', color: '#333', margin: 0, fontWeight: '800' }}>Latest News</h2>
-            <Link href="/news" style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '6px', 
-              color: '#004094', 
-              textDecoration: 'none', 
-              fontWeight: 'bold', 
-              fontSize: '1rem' // [수정] 1.1rem -> 1rem
-            }}>
+      {/* 2. Research Highlights */}
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>Research Highlights</h2>
+        <div className={styles.cardGrid}>
+          {researchTopics.map((topic, index) => (
+            <div key={index} className={styles.researchCard}>
+              <div className={styles.iconCircle}>
+                {topic.icon}
+              </div>
+              <h3 className={styles.cardTitle}>{topic.title}</h3>
+              <p className={styles.cardDesc}>{topic.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 3. Latest News */}
+      <div className={styles.newsBg}>
+        <div className={styles.newsInner}>
+          <div className={styles.newsHeader}>
+            <h2 className={styles.sectionTitle} style={{ margin: 0 }}>Latest News</h2>
+            <Link href="/news" className={styles.viewAll}>
               View All <FaArrowRight size={14} />
             </Link>
           </div>
-
-          {/* 뉴스 카드 그리드 */}
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-            gap: '20px' // [수정] 30px -> 20px 간격 축소
-          }}>
+          <div className={styles.cardGrid}>
             {latestNews.map((news) => (
-              <div key={news.id} style={{ 
-                backgroundColor: '#fff', 
-                padding: '25px', // [수정] 카드 내부 패딩 35px -> 25px 축소
-                borderRadius: '12px', 
-                boxShadow: '0 4px 15px rgba(0,0,0,0.03)', 
-                display: 'flex', 
-                flexDirection: 'column',
-                transition: 'transform 0.2s', 
-                border: '1px solid #eee'
-              }}>
-                <span style={{ 
-                  fontSize: '0.85rem', // [수정] 0.95 -> 0.85rem
-                  color: '#004094', 
-                  fontWeight: 'bold', 
-                  marginBottom: '8px', // [수정] 12px -> 8px
-                  display: 'block' 
-                }}>
-                  {news.date}
-                </span>
-                <h3 style={{ 
-                  fontSize: '1.1rem', // [수정] 1.25 -> 1.1rem
-                  marginBottom: '12px', // [수정] 20px -> 12px
-                  lineHeight: '1.4', 
-                  flexGrow: 1, 
-                  fontWeight: '700', 
-                  color: '#222'
-                }}>
-                  {news.title}
-                </h3>
-                <Link 
-                  href={`/news#news-${news.id}`} 
-                  style={{ 
-                    color: '#666', 
-                    textDecoration: 'none', 
-                    fontSize: '0.9rem', 
-                    fontWeight: '500', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '5px' 
-                  }}
-                >
-                  Read more <span style={{ fontSize: '0.7rem' }}>▶</span>
+              <div key={news.id} className={styles.newsCard}>
+                <span className={styles.newsDate}>{news.date}</span>
+                <h3 className={styles.newsTitle}>{news.title}</h3>
+                <Link href={`/news#news-${news.id}`} className={styles.readMore}>
+                  Read more <span style={{ fontSize: "0.7rem" }}>▶</span>
                 </Link>
               </div>
             ))}
