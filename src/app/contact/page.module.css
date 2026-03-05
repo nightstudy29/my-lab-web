@@ -1,0 +1,35 @@
+/* ✅ 이메일 링크 hover - onMouseOver/onMouseOut 대체 */
+.emailLink {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #004094;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.emailLink:hover {
+  border-bottom: 2px solid #004094;
+}
+
+/* ✅ Google Maps 링크 */
+.mapsLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: opacity 0.2s;
+}
+
+.mapsLink:hover {
+  opacity: 0.75;
+}
+
+/* ===== 모바일 대응 ===== */
+@media (max-width: 480px) {
+  .emailLink {
+    font-size: 1.2rem;
+  }
+}
