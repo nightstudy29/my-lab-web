@@ -234,7 +234,7 @@ export default function LabPortalPage() {
       </div>
 
       {/* ===== Tabs ===== */}
-      <div style={{ display: 'flex', gap: mobile ? '4px' : '20px', marginBottom: '30px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none' }}>
+      <div style={{ display: 'flex', gap: mobile ? '0px' : '20px', marginBottom: '30px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none', justifyContent: mobile ? 'space-between' : 'flex-start' }}>
         {[
           { id: 'manual', label: 'Newbie Guide', icon: <FaIcons.FaBookOpen /> },
           { id: 'rules', label: 'Lab Rules', icon: <FaIcons.FaGavel /> },
@@ -247,7 +247,7 @@ export default function LabPortalPage() {
           </button>
         ))}
         {user.role === 'admin' && (
-          <button onClick={() => setActiveTab('admin')} style={{ ...tabBtnStyle(activeTab === 'admin', true, mobile), marginLeft: 'auto' }}>
+          <button onClick={() => setActiveTab('admin')} style={tabBtnStyle(activeTab === 'admin', true, mobile)}>
             <MdAdminPanelSettings size={18} />
             {mobile ? <span style={{ fontSize: '0.7rem' }}>Admin</span> : 'Admin'}
           </button>
@@ -531,10 +531,19 @@ export default function LabPortalPage() {
                             {remain}일 남음 <span style={{ fontWeight: 'normal', color: '#999', fontSize: '0.75rem' }}>({usedCount}/7)</span>
                           </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '5px', marginBottom: '12px' }}>
+                        <div style={{ display: 'flex', gap: '5px', marginBottom: '12px', flexWrap: mobile ? 'wrap' : 'nowrap' }}>
                           {m.vacation.checks.map((isChecked, dayIdx) => (
                             <div key={dayIdx} onClick={() => handleCheckUpdate(originalIndex, dayIdx, isChecked)}
-                              style={{ flex: 1, height: '32px', backgroundColor: isChecked ? '#4dabf7' : '#fff', border: isChecked ? '1px solid #4dabf7' : '1px solid #dee2e6', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.8rem', transition: 'all 0.2s' }}>
+                              style={{ 
+                                flex: mobile ? '0 0 calc(25% - 4px)' : '1',
+                                minWidth: mobile ? '44px' : 'unset',
+                                height: mobile ? '44px' : '32px',
+                                backgroundColor: isChecked ? '#4dabf7' : '#fff',
+                                border: isChecked ? '1px solid #4dabf7' : '1px solid #dee2e6',
+                                borderRadius: '6px', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                color: 'white', fontSize: '1rem', transition: 'all 0.2s'
+                              }}>
                               {isChecked && <FaIcons.FaCheck />}
                             </div>
                           ))}
