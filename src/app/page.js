@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaArrowRight, FaAtom, FaLayerGroup, FaMicrochip } from "react-icons/fa6";
+import { FaArrowRight } from "react-icons/fa6";
 import newsData from "../data/news.json";
 import styles from "./page.module.css";
 
@@ -94,17 +94,17 @@ function ParticleCanvas() {
 // ===== 리서치 토픽 =====
 const researchTopics = [
   {
-    icon: <FaAtom size={28} color="#004094" />,
+    image: "/images/research/topic_1.png",
     title: <>Low-Dimensional Materials<br />& Nanostructures</>,
     desc: <>Synthesis of <strong>atomically thin membranes</strong> and <strong>functional nanostructures</strong> to engineer novel physical and chemical properties.</>,
   },
   {
-    icon: <FaLayerGroup size={28} color="#004094" />,
+    image: "/images/research/topic_2.jpg",
     title: <>Heterogeneous<br />3D Integration</>,
     desc: <>Universal platform for stacking diverse functional layers vertically using <strong>freestanding nanomembranes</strong> without lattice constraints.</>,
   },
   {
-    icon: <FaMicrochip size={28} color="#004094" />,
+    image: "/images/research/topic_3.jpg",
     title: <>Intelligent Sensors<br />& Free-Form Electronics</>,
     desc: <><strong>AI-enabled sensing platforms</strong> (In-Sensor AI) capable of conforming to any shape for next-generation applications.</>,
   },
@@ -219,9 +219,19 @@ export default function Home() {
         <div className={styles.cardGrid}>
           {researchTopics.map((topic, index) => (
             <div key={index} className={styles.researchCard}>
-              <div className={styles.iconCircle}>{topic.icon}</div>
-              <h3 className={styles.cardTitle}>{topic.title}</h3>
-              <p className={styles.cardDesc}>{topic.desc}</p>
+              <div className={styles.cardImageWrap}>
+                <Image
+                  src={topic.image}
+                  alt=""
+                  fill
+                  style={{ objectFit: "cover" }}
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
+              <div className={styles.cardBody}>
+                <h3 className={styles.cardTitle}>{topic.title}</h3>
+                <p className={styles.cardDesc}>{topic.desc}</p>
+              </div>
             </div>
           ))}
         </div>
