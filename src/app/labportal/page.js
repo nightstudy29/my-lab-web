@@ -234,7 +234,7 @@ export default function LabPortalPage() {
       </div>
 
       {/* ===== Tabs ===== */}
-      <div style={{ display: 'flex', gap: mobile ? '0px' : '20px', marginBottom: '30px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none' }}>
+      <div style={{ display: 'flex', gap: mobile ? '0px' : '20px', marginBottom: '30px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none', padding: mobile ? '0 4px' : '0' }}>
         {[
           { id: 'manual', label: 'Newbie Guide', icon: <FaIcons.FaBookOpen /> },
           { id: 'rules', label: 'Lab Rules', icon: <FaIcons.FaGavel /> },
