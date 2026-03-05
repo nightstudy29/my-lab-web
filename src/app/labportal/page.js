@@ -248,7 +248,7 @@ export default function LabPortalPage() {
         ))}
         {user.role === 'admin' && (
           <button onClick={() => setActiveTab('admin')} style={tabBtnStyle(activeTab === 'admin', true, mobile)}>
-            <MdAdminPanelSettings size={16} />
+            <FaIcons.FaUserShield />
             <span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>Admin</span>
           </button>
         )}
