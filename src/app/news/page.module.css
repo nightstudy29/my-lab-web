@@ -91,6 +91,7 @@
   min-width: 280px;
   background-color: #f8f9fa;
   border-right: 1px solid #f0f0f0;
+  flex-shrink: 0; /* 데스크탑: 이미지 너비 고정 */
 }
 
 .imageSlider {
@@ -358,12 +359,13 @@
     min-height: auto;
   }
 
-  /* 이미지 가로 꽉 채우기 */
+  /* 이미지 가로 꽉 채우기 - min-width 오버라이드 필수! */
   .imageContainer {
-    width: 100%;
-    min-width: 100%;
+    width: 100% !important;
+    min-width: 0 !important;  /* ✅ 핵심: 280px 고정값 무력화 */
     height: 220px;
     border-right: none;
     border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 1;
   }
 }

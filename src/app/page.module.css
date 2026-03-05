@@ -22,7 +22,7 @@
 
 /* ✅ 로고 - className으로 반응형 처리 (!important 없음) */
 .heroLogo {
-  height: 325px;
+  height: clamp(160px, 25vw, 325px); /* ✅ 모바일에서 자동 축소 */
   width: auto;
   object-fit: contain;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
@@ -50,6 +50,7 @@
   letter-spacing: -0.5px;
   line-height: 1.2;
   word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .heroDesc {
