@@ -326,3 +326,32 @@
     margin-bottom: 24px;
   }
 }
+
+/* ===== Research 카드 이미지 버전 ===== */
+.cardImageWrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  background: #eef4ff;
+}
+
+.cardBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 이미지 버전에서는 카드 align 왼쪽으로 */
+.researchCard:has(.cardImageWrap) {
+  align-items: flex-start;
+  text-align: left;
+  padding: 0;
+  overflow: hidden;
+}
+
+.researchCard:has(.cardImageWrap) .cardBody {
+  padding: 20px 24px 24px;
+}
