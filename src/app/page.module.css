@@ -1,141 +1,317 @@
-.page {
-  --background: #fafafa;
-  --foreground: #fff;
-
-  --text-primary: #000;
-  --text-secondary: #666;
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
-
+/* ===== Hero Section ===== */
+.hero {
+  min-height: 420px;
+  background: linear-gradient(135deg, #002b5e 0%, #004094 100%);
   display: flex;
-  min-height: 100vh;
-  align-items: center;
   justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  align-items: center;
+  color: #fff;
+  padding: 40px 20px;
 }
 
-.main {
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
-  max-width: 800px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
-}
-
-.intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
-}
-
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
-  font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
-}
-
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
-  color: var(--text-secondary);
-}
-
-.intro a {
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.ctas {
+.heroInner {
   display: flex;
   flex-direction: row;
-  width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
-}
-
-.ctas a {
-  display: flex;
-  justify-content: center;
   align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
-  cursor: pointer;
-  width: fit-content;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ✅ 로고 - className으로 반응형 처리 (!important 없음) */
+.heroLogo {
+  height: 325px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+}
+
+/* ✅ 텍스트 영역 - className으로 반응형 처리 */
+.heroText {
+  text-align: left;
+  max-width: 650px;
+}
+
+.heroSubtitle {
+  font-size: 1.05rem;
   font-weight: 500;
+  color: #cce0ff;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
-  gap: 8px;
+.heroTitle {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  word-break: keep-all;
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.heroDesc {
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  opacity: 0.9;
+  margin-bottom: 30px;
+  line-height: 1.6;
 }
 
-/* Enable hover only on non-touch devices */
+.btnGroup {
+  display: flex;
+  gap: 15px;
+}
+
+.btnPrimary {
+  padding: 12px 30px;
+  background-color: #fff;
+  color: #004094;
+  border-radius: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.btnOutline {
+  padding: 12px 30px;
+  border: 2px solid #fff;
+  color: #fff;
+  border-radius: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+/* ===== 공통 섹션 ===== */
+.section {
+  padding: 60px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: #333;
+  font-weight: 800;
+}
+
+/* ===== 카드 그리드 ===== */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+/* ===== Research Cards ===== */
+.researchCard {
+  padding: 30px 25px;
+  background-color: #fff;
+  border-radius: 16px;
+  border: 1px solid #eee;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.iconCircle {
+  width: 65px;
+  height: 65px;
+  background-color: #eef4ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.cardDesc {
+  color: #666;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* ===== News Section ===== */
+.newsBg {
+  background-color: #f8fafc;
+  padding: 60px 20px;
+}
+
+.newsInner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.newsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.viewAll {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #004094;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: gap 0.2s;
+}
+
+.newsCard {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #eee;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.newsDate {
+  font-size: 0.85rem;
+  color: #004094;
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.newsTitle {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  line-height: 1.4;
+  flex-grow: 1;
+  font-weight: 700;
+  color: #222;
+}
+
+.readMore {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.2s;
+}
+
+/* ===== Hover (터치 아닌 기기에서만) ===== */
 @media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
+  .btnPrimary:hover {
+    background-color: #e8f0fe;
+    transform: translateY(-2px);
   }
 
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
+  .btnOutline:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .researchCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .newsCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .viewAll:hover {
+    gap: 10px;
+  }
+
+  .readMore:hover {
+    color: #004094;
   }
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
+/* ===== 태블릿 / 모바일 (768px 이하) ===== */
+@media (max-width: 768px) {
+  .heroInner {
+    flex-direction: column;
+    gap: 30px;
   }
 
-  .intro {
+  /* 로고 크기 축소 */
+  .heroLogo {
+    height: 200px;
+  }
+
+  /* 텍스트 중앙 정렬 */
+  .heroText {
+    text-align: center;
+  }
+
+  /* br 태그 숨김 (모바일에서 자연스럽게 줄바꿈) */
+  .heroDesc br,
+  .heroTitle br {
+    display: none;
+  }
+
+  /* 버튼 중앙 정렬 */
+  .btnGroup {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .section {
+    padding: 40px 16px;
+  }
+
+  .sectionTitle {
+    font-size: 1.6rem;
+    margin-bottom: 24px;
+  }
+
+  /* 카드 1열 */
+  .cardGrid {
+    grid-template-columns: 1fr;
     gap: 16px;
   }
 
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
+  .newsBg {
+    padding: 40px 16px;
+  }
+
+  .newsHeader {
+    margin-bottom: 20px;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
+/* ===== 소형 모바일 (480px 이하) ===== */
+@media (max-width: 480px) {
+  .heroLogo {
+    height: 160px;
   }
 
-  .page {
-    --background: #000;
-    --foreground: #000;
+  .heroSubtitle {
+    font-size: 0.85rem;
+  }
 
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
+  .btnPrimary,
+  .btnOutline {
+    padding: 10px 20px;
+    font-size: 0.9rem;
   }
 }

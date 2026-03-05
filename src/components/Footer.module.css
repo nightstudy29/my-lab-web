@@ -1,0 +1,74 @@
+/* ✅ 인라인 스타일 → CSS 모듈로 분리 (유지보수 용이) */
+
+.footer {
+  background-color: #002b5e;
+  color: #fff;
+  padding: 40px 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: nowrap; /* 줄바꿈 방지 */
+}
+
+.logoWrapper {
+  flex-shrink: 0;
+}
+
+.info {
+  text-align: left;
+  flex-shrink: 1;
+  min-width: 0; /* flexbox 안에서 텍스트 줄바꿈 정상 작동 */
+}
+
+.labName {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  font-weight: 700;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.labDesc {
+  font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+  color: #ccd6f6;
+  line-height: 1.4;
+  margin: 0;
+  word-break: keep-all;
+}
+
+.labDesc span {
+  font-size: 0.9em;
+}
+
+.copyright {
+  font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+/* ===== 모바일 대응 ===== */
+@media (max-width: 480px) {
+  .footer {
+    padding: 30px 15px;
+  }
+
+  .inner {
+    flex-wrap: wrap; /* 아주 작은 화면에서는 줄바꿈 허용 */
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .info {
+    text-align: center;
+  }
+}

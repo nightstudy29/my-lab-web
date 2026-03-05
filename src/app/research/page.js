@@ -68,7 +68,7 @@ function ResearchSection({ item, index }) {
         boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
         borderRadius: '16px',
         overflow: 'hidden',
-        // 높이 자동 조절을 위해 별도 높이 지정 안 함
+        // 높이 자동 조절을 위해 별도 높이 지정 안함
       }}>
         <img 
           src={item.image} 
