@@ -521,37 +521,44 @@ export default function LabPortalPage() {
                     const usedCount = m.vacation.checks.filter(Boolean).length;
                     const remain = 7 - usedCount;
                     return (
-                      <div key={mIdx} style={{ ...guideCardStyle, flexDirection: 'block', borderTop: remain === 0 ? '4px solid #d32f2f' : '4px solid #4dabf7' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <div key={mIdx} style={{ 
+                        padding: '16px', background: '#fff',
+                        border: '1px solid #e9ecef', borderRadius: '12px',
+                        borderTop: remain === 0 ? '4px solid #d32f2f' : '4px solid #4dabf7',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+                      }}>
+                        {/* 1행: 이름 + 몇일 남음 */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                           <div>
                             <span style={{ fontSize: '1rem', fontWeight: 'bold', color: '#333' }}>{m.nameKor}</span>
-                            <span style={{ fontSize: '0.8rem', color: '#888', marginLeft: '6px' }}>{m.position}</span>
+                            <span style={{ fontSize: '0.75rem', color: '#888', marginLeft: '6px' }}>{m.position}</span>
                           </div>
-                          <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: remain === 0 ? '#d32f2f' : '#004094' }}>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: remain === 0 ? '#d32f2f' : '#004094', whiteSpace: 'nowrap', marginLeft: '8px' }}>
                             {remain}일 남음 <span style={{ fontWeight: 'normal', color: '#999', fontSize: '0.75rem' }}>({usedCount}/7)</span>
                           </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', justifyContent: 'space-between' }}>
+                        {/* 2행: 체크박스 7개 */}
+                        <div style={{ display: 'flex', gap: '5px', marginBottom: '10px' }}>
                           {m.vacation.checks.map((isChecked, dayIdx) => (
                             <div key={dayIdx} onClick={() => handleCheckUpdate(originalIndex, dayIdx, isChecked)}
                               style={{ 
                                 flex: 1,
-                                minWidth: '32px',
-                                height: '44px',
+                                height: '40px',
                                 backgroundColor: isChecked ? '#4dabf7' : '#fff',
                                 border: isChecked ? '2px solid #4dabf7' : '2px solid #dee2e6',
-                                borderRadius: '8px', cursor: 'pointer',
+                                borderRadius: '6px', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                color: '#fff', fontSize: '1rem', transition: 'all 0.2s',
+                                color: '#fff', transition: 'all 0.2s',
                               }}>
-                              {isChecked && <FaIcons.FaCheck size={14} />}
+                              {isChecked && <FaIcons.FaCheck size={12} />}
                             </div>
                           ))}
                         </div>
+                        {/* 메모 */}
                         <input type="text" placeholder="휴가일자 기록 (예: 8/15-18)" value={m.vacation.memo}
                           onChange={(e) => handleMemoChange(e, originalIndex)}
                           onBlur={(e) => handleMemoSave(originalIndex, e.target.value)}
-                          style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #eee', background: '#f8f9fa', fontSize: '0.85rem', outline: 'none', boxSizing: 'border-box', color: '#555' }} />
+                          style={{ width: '100%', padding: '7px 10px', borderRadius: '6px', border: '1px solid #eee', background: '#f8f9fa', fontSize: '0.85rem', outline: 'none', boxSizing: 'border-box', color: '#555' }} />
                       </div>
                     );
                   })}
