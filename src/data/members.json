@@ -74,9 +74,9 @@
       "id": 101,
       "name": "Chaehyeon Kwak",
       "period": "Summer 2025",
-      "program": "SNUMSE",
+      "program": "MSE Intern",
       "achievements": [
-        { "type": "award", "title": "Best Poster Award", "url": "https://mse.snu.ac.kr/2025%eb%85%84-%ec%9e%ac%eb%a3%8c%ea%b3%b5%ed%95%99%eb%b6%80-%ed%95%99%eb%b6%80%ec%83%9d-%ec%97%ac%eb%a6%84-%ec%9d%b8%ed%84%b4%ed%94%84%eb%a1%9c%ea%b7%b8%eb%9e%a8-%ec%9a%b0%ec%88%98-%ec%9d%b8%ed%84%b4/" },
+        { "type": "award", "title": "Best Intern Award", "url": "https://mse.snu.ac.kr/2025%eb%85%84-%ec%9e%ac%eb%a3%8c%ea%b3%b5%ed%95%99%eb%b6%80-%ed%95%99%eb%b6%80%ec%83%9d-%ec%97%ac%eb%a6%84-%ec%9d%b8%ed%84%b4%ed%94%84%eb%a1%9c%ea%b7%b8%eb%9e%a8-%ec%9a%b0%ec%88%98-%ec%9d%b8%ed%84%b4/" },
         { "type": "paper", "title": "Published Paper", "url": "https://iopscience.iop.org/article/10.1088/2634-4386/ae294e"}
       ]
     },
@@ -84,7 +84,7 @@
       "id": 102,
       "name": "Keunpyo Park",
       "period": "Summer 2025",
-      "program": "SNUMSE",
+      "program": "MSE Intern",
       "achievements": [
         { "type": "paper", "title": "Paper Title", "url": "https://iopscience.iop.org/article/10.1088/2634-4386/ae294e" }
       ]
@@ -93,35 +93,37 @@
       "id": 103,
       "name": "Jihwan Kim",
       "period": "Fall 2025",
-      "program": "SNUMSE",
-      "achievements": []
+      "program": "445.408A",
+      "achievements": [
+                { "type": "award", "title": "Best Intern Award", "url": "" }
+      ]
     },
     {
       "id": 104,
       "name": "Jungwon Yoon",
       "period": "Winter 2025",
-      "program": "SNUTI",
+      "program": "TI Intern",
       "achievements": []
     },
     {
       "id": 105,
       "name": "Ye Eun Jang",
       "period": "Winter 2025",
-      "program": "SNUTI",
+      "program": "TI Intern",
       "achievements": []
     },
     {
       "id": 106,
       "name": "Jaegyeong Jeong",
       "period": "Winter 2025",
-      "program": "SNUMSE",
+      "program": "MSE Intern",
       "achievements": []
     },
     {
       "id": 107,
       "name": "Changmin Yun",
       "period": "Winter 2025",
-      "program": "SNUMSE",
+      "program": "MSE Intern",
       "achievements": []
     }
   ]
