@@ -241,7 +241,7 @@ export default function PublicationsPage() {
       </div>
 
       {/* ===== 연도 네비게이션 (News와 동일 스타일) ===== */}
-      <div style={{
+      <div className="pubYearNav" style={{
         width: '120px',
         minWidth: '120px',
         flexShrink: 0,
@@ -302,12 +302,10 @@ export default function PublicationsPage() {
         </div>
       </div>
 
-      {/* 모바일에서 네비 숨김 */}
-      <style jsx>{`
+      {/* 모바일에서 네비 숨김 - globals.css에서 처리 */}
+      <style>{`
         @media (max-width: 1080px) {
-          div[style*="min-width: 120px"] {
-            display: none !important;
-          }
+          .pubYearNav { display: none !important; }
         }
       `}</style>
 
