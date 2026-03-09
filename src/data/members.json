@@ -64,6 +64,16 @@
       "area": "Co-advisor: Dr. Ki Chang Kwon (KRISS)",
       "image": "/members/jeonginbae.jpeg",
       "links": { "cv": "", "googleScholar": "", "linkedin": "", "orcid": "" }
+    },
+    {
+      "id": 100,
+      "name": "Mi Kyung Choi",
+      "role": "Administrative Staff",
+      "joined": "",
+      "email": "mkchoi01@snu.ac.kr",
+      "area": "",
+      "image": "",
+      "links": { "cv": "", "googleScholar": "", "linkedin": "", "orcid": "" }
     }
   ],
   "alumni": [
