@@ -24,7 +24,7 @@ function ParticleCanvas() {
     window.addEventListener("resize", resize);
 
     // 파티클 생성
-    const particles = Array.from({ length: 60 }, () => ({
+    const particles = Array.from({ length: 120 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.4,
@@ -214,7 +214,6 @@ export default function Home() {
 
       {/* ===== Research Highlights ===== */}
       <div className={styles.section}>
-        <div className={styles.sectionLabel}>What We Do</div>
         <h2 className={styles.sectionTitle}>Research Highlights</h2>
         <div className={styles.cardGrid}>
           {researchTopics.map((topic, index) => (
@@ -242,7 +241,6 @@ export default function Home() {
         <div className={styles.newsInner}>
           <div className={styles.newsHeader}>
             <div>
-              <div className={styles.sectionLabel} style={{ color: "#004094" }}>Stay Updated</div>
               <h2 className={styles.sectionTitle} style={{ margin: 0 }}>Latest News</h2>
             </div>
             <Link href="/news" className={styles.viewAll}>

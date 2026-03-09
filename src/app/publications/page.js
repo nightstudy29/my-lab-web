@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useMemo, useEffect, useRef } from "react";
-import { FaNewspaper, FaMagnifyingGlass } from "react-icons/fa6";
+import { FaNewspaper } from "react-icons/fa6";
 import papers from '../../data/papers.json';
 import patents from '../../data/patents.json';
 
@@ -107,33 +107,20 @@ function PatentItem({ item }) {
 
 // ✅ 메인 페이지
 export default function PublicationsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("papers");
-  const [searchFocused, setSearchFocused] = useState(false);
   const [activeYear, setActiveYear] = useState(String(new Date().getFullYear()));
 
   const currentData = activeTab === 'papers' ? papers : patents;
 
   const groupedData = useMemo(() => {
-    const filtered = currentData.filter((item) => {
-      const query = searchTerm.toLowerCase();
-      return (
-        item.title.toLowerCase().includes(query) ||
-        (item.authors && item.authors.toLowerCase().includes(query)) ||
-        (item.inventors && item.inventors.toLowerCase().includes(query)) ||
-        (item.conference && item.conference.toLowerCase().includes(query)) ||
-        (item.number && item.number.toLowerCase().includes(query)) ||
-        String(item.year).includes(query)
-      );
-    });
-    const groups = filtered.reduce((acc, item) => {
+    const groups = currentData.reduce((acc, item) => {
       if (!acc[item.year]) acc[item.year] = [];
       acc[item.year].push(item);
       return acc;
     }, {});
     const sortedYears = Object.keys(groups).sort((a, b) => b - a);
-    return { groups, sortedYears, totalCount: filtered.length };
-  }, [currentData, searchTerm]);
+    return { groups, sortedYears };
+  }, [currentData]);
 
   // 스크롤 감지
   useEffect(() => {
@@ -158,7 +145,6 @@ export default function PublicationsPage() {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setSearchTerm('');
     setActiveYear(String(new Date().getFullYear()));
   };
 
@@ -186,26 +172,7 @@ export default function PublicationsPage() {
               </button>
             ))}
           </div>
-          <p style={{ color: '#666', fontSize: '1rem', marginBottom: '20px' }}>
-            Total {activeTab === 'papers' ? 'Papers' : 'Patents'}: <strong>{currentData.length}</strong>
-            {searchTerm && ` (Found: ${groupedData.totalCount})`}
-          </p>
-          <div style={{ position: 'relative', maxWidth: '500px', display: 'flex', alignItems: 'center' }}>
-            <FaMagnifyingGlass style={{ position: 'absolute', left: '15px', color: '#888', pointerEvents: 'none' }} />
-            <input
-              type="text"
-              placeholder={activeTab === 'papers' ? "Search papers..." : "Search patents..."}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setSearchFocused(false)}
-              style={{
-                width: '100%', padding: '12px 15px 12px 45px', fontSize: '1rem',
-                border: `2px solid ${searchFocused ? '#004094' : '#e0e0e0'}`,
-                borderRadius: '30px', outline: 'none', transition: 'border-color 0.2s'
-              }}
-            />
-          </div>
+
         </div>
 
         {/* 리스트 */}
@@ -235,7 +202,7 @@ export default function PublicationsPage() {
           ))
         ) : (
           <div style={{ padding: '50px 0', textAlign: 'center', color: '#888', fontSize: '1.2rem' }}>
-            No {activeTab} found matching &quot;{searchTerm}&quot;.
+            No {activeTab} found.
           </div>
         )}
       </div>
@@ -246,7 +213,7 @@ export default function PublicationsPage() {
         minWidth: '120px',
         flexShrink: 0,
       }}>
-        <div style={{ position: 'sticky', top: '120px', marginTop: '10px' }}>
+        <div style={{ position: 'sticky', top: '120px', marginTop: '300px' }}>
           <div style={{ position: 'relative', paddingLeft: '20px' }}>
 
             {/* 세로선 */}
@@ -268,6 +235,7 @@ export default function PublicationsPage() {
                         display: 'flex', alignItems: 'center', gap: '15px',
                         background: 'none', border: 'none', padding: 0,
                         cursor: hasData ? 'pointer' : 'default', textDecoration: 'none',
+                        font: 'inherit',
                       }}
                     >
                       {/* 도트 */}
@@ -283,13 +251,19 @@ export default function PublicationsPage() {
                         flexShrink: 0,
                       }} />
                       {/* 연도 텍스트 */}
-                      <span style={{
+                      <span style={isActive ? {
                         fontSize: '0.95rem',
-                        fontWeight: isActive ? '800' : '500',
-                        color: isActive ? '#004094' : '#adb5bd',
-                        transform: isActive ? 'translateX(5px)' : 'translateX(0)',
-                        display: 'inline-block',
+                        fontWeight: '800',
+                        color: '#004094',
                         transition: 'all 0.3s ease',
+                        transform: 'translateX(5px)',
+                        display: 'inline-block',
+                      } : {
+                        fontSize: '0.95rem',
+                        fontWeight: '500',
+                        color: '#adb5bd',
+                        transition: 'all 0.3s ease',
+                        display: 'inline-block',
                       }}>
                         {year}
                       </span>
