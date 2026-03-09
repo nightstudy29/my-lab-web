@@ -1,0 +1,36 @@
+/* ===== 헤더 ===== */
+.header {
+  background-color: #f8f9fa;
+  padding: 80px 20px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.title {
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  margin-bottom: 15px;
+  color: #333;
+  font-weight: 800;
+}
+
+.subtitle {
+  font-size: clamp(1rem, 3vw, 1.1rem);
+  color: #666;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ===== 연구 주제 리스트 컨테이너 ===== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+/* ===== 모바일 대응 ===== */
+@media (max-width: 768px) {
+  .header {
+    padding: 50px 20px;
+  }
+}

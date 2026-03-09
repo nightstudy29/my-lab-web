@@ -1,0 +1,150 @@
+/* ===== 전체 래퍼 ===== */
+.wrapper {
+  padding: 60px 20px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.loading {
+  padding: 60px;
+  text-align: center;
+}
+
+/* ===== 섹션 ===== */
+.section {
+  margin-bottom: 80px;
+}
+
+.sectionTitleLarge {
+  margin-bottom: 40px;
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 800;
+  color: #222;
+}
+
+.sectionTitle {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  font-size: clamp(1.5rem, 4vw, 1.8rem);
+  color: #333;
+}
+
+.emptyText {
+  color: #888;
+  font-style: italic;
+}
+
+/* ===== Members 그리드 ===== */
+.membersGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .membersGrid {
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 25px;
+  }
+}
+
+/* ===== Alumni 그리드 ===== */
+.alumniGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.alumniCard {
+  padding: 12px 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #444;
+}
+
+/* ===== Interns 그리드 ===== */
+.internGrid {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+  gap: 8px;
+}
+
+.internCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.internTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.internName {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #333;
+  letter-spacing: -0.3px;
+}
+
+.internIcons {
+  display: flex;
+  gap: 3px;
+}
+
+.internIconLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.internBottom {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.internProgram {
+  align-self: flex-start;
+  color: #555;
+  background-color: #f1f3f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.internPeriod {
+  color: #999;
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
+
+/* ===== 모바일 대응 ===== */
+@media (max-width: 480px) {
+  .wrapper {
+    padding: 40px 16px;
+  }
+
+  .section {
+    margin-bottom: 50px;
+  }
+
+  .internGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
