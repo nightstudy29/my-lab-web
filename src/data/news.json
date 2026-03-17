@@ -36,5 +36,17 @@
       "/images/news/2026-01-06 14.52.39.jpg",
       "/images/news/2026-01-06 14.52.45.jpg"
     ]
+  },
+  {
+    "id": 20260313,
+    "date": "2026-03-13",
+    "category": "Group Outing",
+    "title": "연구실 회식",
+    "description": "개강 맞이 연구실 회식을 진행했습니다.",
+    "link": "",
+    "images": [
+      "/images/news/2026-03-13-1.jpg",
+      "/images/news/2026-03-13-2.jpg"
+    ]
   }
 ]
