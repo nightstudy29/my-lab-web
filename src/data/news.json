@@ -48,5 +48,18 @@
       "/images/news/2026-03-13-1.jpg",
       "/images/news/2026-03-13-2.jpg"
     ]
+  },
+  {
+    "id": 20260319,
+    "date": "2026-03-19",
+    "category": "Award",
+    "title": "조윤행 박사과정 학생 한국센서학회 최우수발표논문상 수상",
+    "description": "조윤행 박사과정 학생이 2026년 한국센서학회 춘계학술대회 최우수발표논문 상을 수상했습니다.",
+    "link": "",
+    "images": [
+      "/images/news/2026-03-19-1.jpg",
+      "/images/news/2026-03-19-2.jpg",
+      "/images/news/2026-03-19-3.jpg"
+    ]
   }
 ]
