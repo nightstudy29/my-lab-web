@@ -111,8 +111,8 @@
     {
       "id": 104,
       "name": "Jungwon Yoon",
-      "period": "Winter 2025",
-      "program": "TI Intern",
+      "period": "Winter 2025, Spring 2026",
+      "program": "TI Intern, M3637.002300",
       "achievements": []
     },
     {
@@ -134,6 +134,27 @@
       "name": "Changmin Yun",
       "period": "Winter 2025",
       "program": "MSE Intern",
+      "achievements": []
+    },
+    {
+      "id": 108,
+      "name": "Chan Hyung Lee",
+      "period": "Spring 2025",
+      "program": "445.408A, M3637.002300",
+      "achievements": []
+    },
+    {
+      "id": 109,
+      "name": "Do Gyu Gong",
+      "period": "Spring 2025",
+      "program": "M3637.002300",
+      "achievements": []
+    },
+    {
+      "id": 110,
+      "name": "Sehee Park",
+      "period": "Spring 2025",
+      "program": "M3637.002300",
       "achievements": []
     }
   ]
