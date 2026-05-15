@@ -55,7 +55,7 @@ export default function MembersPage() {
                   {intern.achievements?.length > 0 && (
                     <div className={styles.internIcons}>
                       {intern.achievements.map((ach, idx) => (
-                          <a
+                        <a
                           key={idx}
                           href={ach.url}
                           target="_blank"
@@ -71,13 +71,17 @@ export default function MembersPage() {
                   )}
                 </div>
 
-                {/* participations 순회 */}
-                {intern.participations?.map((p, idx) => (
-                  <div key={idx} className={styles.internBottom}>
-                    <span className={styles.internProgram}>{p.program}</span>
-                    <span className={styles.internPeriod}>{p.period}</span>
-                  </div>
-                ))}
+                {/* program 배지 */}
+                <div className={styles.internPrograms}>
+                  {intern.participations?.map((p, idx) => (
+                    <span key={idx} className={styles.internProgram}>{p.program}</span>
+                  ))}
+                </div>
+
+                {/* period 모아서 한 줄 */}
+                <div className={styles.internPeriod}>
+                  {[...new Set(intern.participations?.map((p) => p.period))].join(', ')}
+                </div>
 
               </li>
             ))}
