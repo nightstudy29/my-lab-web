@@ -79,84 +79,97 @@
   "alumni": [
     
   ],
+
+
   "interns": [
-    {
-      "id": 101,
-      "name": "Chaehyeon Kwak",
-      "period": "Summer 2025",
-      "program": "MSE Intern",
-      "achievements": [
-        { "type": "award", "title": "Best Intern Award", "url": "https://mse.snu.ac.kr/2025%eb%85%84-%ec%9e%ac%eb%a3%8c%ea%b3%b5%ed%95%99%eb%b6%80-%ed%95%99%eb%b6%80%ec%83%9d-%ec%97%ac%eb%a6%84-%ec%9d%b8%ed%84%b4%ed%94%84%eb%a1%9c%ea%b7%b8%eb%9e%a8-%ec%9a%b0%ec%88%98-%ec%9d%b8%ed%84%b4/" },
-        { "type": "paper", "title": "Published Paper", "url": "https://iopscience.iop.org/article/10.1088/2634-4386/ae294e"}
-      ]
-    },
-    {
-      "id": 102,
-      "name": "Keunpyo Park",
-      "period": "Summer 2025",
-      "program": "MSE Intern",
-      "achievements": [
-        { "type": "paper", "title": "Paper Title", "url": "https://iopscience.iop.org/article/10.1088/2634-4386/ae294e" }
-      ]
-    },
-    {
-      "id": 103,
-      "name": "Jihwan Kim",
-      "period": "Fall 2025",
-      "program": "445.408A",
-      "achievements": [
-                { "type": "award", "title": "Best Intern Award"}
-      ]
-    },
-    {
-      "id": 104,
-      "name": "Jungwon Yoon",
-      "period": "Winter 2025",
-      "period": "Spring 2026",
-      "program": "TI Intern, M3637.002300",
-      "achievements": []
-    },
-    {
-      "id": 105,
-      "name": "Ye Eun Jang",
-      "period": "Winter 2025",
-      "program": "TI Intern",
-      "achievements": []
-    },
-    {
-      "id": 106,
-      "name": "Jaegyeong Jeong",
-      "period": "Winter 2025",
-      "program": "MSE Intern",
-      "achievements": []
-    },
-    {
-      "id": 107,
-      "name": "Changmin Yun",
-      "period": "Winter 2025",
-      "program": "MSE Intern",
-      "achievements": []
-    },
-    {
-      "id": 108,
-      "name": "Chan Hyung Lee",
-      "period": "Spring 2025",
-      "program": "445.408A, M3637.002300",
-      "achievements": []
-    },
-    {
-      "id": 109,
-      "name": "Do Gyu Gong",
-      "period": "Spring 2025",
-      "program": "M3637.002300",
-      "achievements": []
-    },
-    {
-      "id": 110,
-      "name": "Sehee Park",
-      "period": "Spring 2025",
-      "program": "M3637.002300",
-      "achievements": []
-    }
-  ]
+  {
+    "id": 101,
+    "name": "Chaehyeon Kwak",
+    "participations": [
+      { "period": "Summer 2025", "program": "MSE Intern" }
+    ],
+    "achievements": [
+      { "type": "award", "title": "Best Intern Award", "url": "https://mse.snu.ac.kr/2025%eb%85%84-%ec%9e%ac%eb%a3%8c%ea%b3%b5%ed%95%99%eb%b6%80-%ed%95%99%eb%b6%80%ec%83%9d-%ec%97%ac%eb%a6%84-%ec%9d%b8%ed%84%b4%ed%94%84%eb%a1%9c%ea%b7%b8%eb%9e%a8-%ec%9a%b0%ec%88%98-%ec%9d%b8%ed%84%b4/" },
+      { "type": "paper", "title": "Published Paper", "url": "https://iopscience.iop.org/article/10.1088/2634-4386/ae294e" }
+    ]
+  },
+  {
+    "id": 102,
+    "name": "Keunpyo Park",
+    "participations": [
+      { "period": "Summer 2025", "program": "MSE Intern" }
+    ],
+    "achievements": [
+      { "type": "paper", "title": "Paper Title", "url": "https://iopscience.iop.org/article/10.1088/2634-4386/ae294e" }
+    ]
+  },
+  {
+    "id": 103,
+    "name": "Jihwan Kim",
+    "participations": [
+      { "period": "Fall 2025", "program": "445.408A" }
+    ],
+    "achievements": [
+      { "type": "award", "title": "Best Intern Award" }
+    ]
+  },
+  {
+    "id": 104,
+    "name": "Jungwon Yoon",
+    "participations": [
+      { "period": "Winter 2025", "program": "TI Intern" },
+      { "period": "Spring 2026", "program": "M3637.002300" }
+    ],
+    "achievements": []
+  },
+  {
+    "id": 105,
+    "name": "Ye Eun Jang",
+    "participations": [
+      { "period": "Winter 2025", "program": "TI Intern" }
+    ],
+    "achievements": []
+  },
+  {
+    "id": 106,
+    "name": "Jaegyeong Jeong",
+    "participations": [
+      { "period": "Winter 2025", "program": "MSE Intern" }
+    ],
+    "achievements": []
+  },
+  {
+    "id": 107,
+    "name": "Changmin Yun",
+    "participations": [
+      { "period": "Winter 2025", "program": "MSE Intern" }
+    ],
+    "achievements": []
+  },
+  {
+    "id": 108,
+    "name": "Chan Hyung Lee",
+    "participations": [
+      { "period": "Spring 2026", "program": "445.408A" },
+      { "period": "Spring 2026", "program": "M3637.002300" }
+    ],
+    "achievements": []
+  },
+  {
+    "id": 109,
+    "name": "Do Gyu Gong",
+    "participations": [
+      { "period": "Spring 2026", "program": "M3637.002300" }
+    ],
+    "achievements": []
+  },
+  {
+    "id": 110,
+    "name": "Sehee Park",
+    "participations": [
+      { "period": "Spring 2026", "program": "M3637.002300" }
+    ],
+    "achievements": []
+  }
+]
 }
