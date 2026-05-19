@@ -61,5 +61,18 @@
       "/images/news/2026-03-19-2.png",
       "/images/news/2026-03-19-3.png"
     ]
+  },
+  {
+    "id": 20260515,
+    "date": "2026-05-15",
+    "category": "Group Outing",
+    "title": "2026 Teacher Appreciation Day",
+    "description": "2026 스승의 날. 앞으로 더 좋은 날이 계속되기를",
+    "link": "",
+    "images": [
+      "/images/news/2026-05-15 11.44.20.jpg",
+      "/images/news/2026-05-15 10.08.00.jpg",
+      "/images/news/2026-05-15 10.07.42.jpg"
+    ]
   }
 ]
