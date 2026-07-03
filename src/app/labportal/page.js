@@ -217,7 +217,7 @@ export default function LabPortalPage() {
             <div style={shortcutSubStyle}>교수님 포함 톡방</div>
           </div>
         </a>
-        <a href="#" target="_blank" style={cardLinkStyle(mobile)}>
+        <a href="https://open.kakao.com/o/g62RoPAi" target="_blank" style={cardLinkStyle(mobile)}>
           <div style={shortcutIconStyle}><SiKakaotalk /></div>
           <div>
             <div style={shortcutTitleStyle}>Kakao (학생)</div>
