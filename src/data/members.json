@@ -151,7 +151,8 @@
     "name": "Chan Hyung Lee",
     "participations": [
       { "period": "Spring 2026", "program": "445.408A" },
-      { "period": "Spring 2026", "program": "M3637.002300" }
+      { "period": "Spring 2026", "program": "M3637.002300" },
+      { "period": "Summer 2026", "program": "" }
     ],
     "achievements": []
   },
@@ -168,6 +169,30 @@
     "name": "Sehee Park",
     "participations": [
       { "period": "Spring 2026", "program": "M3637.002300" }
+    ],
+    "achievements": []
+  },
+  {
+    "id": 111,
+    "name": "Jin Young Eom",
+    "participations": [
+      { "period": "Summer 2026", "program": "MSE Intern" }
+    ],
+    "achievements": []
+  },
+  {
+    "id": 112,
+    "name": "Dong Geon Kim",
+    "participations": [
+      { "period": "Summer 2026", "program": "MSE Intern" }
+    ],
+    "achievements": []
+  },
+  {
+    "id": 113,
+    "name": "Ganghui Noh",
+    "participations": [
+      { "period": "Summer 2026", "program": "TI Intern" }
     ],
     "achievements": []
   }
