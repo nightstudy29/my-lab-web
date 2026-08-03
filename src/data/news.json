@@ -7,6 +7,17 @@
     "description": "SMID(Semiconductor Materials for Intelligent Devices), 지능형 반도체 소자 재료 연구실의 홈페이지가 공식적으로 오픈되었습니다."
   },
   {
+    "id": 20250827,
+    "date": "2025-08-27",
+    "category": "Award",
+    "title": "2025년 우수신진연구(씨앗연구) 과제 수주",
+    "description": "본 연구실은 2025년 개인기초연구 우수신진연구(씨앗연구) (과학기술정보통신부) 과제를 수주하였습니다.",
+    "link": "",
+    "images": [
+      "/images/news/trophy.jpg"
+    ]
+  },
+  {
     "id": 20251217,
     "date": "2025-12-17",
     "category": "Paper Accepted",
@@ -35,6 +46,17 @@
       "/images/news/2026-01-06 15.57.00.jpg",
       "/images/news/2026-01-06 14.52.39.jpg",
       "/images/news/2026-01-06 14.52.45.jpg"
+    ]
+  },
+  {
+    "id": 20260226,
+    "date": "2026-02-26",
+    "category": "Award",
+    "title": "2026년 신진연구자 인프라 지원사업 과제 수주",
+    "description": "본 연구실은 2026년 개인기초연구 신진연구자 인프라 지원 사업 (과학기술정보통신부) 과제를 수주하였습니다.",
+    "link": "",
+    "images": [
+      "/images/news/trophy.jpg"
     ]
   },
   {
@@ -84,6 +106,28 @@
     "link": "",
     "images": [
       "/images/news/2026-05-25.jpg"
+    ]
+  },
+  {
+    "id": 20260703,
+    "date": "2026-07-03",
+    "category": "Award",
+    "title": "2026년 창의선도 신진연구자 지원사업 과제 수주",
+    "description": "본 연구실은 2026년 창의선도 신진연구자 지원사업 (서울대학교) 과제를 수주하였습니다.",
+    "link": "",
+    "images": [
+      "/images/news/trophy.jpg"
+    ]
+  },
+  {
+    "id": 20260710,
+    "date": "2026-07-10",
+    "category": "Award",
+    "title": "2026년 소재글로벌영커넥트 과제 수주",
+    "description": "본 연구실은 2026년 나노소재기술개발사업 소재글로벌영커넥트 (과학기술정보통신부) 과제를 수주하였습니다.",
+    "link": "",
+    "images": [
+      "/images/news/trophy.jpg"
     ]
   }
 ]
