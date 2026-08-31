@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -13,6 +12,7 @@ const menuItems = [
   'Members',
   'Publications',
   // 'Equipment',
+  'Lecture',
   'News',
   'Contact',
   'Lab Portal'
@@ -31,7 +31,6 @@ export default function Navbar() {
   return (
     <nav className={styles.nav}>
       <div className={styles.inner}>
-
         {/* 로고 영역 */}
         <Link href="/" className={styles.logo}>
           <Image
@@ -69,7 +68,6 @@ export default function Navbar() {
         >
           {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
         </button>
-
       </div>
 
       {/* 모바일 드롭다운 */}
