@@ -1,0 +1,163 @@
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 64px 24px 96px;
+}
+
+.header {
+  margin-bottom: 40px;
+}
+
+.eyebrow {
+  font-size: 0.85rem;
+  color: rgba(180, 210, 255, 0.75);
+  margin: 0 0 8px;
+  letter-spacing: 0.02em;
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.desc {
+  font-size: 1rem;
+  opacity: 0.72;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ===== Tabs ===== */
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(180, 210, 255, 0.16);
+  margin-bottom: 28px;
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.2s ease;
+}
+
+.tab:hover {
+  opacity: 0.9;
+}
+
+.tabActive {
+  opacity: 1;
+}
+
+.tabActive::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: rgba(120, 170, 255, 0.9);
+  border-radius: 2px;
+}
+
+/* ===== List ===== */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.empty {
+  opacity: 0.5;
+  padding: 32px 0;
+  text-align: center;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid rgba(180, 210, 255, 0.12);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.item:hover {
+  border-color: rgba(120, 170, 255, 0.5);
+  background: rgba(120, 170, 255, 0.06);
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  background: rgba(120, 170, 255, 0.14);
+  color: rgba(160, 195, 255, 0.95);
+}
+
+.badge_grade {
+  background: rgba(120, 220, 170, 0.14);
+  color: rgba(140, 220, 180, 0.95);
+}
+
+.badge_notice {
+  background: rgba(255, 190, 120, 0.14);
+  color: rgba(255, 195, 140, 0.95);
+}
+
+.itemBody {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.itemDate {
+  font-size: 0.78rem;
+  opacity: 0.55;
+}
+
+.itemTitle {
+  font-size: 0.98rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemLinkIcon {
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 48px 16px 64px;
+  }
+
+  .item {
+    flex-wrap: wrap;
+  }
+
+  .itemTitle {
+    white-space: normal;
+  }
+}
