@@ -6,16 +6,14 @@
       "name": "결정학 기초 (Basics of Crystallography)",
       "materials": [
         {
-          "id": "c1-1", "type": "notice",
-          "date": "2026-09-01",  "week": 1,
+          "id": "c1-1", "type": "notice", "date": "2026-09-01",  "week": 1,
           "title": "강의계획서",
           "driveUrl": "https://snutt-proxy.wafflestudio.com/sugang/cc/cc103.action?openSchyy=2026&openShtmFg=U000200002&openDetaShtmFg=U000300001&sbjtCd=M3637.002100&ltNo=001&sbjtSubhCd=000"
         },
         {
-          "id": "c1-2", "type": "slide",
-          "date": "2026-09-01", "week": 1,
-          "title": "#1 Orientation",
-          "driveUrl": "tbd"
+          "id": "c1-2", "type": "slide", "date": "2026-09-01", "week": 1,
+          "title": "#1 OT & Intro",
+          "driveUrl": "https://drive.google.com/file/d/1IkAYTjuWI9H9Dj2ElfFlp8x0xYLzGFNx/view?usp=sharing"
         }
       ]
     },
@@ -24,8 +22,7 @@
       "name": "첨단반도체물리 (Semiconductor Physics)",
       "materials": [
         {
-          "id": "c2-1", "type": "notice",
-          "date": "2026-09-01", "week": 1, 
+          "id": "c2-1", "type": "notice", "date": "2026-09-01", "week": 1, 
           "title": "강의계획서",
           "driveUrl": "https://snutt-proxy.wafflestudio.com/sugang/cc/cc103.action?openSchyy=2026&openShtmFg=U000200002&openDetaShtmFg=U000300001&sbjtCd=M3637.000800&ltNo=001&sbjtSubhCd=000"
         }
@@ -36,10 +33,14 @@
       "name": "3차원 적층 반도체 소재 및 소자 (Semiconductor materials and devices for 3D integration)",
       "materials": [
         {
-          "id": "c3-1", "type": "notice",
-          "date": "2026-09-01", "week": 1, 
+          "id": "c3-1", "type": "notice", "date": "2026-09-01", "week": 1, 
           "title": "강의계획서",
           "driveUrl": "https://snutt-proxy.wafflestudio.com/sugang/cc/cc103.action?openSchyy=2026&openShtmFg=U000200002&openDetaShtmFg=U000300001&sbjtCd=M1569.004400&ltNo=001&sbjtSubhCd=000"
+        },
+        {
+          "id": "c3-2", "type": "slide", "date": "2026-09-01", "week": 1,
+          "title": "#1 OT & Intro",
+          "driveUrl": "https://drive.google.com/file/d/1yDilLl8acCiqWFDEajK-T9yYz9vBp6GY/view?usp=sharing"
         }
       ]
     }
