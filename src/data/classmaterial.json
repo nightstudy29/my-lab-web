@@ -25,6 +25,11 @@
           "id": "c2-1", "type": "notice", "date": "2026-09-01", "week": 1, 
           "title": "강의계획서",
           "driveUrl": "https://snutt-proxy.wafflestudio.com/sugang/cc/cc103.action?openSchyy=2026&openShtmFg=U000200002&openDetaShtmFg=U000300001&sbjtCd=M3637.000800&ltNo=001&sbjtSubhCd=000"
+        },
+        {
+          "id": "c2-2", "type": "slide", "date": "2026-09-02", "week": 1,
+          "title": "#1 OT & Ch1",
+          "driveUrl": "https://drive.google.com/file/d/1Y4KImOQaZiqBa2yiSd7D57nCZI07PEJt/view?usp=sharing"
         }
       ]
     },
