@@ -73,7 +73,9 @@ export default function MembersPage() {
 
                 {/* program 배지 */}
                 <div className={styles.internPrograms}>
-                  {intern.participations?.map((p, idx) => (
+                  {intern.participations
+                    ?.filter((p) => p.program)
+                    .map((p, idx) => (
                     <span key={idx} className={styles.internProgram}>{p.program}</span>
                   ))}
                 </div>

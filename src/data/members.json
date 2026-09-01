@@ -152,8 +152,8 @@
     "participations": [
       { "period": "Spring 2026", "program": "445.408A" },
       { "period": "Spring 2026", "program": "M3637.002300" },
-      { "period": "Summer 2026", "program": "" },
-      { "period": "Fall 2026", "program": "" }
+      { "period": "Summer 2026"},
+      { "period": "Fall 2026"}
     ],
     "achievements": []
   },
