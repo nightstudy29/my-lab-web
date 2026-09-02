@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
-  // 1. 매 요청마다 랜덤한 Nonce(암호) 생성
-  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
-
-  // 2. CSP 정책 설정
+  // CSP 정책 설정
   // - script-src: Next.js App Router 하이드레이션 때문에 unsafe-inline/unsafe-eval 유지
-  // - connect-src: Supabase API 통신 허용 (이게 없으면 이론상 fetch가 막혀야 정상)
+  //   (nonce는 Next.js 자체 인라인 스크립트에 제대로 전파되지 않아 하이드레이션이
+  //    깨지는 문제가 있어 제거했습니다 — nonce가 있으면 unsafe-inline이 완전히
+  //    무시되는 CSP 스펙 때문입니다.)
+  // - connect-src: Supabase API, Google Apps Script(로그인/휴가관리), Google Sheets(회원 CSV) 허용
   // - img-src: Cloudflare R2에 올린 이미지(뉴스 사진 등) 허용
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com;
     style-src 'self' 'unsafe-inline';
-    connect-src 'self' https://www.google-analytics.com https://iagkjazyhvahkeifxduq.supabase.co;
+    connect-src 'self' https://www.google-analytics.com https://iagkjazyhvahkeifxduq.supabase.co https://script.google.com https://docs.google.com;
     img-src 'self' blob: data: https://www.google-analytics.com https://pub-d01d2f0a6f224159a4981cb55c90fad3.r2.dev;
     font-src 'self' data:;
     object-src 'none';
@@ -22,18 +22,7 @@ export function middleware(request) {
     upgrade-insecure-requests;
   `.replace(/\s{2,}/g, ' ').trim();
 
-  // 3. 헤더에 설정 적용
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-nonce', nonce);
-  requestHeaders.set('Content-Security-Policy', cspHeader);
-
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
-
-  // 브라우저에게 전달할 응답 헤더 설정
+  const response = NextResponse.next();
   response.headers.set('Content-Security-Policy', cspHeader);
 
   return response;
