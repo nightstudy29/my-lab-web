@@ -12,7 +12,7 @@ export function middleware(request) {
     default-src 'self';
     script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com;
     style-src 'self' 'unsafe-inline';
-    connect-src 'self' https://www.google-analytics.com https://iagkjazyhvahkeifxduq.supabase.co https://script.google.com https://docs.google.com;
+    connect-src 'self' https://www.google-analytics.com https://iagkjazyhvahkeifxduq.supabase.co https://script.google.com https://docs.google.com https://script.googleusercontent.com https://*.googleusercontent.com;
     img-src 'self' blob: data: https://www.google-analytics.com https://pub-d01d2f0a6f224159a4981cb55c90fad3.r2.dev;
     font-src 'self' data:;
     object-src 'none';
