@@ -12,6 +12,14 @@ const TYPE_META = {
   notice: { label: "공지", icon: FaBullhorn },
 };
 
+// "결정학 기초 (Basics of Crystallography)" -> "결정학 기초"
+// 괄호 앞부분만 탭에 짧게 표시하고, 전체 이름은 별도 줄에 보여줍니다.
+function getShortCourseLabel(fullName) {
+  if (!fullName) return "";
+  const idx = fullName.indexOf(" (");
+  return idx === -1 ? fullName : fullName.slice(0, idx);
+}
+
 export default function LecturePage() {
   const [semester, setSemester] = useState(null);
   const [courses, setCourses] = useState([]);
@@ -83,10 +91,12 @@ export default function LecturePage() {
     return [...list].sort((a, b) => {
       const dateDiff = new Date(b.date) - new Date(a.date);
       if (dateDiff !== 0) return dateDiff;
-      // 날짜가 같으면 created_at 기준으로 최근 등록분이 위로
+      // 날짜가 같으면 seq(삽입 순서) 기준으로 최근 등록분이 위로
       return b.seq - a.seq;
     });
   }, [materialsByCourse, activeCourseId]);
+
+  const activeCourse = courses.find((c) => c.id === activeCourseId);
 
   if (isLoading) {
     return (
@@ -121,15 +131,21 @@ export default function LecturePage() {
             key={course.id}
             role="tab"
             aria-selected={course.id === activeCourseId}
+            title={course.name}
             className={`${styles.tab} ${
               course.id === activeCourseId ? styles.tabActive : ""
             }`}
             onClick={() => setActiveCourseId(course.id)}
           >
-            {course.name}
+            {getShortCourseLabel(course.name)}
           </button>
         ))}
       </div>
+
+      {/* 선택된 과목 풀네임 */}
+      {activeCourse && (
+        <div className={styles.activeCourseName}>{activeCourse.name}</div>
+      )}
 
       {/* 자료 리스트 */}
       <div className={styles.list}>
