@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { supabase } from "@/lib/supabaseClient";
+import newsData from '../../data/news.json';
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaLink } from "react-icons/fa";
 import styles from './page.module.css';
 
@@ -67,13 +67,13 @@ function NewsCard({ item, anchorId }) {
 
   return (
     <article id={anchorId} className={styles.card} style={{
-      flexDirection: isMobile ? 'column' : 'row',
+      flexDirection: isMobile ? 'column' : 'row',  // ✅ JS 분기
     }}>
 
       {/* 이미지 영역 */}
       {hasImages && (
         <div className={styles.imageContainer} style={{
-          width: isMobile ? '100%' : '280px',
+          width: isMobile ? '100%' : '280px',       // ✅ JS 분기
           minWidth: isMobile ? '0' : '280px',
           height: isMobile ? '220px' : '100%',
           borderRight: isMobile ? 'none' : '1px solid #f0f0f0',
@@ -150,7 +150,7 @@ function NewsCard({ item, anchorId }) {
         </div>
 
         {/* 링크 버튼 */}
-        {item.link && item.link.trim() !== "" && (
+        {item.link && (
           <div className={styles.linkWrapper}>
             <a
               href={item.link}
@@ -169,30 +169,7 @@ function NewsCard({ item, anchorId }) {
 
 // ===== 메인 페이지 =====
 export default function NewsPage() {
-  const [newsData, setNewsData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-  const [activeYear, setActiveYear] = useState(null);
-
-  useEffect(() => {
-    async function loadNews() {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from("news")
-        .select("*")
-        .order("date", { ascending: false });
-
-      if (error) {
-        console.error("뉴스 조회 실패:", error);
-      } else {
-        setNewsData(data || []);
-      }
-      setIsLoading(false);
-    }
-    loadNews();
-  }, []);
-
-  const sortedNews = [...newsData].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortedNews = [...(newsData || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const newsByYear = sortedNews.reduce((acc, item) => {
     const year = item.date.substring(0, 4);
@@ -202,9 +179,8 @@ export default function NewsPage() {
   }, {});
   const years = Object.keys(newsByYear).sort((a, b) => b - a);
 
-  useEffect(() => {
-    if (years.length > 0 && !activeYear) setActiveYear(years[0]);
-  }, [years, activeYear]);
+  const [activeYear, setActiveYear] = useState(years[0]);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 1000);
@@ -217,6 +193,7 @@ export default function NewsPage() {
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 300;
 
+      // ✅ 위/아래 스크롤 모두 정확히 작동
       let currentYear = years[years.length - 1];
       for (const year of [...years].reverse()) {
         const element = document.getElementById(`year-${year}`);
@@ -232,17 +209,6 @@ export default function NewsPage() {
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [years]);
-
-  if (isLoading) {
-    return (
-      <div className={styles.wrapper}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Lab News</h1>
-          <p className={styles.subtitle}>불러오는 중입니다...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.wrapper}>

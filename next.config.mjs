@@ -5,6 +5,16 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  // R2에 올린 이미지를 next/image로 표시하기 위한 허용 도메인 설정
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'pub-d01d2f0a6f224159a4981cb55c90fad3.r2.dev',
+      },
+    ],
+  },
+
   // 보안 헤더 설정
   async headers() {
     return [

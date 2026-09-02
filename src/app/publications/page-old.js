@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { FaNewspaper } from "react-icons/fa6";
-import { supabase } from "@/lib/supabaseClient";
+import papers from '../../data/papers.json';
+import patents from '../../data/patents.json';
 
-// ✅ JSON/DB 데이터에서 연도 자동 추출 (코드 수정 없이 자동 반영)
+// ✅ JSON 데이터에서 연도 자동 추출 (코드 수정 없이 자동 반영)
 const getYearsFromData = (data) =>
   [...new Set(data.map(item => String(item.year)))]
     .sort((a, b) => b - a);
@@ -108,47 +109,6 @@ function PatentItem({ item }) {
 export default function PublicationsPage() {
   const [activeTab, setActiveTab] = useState("papers");
   const [activeYear, setActiveYear] = useState(String(new Date().getFullYear()));
-  const [papers, setPapers] = useState([]);
-  const [patents, setPatents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadData() {
-      setIsLoading(true);
-
-      const { data: paperRows, error: paperError } = await supabase
-        .from("papers")
-        .select("*")
-        .order("seq", { ascending: false });
-
-      if (paperError) {
-        console.error("논문 조회 실패:", paperError);
-      } else {
-        setPapers((paperRows || []).map((p) => ({ ...p, conference: p.journal })));
-      }
-
-      const { data: patentRows, error: patentError } = await supabase
-        .from("patents")
-        .select("*")
-        .order("seq", { ascending: false });
-
-      if (patentError) {
-        console.error("특허 조회 실패:", patentError);
-      } else {
-        setPatents((patentRows || []).map((p) => ({
-          ...p,
-          koreanTitle: p.korean_title,
-          applicationDate: p.application_date,
-          applicationNumber: p.application_number,
-          registrationDate: p.registration_date,
-          registrationNumber: p.registration_number,
-        })));
-      }
-
-      setIsLoading(false);
-    }
-    loadData();
-  }, []);
 
   const currentData = activeTab === 'papers' ? papers : patents;
 
@@ -216,11 +176,7 @@ export default function PublicationsPage() {
         </div>
 
         {/* 리스트 */}
-        {isLoading ? (
-          <div style={{ padding: '50px 0', textAlign: 'center', color: '#888', fontSize: '1.2rem' }}>
-            불러오는 중입니다...
-          </div>
-        ) : groupedData.sortedYears.length > 0 ? (
+        {groupedData.sortedYears.length > 0 ? (
           groupedData.sortedYears.map((year) => (
             <div key={year} id={`pub-year-${year}`} style={{ marginBottom: '60px' }}>
               <div style={{
@@ -267,7 +223,7 @@ export default function PublicationsPage() {
             }} />
 
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '30px', position: 'relative', zIndex: 1 }}>
-              {/* ✅ 연도만 표시 - 자동 반영 */}
+              {/* ✅ JSON에 있는 연도만 표시 - 자동 반영 */}
               {getYearsFromData(currentData).map((year) => {
                 const hasData = !!groupedData.groups[year];
                 const isActive = activeYear === year;

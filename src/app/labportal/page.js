@@ -8,10 +8,24 @@ import wikiData from '@/data/labwiki.json';
 import * as FaIcons from "react-icons/fa";
 import { SiGoogle, SiLinkedin, SiOrcid, SiKakaotalk, SiSlack } from "react-icons/si"; 
 import { MdAdminPanelSettings, MdPendingActions, MdPlaylistAddCheck } from "react-icons/md"; 
+import ClassMaterialAdmin from '@/components/ClassMaterialAdmin';
+import PapersAdmin from '@/components/PapersAdmin';
+import NewsAdmin from '@/components/NewsAdmin';
+import PatentsAdmin from '@/components/PatentsAdmin';
 
 const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZFKBBsoaoqe9PV4aOz92jS-k5yMr6ynih1NBSFr7490KdMFkRHKsSwyBRha0CTgP-_WlvIiOoUwwh/pub?gid=0&single=true&output=csv"; 
 const GAS_MEMBER_URL = "https://script.google.com/macros/s/AKfycbwdgyNJ2J6L1nxiCy5DIIfNmsaFRiwg6uwTlWrbY3nnYvufz-wbN4vsWhoj71hWlM_Z7w/exec"; 
 const GAS_AUTH_URL = "https://script.google.com/macros/s/AKfycbyaTohnw8xR8yqX3lWUbGsMNaVVc2oL-3OGYQkpYeiKaXRVGKPN0bRcfg59zSkJni_Ppg/exec";
+
+const ADMIN_SUB_TABS = [
+  { id: 'approvals', label: '가입 승인' },
+  { id: 'requests', label: '수정 요청' },
+  { id: 'vacation', label: '휴가 관리' },
+  { id: 'classmaterial', label: '강의자료' },
+  { id: 'papers', label: '논문' },
+  { id: 'patents', label: '특허' },
+  { id: 'news', label: '뉴스' },  
+];
 
 export default function LabPortalPage() {
   const router = useRouter();
@@ -28,6 +42,7 @@ export default function LabPortalPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [requestCategory, setRequestCategory] = useState("");
   const [requestContent, setRequestContent] = useState("");
+  const [adminSubTab, setAdminSubTab] = useState('approvals');
 
   // 모바일 감지
   useEffect(() => {
@@ -448,144 +463,172 @@ export default function LabPortalPage() {
               <MdAdminPanelSettings size={24} /> Admin Dashboard
             </h2>
 
-            {/* 가입 승인 대기 */}
-            <div style={adminCardStyle}>
-              <h3 style={{ marginTop: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <MdPendingActions size={22} color="#d32f2f" /> 가입 승인 대기 ({pendingUsers.length})
-              </h3>
-              {pendingUsers.length === 0 ? (
-                <p style={{ color: '#888', fontSize: '0.9rem' }}>대기 중인 가입 요청이 없습니다.</p>
-              ) : mobile ? (
-                // 모바일: 카드
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
-                  {pendingUsers.map((u, idx) => (
-                    <div key={idx} style={{ background: '#f8f9fa', border: '1px solid #eee', borderRadius: '8px', padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <div style={{ fontWeight: 'bold', color: '#333', marginBottom: '4px' }}>{u.name}</div>
-                        <div style={{ fontSize: '0.8rem', color: '#888' }}>{u.id}</div>
-                        <div style={{ fontSize: '0.8rem', color: '#888' }}>{u.timestamp}</div>
-                      </div>
-                      <button onClick={() => handleApproveUser(u.id)} style={approveBtn}>승인</button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px' }}>
-                    <thead>
-                      <tr style={{ background: '#f8f9fa', color: '#555', textAlign: 'left', fontSize: '0.9rem' }}>
-                        <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>ID</th>
-                        <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>Name</th>
-                        <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>Date</th>
-                        <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #eee' }}>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pendingUsers.map((u, idx) => (
-                        <tr key={idx} style={{ borderBottom: '1px solid #f1f3f5' }}>
-                          <td style={{ padding: '12px', color: '#333' }}>{u.id}</td>
-                          <td style={{ padding: '12px', fontWeight: 'bold', color: '#333' }}>{u.name}</td>
-                          <td style={{ padding: '12px', color: '#666', fontSize: '0.85rem' }}>{u.timestamp}</td>
-                          <td style={{ padding: '12px', textAlign: 'center' }}>
-                            <button onClick={() => handleApproveUser(u.id)} style={approveBtn}>승인</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+            {/* ===== Admin 서브 탭 ===== */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '2px' }}>
+              {ADMIN_SUB_TABS.map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => setAdminSubTab(t.id)}
+                  style={adminSubTabBtnStyle(adminSubTab === t.id)}
+                >
+                  {t.label}
+                </button>
+              ))}
             </div>
+
+            {/* 가입 승인 대기 */}
+            {adminSubTab === 'approvals' && (
+              <div style={adminCardStyle}>
+                <h3 style={{ marginTop: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <MdPendingActions size={22} color="#d32f2f" /> 가입 승인 대기 ({pendingUsers.length})
+                </h3>
+                {pendingUsers.length === 0 ? (
+                  <p style={{ color: '#888', fontSize: '0.9rem' }}>대기 중인 가입 요청이 없습니다.</p>
+                ) : mobile ? (
+                  // 모바일: 카드
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
+                    {pendingUsers.map((u, idx) => (
+                      <div key={idx} style={{ background: '#f8f9fa', border: '1px solid #eee', borderRadius: '8px', padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <div style={{ fontWeight: 'bold', color: '#333', marginBottom: '4px' }}>{u.name}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#888' }}>{u.id}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#888' }}>{u.timestamp}</div>
+                        </div>
+                        <button onClick={() => handleApproveUser(u.id)} style={approveBtn}>승인</button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px' }}>
+                      <thead>
+                        <tr style={{ background: '#f8f9fa', color: '#555', textAlign: 'left', fontSize: '0.9rem' }}>
+                          <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>ID</th>
+                          <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>Name</th>
+                          <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>Date</th>
+                          <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #eee' }}>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pendingUsers.map((u, idx) => (
+                          <tr key={idx} style={{ borderBottom: '1px solid #f1f3f5' }}>
+                            <td style={{ padding: '12px', color: '#333' }}>{u.id}</td>
+                            <td style={{ padding: '12px', fontWeight: 'bold', color: '#333' }}>{u.name}</td>
+                            <td style={{ padding: '12px', color: '#666', fontSize: '0.85rem' }}>{u.timestamp}</td>
+                            <td style={{ padding: '12px', textAlign: 'center' }}>
+                              <button onClick={() => handleApproveUser(u.id)} style={approveBtn}>승인</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* 콘텐츠 수정 요청 */}
-            <div style={adminCardStyle}>
-              <h3 style={{ marginTop: 0, color: '#1565c0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <MdPlaylistAddCheck size={26} color="#1565c0" /> 콘텐츠 수정/추가 요청 ({contentRequests.length})
-              </h3>
-              {contentRequests.length === 0 ? (
-                <p style={{ color: '#888', fontSize: '0.9rem' }}>접수된 요청사항이 없습니다.</p>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
-                  {contentRequests.map((req, index) => (
-                    <div key={index} style={{ border: '1px solid #e9ecef', borderRadius: '8px', padding: '15px', background: '#f8f9fa', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: mobile ? 'wrap' : 'nowrap' }}>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                          <span style={{ background: '#e3f2fd', color: '#1565c0', fontSize: '0.75rem', fontWeight: 'bold', padding: '3px 8px', borderRadius: '4px' }}>{req.page}</span>
-                          <span style={{ color: '#adb5bd', fontSize: '0.75rem' }}>{new Date(req.timestamp).toLocaleString()}</span>
+            {adminSubTab === 'requests' && (
+              <div style={adminCardStyle}>
+                <h3 style={{ marginTop: 0, color: '#1565c0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <MdPlaylistAddCheck size={26} color="#1565c0" /> 콘텐츠 수정/추가 요청 ({contentRequests.length})
+                </h3>
+                {contentRequests.length === 0 ? (
+                  <p style={{ color: '#888', fontSize: '0.9rem' }}>접수된 요청사항이 없습니다.</p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
+                    {contentRequests.map((req, index) => (
+                      <div key={index} style={{ border: '1px solid #e9ecef', borderRadius: '8px', padding: '15px', background: '#f8f9fa', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: mobile ? 'wrap' : 'nowrap' }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                            <span style={{ background: '#e3f2fd', color: '#1565c0', fontSize: '0.75rem', fontWeight: 'bold', padding: '3px 8px', borderRadius: '4px' }}>{req.page}</span>
+                            <span style={{ color: '#adb5bd', fontSize: '0.75rem' }}>{new Date(req.timestamp).toLocaleString()}</span>
+                          </div>
+                          <p style={{ color: '#495057', fontSize: '0.95rem', margin: '0 0 8px 0', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>{req.message}</p>
+                          <div style={{ fontSize: '0.85rem', color: '#868e96' }}>From: <span style={{ fontWeight: '600', color: '#495057' }}>{req.from}</span></div>
                         </div>
-                        <p style={{ color: '#495057', fontSize: '0.95rem', margin: '0 0 8px 0', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>{req.message}</p>
-                        <div style={{ fontSize: '0.85rem', color: '#868e96' }}>From: <span style={{ fontWeight: '600', color: '#495057' }}>{req.from}</span></div>
+                        <button onClick={() => handleResolveRequest(req)} style={{ background: '#2e7d32', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                          처리 완료
+                        </button>
                       </div>
-                      <button onClick={() => handleResolveRequest(req)} style={{ background: '#2e7d32', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
-                        처리 완료
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* 휴가 관리 */}
-            <div style={{ ...adminCardStyle, marginTop: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '8px' }}>
-                <h3 style={{ margin: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <FaIcons.FaPlane size={20} color="#004094" /> 연구원 휴가 관리
-                </h3>
-                {isSaving && <span style={{ fontSize: '0.9rem', color: '#004094', fontWeight: 'bold' }}>💾 Saving...</span>}
-              </div>
-              {isLoading ? (
-                <div style={{ textAlign: 'center', padding: '40px', color: '#888' }}>데이터 로딩 중...</div>
-              ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-                  {members.filter(m => m.status === 'Active').map((m, mIdx) => {
-                    const originalIndex = members.findIndex(orig => orig.nameKor === m.nameKor);
-                    const usedCount = m.vacation.checks.filter(Boolean).length;
-                    const remain = 7 - usedCount;
-                    return (
-                      <div key={mIdx} style={{ 
-                        padding: '16px', background: '#fff',
-                        border: '1px solid #e9ecef', borderRadius: '12px',
-                        borderTop: remain === 0 ? '4px solid #d32f2f' : '4px solid #4dabf7',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
-                      }}>
-                        {/* 1행: 이름 + 몇일 남음 */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                          <div>
-                            <span style={{ fontSize: '1rem', fontWeight: 'bold', color: '#333' }}>{m.nameKor}</span>
-                            <span style={{ fontSize: '0.75rem', color: '#888', marginLeft: '6px' }}>{m.position}</span>
-                          </div>
-                          <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: remain === 0 ? '#d32f2f' : '#004094', whiteSpace: 'nowrap', marginLeft: '8px' }}>
-                            {remain}일 남음 <span style={{ fontWeight: 'normal', color: '#999', fontSize: '0.75rem' }}>({usedCount}/7)</span>
-                          </div>
-                        </div>
-                        {/* 2행: 체크박스 7개 */}
-                        <div style={{ display: 'flex', gap: '5px', marginBottom: '10px' }}>
-                          {m.vacation.checks.map((isChecked, dayIdx) => (
-                            <div key={dayIdx} onClick={() => handleCheckUpdate(originalIndex, dayIdx, isChecked)}
-                              style={{ 
-                                flex: 1,
-                                height: '40px',
-                                backgroundColor: isChecked ? '#4dabf7' : '#fff',
-                                border: isChecked ? '2px solid #4dabf7' : '2px solid #dee2e6',
-                                borderRadius: '6px', cursor: 'pointer',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                color: '#fff', transition: 'all 0.2s',
-                              }}>
-                              {isChecked && <FaIcons.FaCheck size={12} />}
-                            </div>
-                          ))}
-                        </div>
-                        {/* 메모 */}
-                        <input type="text" placeholder="휴가일자 기록 (예: 8/15-18)" value={m.vacation.memo}
-                          onChange={(e) => handleMemoChange(e, originalIndex)}
-                          onBlur={(e) => handleMemoSave(originalIndex, e.target.value)}
-                          style={{ width: '100%', padding: '7px 10px', borderRadius: '6px', border: '1px solid #eee', background: '#f8f9fa', fontSize: '0.85rem', outline: 'none', boxSizing: 'border-box', color: '#555' }} />
-                      </div>
-                    );
-                  })}
+            {adminSubTab === 'vacation' && (
+              <div style={{ ...adminCardStyle }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '8px' }}>
+                  <h3 style={{ margin: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <FaIcons.FaPlane size={20} color="#004094" /> 연구원 휴가 관리
+                  </h3>
+                  {isSaving && <span style={{ fontSize: '0.9rem', color: '#004094', fontWeight: 'bold' }}>💾 Saving...</span>}
                 </div>
-              )}
-            </div>
+                {isLoading ? (
+                  <div style={{ textAlign: 'center', padding: '40px', color: '#888' }}>데이터 로딩 중...</div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+                    {members.filter(m => m.status === 'Active').map((m, mIdx) => {
+                      const originalIndex = members.findIndex(orig => orig.nameKor === m.nameKor);
+                      const usedCount = m.vacation.checks.filter(Boolean).length;
+                      const remain = 7 - usedCount;
+                      return (
+                        <div key={mIdx} style={{ 
+                          padding: '16px', background: '#fff',
+                          border: '1px solid #e9ecef', borderRadius: '12px',
+                          borderTop: remain === 0 ? '4px solid #d32f2f' : '4px solid #4dabf7',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+                        }}>
+                          {/* 1행: 이름 + 몇일 남음 */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                            <div>
+                              <span style={{ fontSize: '1rem', fontWeight: 'bold', color: '#333' }}>{m.nameKor}</span>
+                              <span style={{ fontSize: '0.75rem', color: '#888', marginLeft: '6px' }}>{m.position}</span>
+                            </div>
+                            <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: remain === 0 ? '#d32f2f' : '#004094', whiteSpace: 'nowrap', marginLeft: '8px' }}>
+                              {remain}일 남음 <span style={{ fontWeight: 'normal', color: '#999', fontSize: '0.75rem' }}>({usedCount}/7)</span>
+                            </div>
+                          </div>
+                          {/* 2행: 체크박스 7개 */}
+                          <div style={{ display: 'flex', gap: '5px', marginBottom: '10px' }}>
+                            {m.vacation.checks.map((isChecked, dayIdx) => (
+                              <div key={dayIdx} onClick={() => handleCheckUpdate(originalIndex, dayIdx, isChecked)}
+                                style={{ 
+                                  flex: 1,
+                                  height: '40px',
+                                  backgroundColor: isChecked ? '#4dabf7' : '#fff',
+                                  border: isChecked ? '2px solid #4dabf7' : '2px solid #dee2e6',
+                                  borderRadius: '6px', cursor: 'pointer',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  color: '#fff', transition: 'all 0.2s',
+                                }}>
+                                {isChecked && <FaIcons.FaCheck size={12} />}
+                              </div>
+                            ))}
+                          </div>
+                          {/* 메모 */}
+                          <input type="text" placeholder="휴가일자 기록 (예: 8/15-18)" value={m.vacation.memo}
+                            onChange={(e) => handleMemoChange(e, originalIndex)}
+                            onBlur={(e) => handleMemoSave(originalIndex, e.target.value)}
+                            style={{ width: '100%', padding: '7px 10px', borderRadius: '6px', border: '1px solid #eee', background: '#f8f9fa', fontSize: '0.85rem', outline: 'none', boxSizing: 'border-box', color: '#555' }} />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 강의자료 관리 */}
+            {adminSubTab === 'classmaterial' && <ClassMaterialAdmin />}
+
+            {/* 논문 관리 */}
+            {adminSubTab === 'papers' && <PapersAdmin />}
+            {adminSubTab === 'patents' && <PatentsAdmin />}
+            {/* 뉴스 관리 */}
+            {adminSubTab === 'news' && <NewsAdmin />}
           </div>
         )}
       </div>
@@ -657,8 +700,22 @@ const tabBtnStyle = (isActive, isAdmin, mobile) => ({
   fontSize: mobile ? '0.68rem' : '1rem',
   whiteSpace: 'nowrap', transition: 'all 0.2s',
   minWidth: 0,
-  lineHeight: 1,           // ✅ 줄높이 통일
-  boxSizing: 'border-box', // ✅ 패딩 포함 크기 계산
+  lineHeight: 1,
+  boxSizing: 'border-box',
+});
+
+const adminSubTabBtnStyle = (isActive) => ({
+  padding: '8px 14px',
+  border: 'none',
+  background: isActive ? '#fce8e6' : 'transparent',
+  color: isActive ? '#d32f2f' : '#888',
+  fontWeight: 'bold',
+  fontSize: '0.85rem',
+  borderRadius: '20px 20px 0 0',
+  cursor: 'pointer',
+  whiteSpace: 'nowrap',
+  transition: 'all 0.2s',
+  flexShrink: 0,
 });
 
 const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px', display: 'flex', alignItems: 'center', flexShrink: 0 };
