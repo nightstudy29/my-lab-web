@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { supabase } from "@/lib/supabaseClient";
+import useIsMobile from "@/hooks/useIsMobile";
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaLink } from "react-icons/fa";
 import styles from './page.module.css';
 
@@ -21,19 +22,12 @@ function NewsCard({ item, anchorId }) {
   const [imgIndex, setImgIndex] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isClamped, setIsClamped] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile(768) === true;
   const scrollRef = useRef(null);
   const textRef = useRef(null);
 
   const hasImages = item.images && item.images.length > 0;
   const hasMultipleImages = item.images && item.images.length > 1;
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
 
   useEffect(() => {
     const checkClamped = () => {
@@ -81,10 +75,10 @@ function NewsCard({ item, anchorId }) {
         }}>
           {hasMultipleImages && (
             <>
-              <button onClick={() => scroll(-1)} className={styles.sliderBtn} style={{ left: '5px' }}>
+              <button onClick={() => scroll(-1)} className={styles.sliderBtn} style={{ left: '5px' }} aria-label="이전 사진">
                 <FaChevronLeft size={12} />
               </button>
-              <button onClick={() => scroll(1)} className={styles.sliderBtn} style={{ right: '5px' }}>
+              <button onClick={() => scroll(1)} className={styles.sliderBtn} style={{ right: '5px' }} aria-label="다음 사진">
                 <FaChevronRight size={12} />
               </button>
             </>
@@ -171,8 +165,8 @@ function NewsCard({ item, anchorId }) {
 export default function NewsPage() {
   const [newsData, setNewsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
   const [activeYear, setActiveYear] = useState(null);
+  const isMobile = useIsMobile(1000) === true;
 
   useEffect(() => {
     async function loadNews() {
@@ -192,28 +186,25 @@ export default function NewsPage() {
     loadNews();
   }, []);
 
-  const sortedNews = [...newsData].sort((a, b) => new Date(b.date) - new Date(a.date));
+  // 연도별 그룹 — newsData가 바뀔 때만 다시 계산 (매 렌더마다 새 배열이 만들어지지 않도록)
+  const { newsByYear, years } = useMemo(() => {
+    const sorted = [...newsData].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const byYear = sorted.reduce((acc, item) => {
+      const year = item.date.substring(0, 4);
+      if (!acc[year]) acc[year] = [];
+      acc[year].push(item);
+      return acc;
+    }, {});
+    return {
+      newsByYear: byYear,
+      years: Object.keys(byYear).sort((a, b) => b - a),
+    };
+  }, [newsData]);
 
-  const newsByYear = sortedNews.reduce((acc, item) => {
-    const year = item.date.substring(0, 4);
-    if (!acc[year]) acc[year] = [];
-    acc[year].push(item);
-    return acc;
-  }, {});
-  const years = Object.keys(newsByYear).sort((a, b) => b - a);
-
+  // 스크롤 위치에 따라 현재 연도 하이라이트 (초기 연도도 여기서 한 번 잡힘)
   useEffect(() => {
-    if (years.length > 0 && !activeYear) setActiveYear(years[0]);
-  }, [years, activeYear]);
+    if (years.length === 0) return;
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 1000);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 300;
 
@@ -228,7 +219,7 @@ export default function NewsPage() {
       setActiveYear(currentYear);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [years]);

@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FaArrowRight } from "react-icons/fa6";
-import newsData from "../data/news.json";
+import { supabase } from "@/lib/supabaseClient";
+import useIsMobile from "@/hooks/useIsMobile";
 import styles from "./page.module.css";
 
 // ===== 파티클 캔버스 컴포넌트 =====
@@ -112,19 +113,29 @@ const researchTopics = [
 
 // ===== 메인 홈 =====
 export default function Home() {
-  const [isMobile, setIsMobile] = useState(null);
+  const isMobile = useIsMobile(768);
   const mobile = isMobile !== false;
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  // 최신 뉴스 3건 — News 페이지와 같은 Supabase news 테이블을 읽습니다.
+  // (관리자 패널에서 뉴스를 추가하면 여기에도 바로 반영됩니다.)
+  const [latestNews, setLatestNews] = useState([]);
 
-  const latestNews = [...newsData]
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 3);
+  useEffect(() => {
+    async function loadLatestNews() {
+      const { data, error } = await supabase
+        .from("news")
+        .select("id, date, title")
+        .order("date", { ascending: false })
+        .limit(3);
+
+      if (error) {
+        console.error("최신 뉴스 조회 실패:", error);
+        return;
+      }
+      setLatestNews(data || []);
+    }
+    loadLatestNews();
+  }, []);
 
   return (
     <div style={{ width: "100%" }}>
