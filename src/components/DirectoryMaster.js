@@ -3,10 +3,12 @@
 // 멤버 관리 (admin 전용) — 멤버 전체 편집 + 계정 연결 + 단기 인턴 기록.
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import FileUploader from "./FileUploader";
 import { itemsFromUrls, uploadItems } from "@/lib/uploadClient";
 import { POSITIONS, POSITION_LABELS_KO, DEGREES, STATUSES } from "@/lib/memberConstants";
 import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall, dangerBtnSmall } from "./adminStyles";
+import { useToast, useConfirm } from "./ui";
 
 const EMPTY_MEMBER = {
   name_kor: "", name_eng: "", email: "", phone: "", kakao_id: "", year_joined: "", current_position: "",
@@ -24,6 +26,8 @@ function formFromMember(m) {
 }
 
 export default function DirectoryMaster() {
+  const toast = useToast();
+  const confirm = useConfirm();
   const [members, setMembers] = useState([]);
   const [unlinkedUsers, setUnlinkedUsers] = useState([]);
   const [interns, setInterns] = useState([]);
@@ -50,7 +54,7 @@ export default function DirectoryMaster() {
   // ===== 멤버 저장/삭제 =====
   async function saveMember() {
     const { form, id } = editing;
-    if (!form.name_kor.trim()) return alert("이름(한글)은 필수입니다.");
+    if (!form.name_kor.trim()) return toast.error("이름(한글)은 필수입니다.");
     setIsSaving(true);
     try {
       const uploaded = await uploadItems(form.photo, {
@@ -65,33 +69,36 @@ export default function DirectoryMaster() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "저장 실패");
+      toast.success(id ? "멤버 정보를 저장했습니다." : "멤버를 추가했습니다.");
       setEditing(null);
       load();
     } catch (e) {
-      alert("실패: " + e.message);
+      toast.error("실패: " + e.message);
     } finally {
       setIsSaving(false);
     }
   }
 
   async function deleteMember(m) {
-    if (!confirm(`${m.nameKor} 멤버 정보를 삭제하시겠습니까? 휴가 기록도 함께 지워집니다. (포털 계정은 남습니다)`)) return;
+    if (!(await confirm({ title: "멤버 삭제", message: `${m.nameKor} 멤버 정보를 삭제합니다. 휴가 기록도 함께 지워집니다. (포털 계정은 남습니다)`, confirmText: "삭제", danger: true }))) return;
     const res = await fetch(`/api/admin/members?id=${m.id}`, { method: "DELETE" });
-    if (!res.ok) return alert("삭제 실패");
+    if (!res.ok) return toast.error("삭제 실패");
+    toast.success("삭제했습니다.");
     load();
   }
 
   async function quickPatch(m, patch) {
     const res = await fetch("/api/admin/members", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: m.id, ...patch }) });
     const data = await res.json();
-    if (!res.ok) return alert("실패: " + data.error);
+    if (!res.ok) return toast.error("실패: " + data.error);
     setMembers((prev) => prev.map((x) => (x.id === m.id ? data.member : x)));
+    toast.success("변경했습니다.");
   }
 
   // ===== 인턴 저장/삭제 =====
   async function saveIntern() {
     const it = editingIntern;
-    if (!it.name_eng.trim()) return alert("영어 이름은 필수입니다.");
+    if (!it.name_eng.trim()) return toast.error("영어 이름은 필수입니다.");
     setIsSaving(true);
     try {
       const res = await fetch("/api/admin/interns", {
@@ -100,14 +107,16 @@ export default function DirectoryMaster() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "저장 실패");
+      toast.success("인턴 기록을 저장했습니다.");
       setEditingIntern(null);
       load();
-    } catch (e) { alert("실패: " + e.message); } finally { setIsSaving(false); }
+    } catch (e) { toast.error("실패: " + e.message); } finally { setIsSaving(false); }
   }
   async function deleteIntern(it) {
-    if (!confirm(`${it.name_eng} 인턴 기록을 삭제하시겠습니까?`)) return;
+    if (!(await confirm({ title: "인턴 기록 삭제", message: `${it.name_eng} 인턴 기록을 삭제합니다.`, confirmText: "삭제", danger: true }))) return;
     const res = await fetch(`/api/admin/interns?id=${it.id}`, { method: "DELETE" });
-    if (!res.ok) return alert("삭제 실패");
+    if (!res.ok) return toast.error("삭제 실패");
+    toast.success("삭제했습니다.");
     load();
   }
 
@@ -165,8 +174,7 @@ export default function DirectoryMaster() {
                     <td style={td}>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         {m.photoUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={m.photoUrl} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+                          <Image src={m.photoUrl} alt="" width={32} height={32} loading="lazy" style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
                         ) : <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#e9ecef", flexShrink: 0 }} />}
                         <div>
                           <div style={{ fontWeight: "bold", color: "#333" }}>{m.nameKor}</div>

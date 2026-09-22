@@ -7,6 +7,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import s from "./ui.module.css";
 
 export { default as SlidePanel } from "./SlidePanel";
+export { default as RichTextInput } from "./RichTextInput";
 export { ToastProvider, useToast } from "./Toast";
 export { ConfirmProvider, useConfirm } from "./Confirm";
 

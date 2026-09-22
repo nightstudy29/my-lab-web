@@ -5,8 +5,10 @@
 import { useState, useEffect } from "react";
 import * as FaIcons from "react-icons/fa";
 import { POSITION_LABELS_KO } from "@/lib/memberConstants";
+import { useToast } from "./ui";
 
 export default function VacationAdmin({ mobile }) {
+  const toast = useToast();
   const thisYear = new Date().getFullYear();
   const [year, setYear] = useState(thisYear);
   const [rows, setRows] = useState([]);
@@ -35,7 +37,7 @@ export default function VacationAdmin({ mobile }) {
       if (!res.ok) throw new Error(data.error || "저장 실패");
       setRows((prev) => prev.map((r) => (r.memberId === memberId ? { ...r, days: data.row.days, memo: data.row.memo } : r)));
     } catch (e) {
-      alert("실패: " + e.message);
+      toast.error("실패: " + e.message);
     } finally {
       setIsSaving(false);
     }

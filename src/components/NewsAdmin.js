@@ -3,6 +3,7 @@
 // 뉴스 관리 — 검색/연도/카테고리 필터 + 표(썸네일), 추가·수정은 슬라이드 패널 (사진 드래그 업로드, 순서 지정).
 
 import { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
 import { FaPen, FaTrash, FaPlus, FaImage } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
 import FileUploader from "./FileUploader";
@@ -121,8 +122,7 @@ export default function NewsAdmin() {
                   <td>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       {n.images?.[0] ? (
-                        // eslint-disable-next-line @next/next/no-img-element -- 관리자 목록 썸네일
-                        <img src={n.images[0]} alt="" style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 6, flexShrink: 0, background: "#f1f3f5" }} />
+                        <Image src={n.images[0]} alt="" width={44} height={44} loading="lazy" style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 6, flexShrink: 0, background: "#f1f3f5" }} />
                       ) : (
                         <div style={{ width: 44, height: 44, borderRadius: 6, background: "#f1f3f5", display: "flex", alignItems: "center", justifyContent: "center", color: "#c5ccd6", flexShrink: 0 }}><FaImage /></div>
                       )}

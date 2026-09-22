@@ -43,6 +43,33 @@ export async function POST(request) {
   }
 }
 
+// 과목 이름/순서 변경
+export async function PATCH(request) {
+  try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
+    const { id, name, sort_order } = await request.json();
+    if (!id) return NextResponse.json({ error: "id가 필요합니다." }, { status: 400 });
+
+    const updates = {};
+    if (name !== undefined) {
+      const n = String(name).trim();
+      if (!n) return NextResponse.json({ error: "과목명은 비울 수 없습니다." }, { status: 400 });
+      updates.name = n;
+    }
+    if (sort_order !== undefined) updates.sort_order = Number(sort_order) || 0;
+    if (Object.keys(updates).length === 0) return NextResponse.json({ error: "변경할 내용이 없습니다." }, { status: 400 });
+
+    const { data, error } = await supabaseAdmin.from("courses").update(updates).eq("id", id).select().single();
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ course: data });
+  } catch (err) {
+    console.error("과목 수정 처리 중 오류:", err);
+    return NextResponse.json({ error: "요청 처리 중 오류가 발생했습니다." }, { status: 500 });
+  }
+}
+
 // 과목 삭제 (딸린 materials는 DB에서 cascade 삭제, R2 파일은 여기서 직접 정리)
 export async function DELETE(request) {
   try {

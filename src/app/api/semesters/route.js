@@ -52,17 +52,27 @@ export async function POST(request) {
   }
 }
 
-// 기존 학기를 다시 "현재 학기"로 전환 (지난 학기 복원/보관 학기 간 전환용)
+// PATCH { id, action?: 'switch' | 'rename', label? }
+//   switch (기본) — 이 학기를 "현재 학기"로 전환 (지난 학기 복원/보관 학기 간 전환용)
+//   rename       — 학기 이름 변경
 export async function PATCH(request) {
   try {
     const auth = await requireAdmin(request);
     if (auth.response) return auth.response;
 
     const body = await request.json();
-    const { id } = body;
+    const { id, action = "switch", label } = body;
 
     if (!id) {
       return NextResponse.json({ error: "id가 필요합니다." }, { status: 400 });
+    }
+
+    if (action === "rename") {
+      const name = String(label || "").trim();
+      if (!name) return NextResponse.json({ error: "학기 이름(label)이 필요합니다." }, { status: 400 });
+      const { data, error } = await supabaseAdmin.from("semesters").update({ label: name }).eq("id", id).select().single();
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ semester: data });
     }
 
     const { error: deactivateError } = await supabaseAdmin

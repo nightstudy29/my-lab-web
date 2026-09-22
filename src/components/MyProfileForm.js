@@ -12,6 +12,7 @@ import ChangePasswordForm from "./ChangePasswordForm";
 import { itemsFromUrls, uploadItems } from "@/lib/uploadClient";
 import { POSITION_LABELS_EN, POSITION_LABELS_KO, REQUIRED_PROFILE_FIELDS } from "@/lib/memberConstants";
 import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall } from "./adminStyles";
+import { useToast } from "./ui";
 
 const FIELD_LABELS = {
   name_kor: "이름 (한글)", name_eng: "이름 (영문)", email: "E-mail", phone: "전화번호", kakao_id: "Kakao ID",
@@ -35,6 +36,7 @@ export function missingProfileFields(member) {
 
 // showPassword = true 면 같은 카드 안에 비밀번호 변경 섹션을 이어서 보여줌 (포털 Account 탭)
 export default function MyProfileForm({ onSaved, showPassword = false, userId }) {
+  const toast = useToast();
   const [member, setMember] = useState(null);
   const [form, setForm] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +54,7 @@ export default function MyProfileForm({ onSaved, showPassword = false, userId })
 
   async function handleSave(e) {
     e.preventDefault();
-    if (!form.name_kor.trim()) return alert("이름(한글)은 필수입니다.");
+    if (!form.name_kor.trim()) return toast.error("이름(한글)은 필수입니다.");
     setIsSaving(true);
     setNotice("");
     try {
@@ -75,7 +77,7 @@ export default function MyProfileForm({ onSaved, showPassword = false, userId })
       setNotice("저장되었습니다.");
       onSaved?.(data.member);
     } catch (err) {
-      alert("실패: " + err.message);
+      toast.error("실패: " + err.message);
     } finally {
       setIsSaving(false);
     }

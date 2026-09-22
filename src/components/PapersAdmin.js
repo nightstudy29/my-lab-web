@@ -7,8 +7,8 @@ import { FaPen, FaTrash, FaPlus } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import {
-  Button, Input, Select, Textarea, Field, Card, Toolbar, SearchInput, Table, td, Badge, Empty, FormGrid, span2,
-  SlidePanel, useToast, useConfirm,
+  Button, Input, Select, Field, Card, Toolbar, SearchInput, Table, td, Badge, Empty, FormGrid, span2,
+  SlidePanel, RichTextInput, useToast, useConfirm,
 } from "./ui";
 
 function defaultForm() {
@@ -139,8 +139,8 @@ export default function PapersAdmin() {
           <FormGrid>
             <Field label="연도" required><Input type="number" value={panel.form.year} onChange={(e) => setF("year", e.target.value)} /></Field>
             <Field label="저널" hint="예: Nature 641, 98-105"><Input value={panel.form.journal} onChange={(e) => setF("journal", e.target.value)} /></Field>
-            <Field label="제목" required hint="아래첨자는 <sub>…</sub> 사용 가능" className={span2}><Textarea rows={2} value={panel.form.title} onChange={(e) => setF("title", e.target.value)} /></Field>
-            <Field label="저자" required hint="랩 멤버는 <b><u>이름</u></b> 으로 감싸면 굵게+밑줄" className={span2}><Textarea rows={3} value={panel.form.authors} onChange={(e) => setF("authors", e.target.value)} /></Field>
+            <Field label="제목" required className={span2}><RichTextInput rows={2} value={panel.form.title} onChange={(v) => setF("title", v)} placeholder="예: Wafer-scale MoS<sub>2</sub> …" /></Field>
+            <Field label="저자" required hint="랩 멤버 이름을 선택하고 [멤버] 버튼을 누르면 굵게+밑줄로 표시됩니다" className={span2}><RichTextInput rows={3} value={panel.form.authors} onChange={(v) => setF("authors", v)} /></Field>
             <Field label="논문 URL" hint="DOI 링크 등" className={span2}><Input value={panel.form.url} onChange={(e) => setF("url", e.target.value)} placeholder="https://doi.org/…" /></Field>
             <div className={span2}>
               <div style={{ fontSize: "0.78rem", color: "#5b6b7c", fontWeight: 600, marginBottom: 6 }}>언론 보도 (선택)</div>
