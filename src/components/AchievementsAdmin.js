@@ -83,7 +83,7 @@ export default function AchievementsAdmin() {
     setIsSaving(true);
     try {
       if (panel.kind === "paper") {
-        const body = { id: panel.id };
+        const body = { id: panel.id, url: (panel.form.url || "").trim() };
         for (const k of ACH_FIELDS) {
           const v = panel.form[k];
           body[k] = v === "" || v == null ? null : ACH_NUMERIC.includes(k) ? Number(v) : v;
@@ -139,7 +139,7 @@ export default function AchievementsAdmin() {
     toast.success(`발표 ${rows.length}건을 CSV로 내보냈습니다.`);
   }
 
-  const openPaper = (p) => setPanel({ kind: "paper", id: p.id, title: strip(p.title), form: achievementFromPaper(p) });
+  const openPaper = (p) => setPanel({ kind: "paper", id: p.id, title: strip(p.title), form: { ...achievementFromPaper(p), url: p.url || "" } });
   const openTalk = (t) => setPanel({
     kind: "talk", id: t?.id ?? null,
     form: Object.fromEntries(TALK_FIELDS.map((k) => [k, t?.[k] ?? ""])),
@@ -201,6 +201,9 @@ export default function AchievementsAdmin() {
                       <td>
                         <div style={{ fontWeight: 600, color: "#222", lineHeight: 1.4 }} dangerouslySetInnerHTML={{ __html: sanitizeHtml(p.title) }} />
                         <div style={{ fontSize: "0.76rem", color: "#8a94a0", marginTop: 1 }}>{p.journal}{p.volume_pages ? ` · ${p.volume_pages}` : ""}{p.published_on ? ` · ${fmtSheetDate(p.published_on)}` : ""}</div>
+                        <div style={{ fontSize: "0.72rem", marginTop: 1 }}>
+                          {p.url ? <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ color: "#6b7785", textDecoration: "none" }}>{p.url.replace(/^https?:\/\/(doi\.org\/)?/, "")}</a> : <span style={{ color: "#b26a00" }}>DOI 없음</span>}
+                        </div>
                       </td>
                       <td>{p.role ? <Badge color={ROLE_COLOR[p.role]}>{p.role}</Badge> : <Badge color="orange"><FaTriangleExclamation size={9} /> 미입력</Badge>}</td>
                       <td className={td.muted}>{p.pub_type || "-"}</td>
@@ -267,6 +270,11 @@ export default function AchievementsAdmin() {
         {panel?.kind === "paper" && (
           <>
             <div style={{ fontSize: "0.88rem", color: "#333", fontWeight: 600, marginBottom: 14, lineHeight: 1.4 }}>{panel.title}</div>
+            <div style={{ marginBottom: 14 }}>
+              <Field label="DOI / URL" hint="공개 Publications 페이지 링크이자 CSV 의 DOI 열. 예: https://doi.org/10.1021/…">
+                <Input value={panel.form.url ?? ""} onChange={(e) => setF("url", e.target.value)} placeholder="https://doi.org/…" />
+              </Field>
+            </div>
             <PaperAchievementFields form={panel.form} onChange={setF} />
           </>
         )}
