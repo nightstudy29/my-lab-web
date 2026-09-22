@@ -10,7 +10,7 @@
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #001a44 0%, #002d70 55%, #004094 100%);
-  padding: 72px 24px 64px;
+  padding: 64px 24px 84px;
   text-align: center;
   color: #fff;
 }
@@ -55,40 +55,11 @@
   font-size: 0.98rem;
   color: rgba(255, 255, 255, 0.72);
   line-height: 1.65;
-  margin: 0 auto 26px;
+  margin: 0 auto;
   max-width: 520px;
 }
 
-.heroActions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
 
-.btnPrimary,
-.btnGhost {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 11px 18px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition: transform 0.15s, background 0.15s, border-color 0.15s;
-}
-.btnPrimary {
-  background: #fff;
-  color: #004094;
-}
-.btnPrimary:hover { transform: translateY(-1px); background: #eef4ff; }
-.btnGhost {
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.06);
-}
-.btnGhost:hover { border-color: rgba(255, 255, 255, 0.7); background: rgba(255, 255, 255, 0.12); }
 
 /* ===== CONTENT ===== */
 .content {
@@ -102,9 +73,12 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  margin-top: -32px;           /* 히어로 위로 살짝 겹치게 */
-  position: relative;
-  z-index: 2;
+  margin-top: 48px;
+}
+.channelsNote {
+  margin: 10px 4px 0;
+  font-size: 0.8rem;
+  color: #8a94a0;
 }
 
 .channel {
@@ -246,14 +220,6 @@ a.channel:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 3
   font-weight: 700;
   color: #1a1f2b;
 }
-.locationMeta {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.86rem;
-  color: #6b7785;
-}
 .mapsLink {
   margin-top: 6px;
   display: inline-flex;
@@ -267,28 +233,13 @@ a.channel:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 3
 .mapsLink:hover { text-decoration: underline; }
 .accent_green .mapsLink { color: #1e7b34; }
 
-.directions {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-top: 16px;
-  padding: 12px 16px;
-  background: #fff;
-  border: 1px dashed #d5dce6;
-  border-radius: 12px;
-  font-size: 0.86rem;
-  color: #4a5563;
-  line-height: 1.55;
-}
-.directionsIcon {
-  flex-shrink: 0;
-  margin-top: 2px;
-  color: #004094;
-}
 
 /* ===== JOIN US ===== */
 .recruit {
-  margin-top: 56px;
+  margin-top: -36px;           /* 히어로 위로 살짝 겹치게 */
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 12px 36px rgba(0, 30, 80, 0.18);
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: 28px;
@@ -296,7 +247,6 @@ a.channel:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 3
   border-radius: 18px;
   background: linear-gradient(135deg, #0a2a5e 0%, #004094 100%);
   color: #fff;
-  position: relative;
   overflow: hidden;
 }
 .recruit::after {
@@ -407,10 +357,10 @@ a.channel:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 3
 @media (max-width: 820px) {
   .hero { padding: 56px 20px 52px; }
   .content { padding: 0 16px 60px; }
-  .channels { grid-template-columns: 1fr; margin-top: -24px; gap: 12px; }
+  .channels { grid-template-columns: 1fr; margin-top: 32px; gap: 12px; }
   .grid { grid-template-columns: 1fr; }
-  .recruit { grid-template-columns: 1fr; padding: 24px 20px; gap: 18px; }
-  .section, .recruit { margin-top: 40px; }
+  .recruit { grid-template-columns: 1fr; padding: 24px 20px; gap: 18px; margin-top: -24px; }
+  .section { margin-top: 40px; }
   .buildingBadge { width: 60px; height: 60px; }
   .buildingNumber { font-size: 1.4rem; }
 }

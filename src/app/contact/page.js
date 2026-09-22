@@ -1,22 +1,13 @@
 // Contact — 서버 컴포넌트. 연락 채널 · 위치 · 모집 안내.
-import {
-  FaEnvelope, FaPhone, FaLocationDot, FaMapLocationDot, FaTrainSubway,
-  FaUserGraduate, FaCheck, FaArrowUpRightFromSquare,
-} from "react-icons/fa6";
+import { FaEnvelope, FaPhone, FaLocationDot, FaUserGraduate, FaCheck, FaArrowUpRightFromSquare } from "react-icons/fa6";
 import styles from './page.module.css';
 
 const EMAIL = 'junminsuh@snu.ac.kr';
 const PHONE = '+82-2-880-8463';
 
 const LOCATIONS = [
-  {
-    number: '18', title: 'Professor Office', room: 'Building 18, Room 405',
-    phone: PHONE, accent: 'blue', maps: 'https://maps.app.goo.gl/mVkc698chUkL4HrB9',
-  },
-  {
-    number: '31', title: 'Student Lab', room: 'Building 31, Room 204-3',
-    phone: null, accent: 'green', maps: 'https://maps.app.goo.gl/LN8xpMhKz97z3xCF8',
-  },
+  { number: '18', title: 'Professor Office', room: 'Building 18, Room 405', accent: 'blue', maps: 'https://maps.app.goo.gl/mVkc698chUkL4HrB9' },
+  { number: '31', title: 'Student Lab', room: 'Building 31, Room 204-3', accent: 'green', maps: 'https://maps.app.goo.gl/LN8xpMhKz97z3xCF8' },
 ];
 
 const POSITIONS = ['MS', 'PhD', 'MS–PhD Integrated', 'Postdoc', 'Undergraduate Intern'];
@@ -35,16 +26,34 @@ export default function ContactPage() {
           <p className={styles.heroLead}>
             Questions about our research, collaboration, or joining the lab — we&apos;d love to hear from you.
           </p>
-          <div className={styles.heroActions}>
-            <a href={`mailto:${EMAIL}`} className={styles.btnPrimary}><FaEnvelope size={14} /> {EMAIL}</a>
-            <a href={LOCATIONS[0].maps} target="_blank" rel="noopener noreferrer" className={styles.btnGhost}>
-              <FaMapLocationDot size={14} /> Find us on Google Maps
-            </a>
-          </div>
         </div>
       </section>
 
       <div className={styles.content}>
+
+        {/* ===== Join Us (맨 위) ===== */}
+        <section className={styles.recruit}>
+          <div className={styles.recruitMain}>
+            <span className={styles.recruitEyebrow}><FaUserGraduate size={12} /> Join us</span>
+            <h2 className={styles.recruitTitle}>We&apos;re recruiting</h2>
+            <p className={styles.recruitDesc}>
+              We are always looking for <strong>highly motivated students and researchers</strong> who want to work on
+              semiconductor materials and intelligent devices. Prior experience is welcome but not required — curiosity is.
+            </p>
+            <div className={styles.positions}>
+              {POSITIONS.map((p) => <span key={p} className={styles.positionChip}>{p}</span>)}
+            </div>
+          </div>
+          <div className={styles.recruitAside}>
+            <div className={styles.checklistTitle}>Please send</div>
+            <ul className={styles.checklist}>
+              {CHECKLIST.map((item) => <li key={item}><FaCheck size={11} /> {item}</li>)}
+            </ul>
+            <a href={`mailto:${EMAIL}?subject=${encodeURIComponent('[SMID Lab] Application')}`} className={styles.recruitBtn}>
+              <FaEnvelope size={13} /> Email your application
+            </a>
+          </div>
+        </section>
 
         {/* ===== 연락 채널 ===== */}
         <div className={styles.channels}>
@@ -67,6 +76,7 @@ export default function ContactPage() {
             <span className={styles.channelSub}>Seoul National University · Seoul 08826, Korea</span>
           </div>
         </div>
+        <p className={styles.channelsNote}>Email is the best way to reach us. The phone number is for the professor office.</p>
 
         {/* ===== 위치 ===== */}
         <section className={styles.section}>
@@ -85,47 +95,12 @@ export default function ContactPage() {
                 <div className={styles.locationBody}>
                   <h3 className={styles.locationTitle}>{loc.title}</h3>
                   <p className={styles.locationRoom}>{loc.room}</p>
-                  <p className={styles.locationMeta}>
-                    <FaPhone size={11} /> {loc.phone || 'TBD'}
-                  </p>
                   <a href={loc.maps} target="_blank" rel="noopener noreferrer" className={styles.mapsLink}>
                     Open in Google Maps <FaArrowUpRightFromSquare size={11} />
                   </a>
                 </div>
               </div>
             ))}
-          </div>
-
-          <div className={styles.directions}>
-            <FaTrainSubway className={styles.directionsIcon} />
-            <span>
-              <strong>Getting here:</strong> Seoul Nat&apos;l Univ. Station (Line 2) → campus bus <strong>5511</strong> or <strong>5513</strong>.
-              Both buildings are within the College of Engineering area.
-            </span>
-          </div>
-        </section>
-
-        {/* ===== Join Us ===== */}
-        <section className={styles.recruit}>
-          <div className={styles.recruitMain}>
-            <span className={styles.recruitEyebrow}><FaUserGraduate size={12} /> Join us</span>
-            <h2 className={styles.recruitTitle}>We&apos;re recruiting</h2>
-            <p className={styles.recruitDesc}>
-              We are always looking for <strong>highly motivated students and researchers</strong> who want to work on
-              semiconductor materials and intelligent devices. Prior experience is welcome but not required — curiosity is.
-            </p>
-            <div className={styles.positions}>
-              {POSITIONS.map((p) => <span key={p} className={styles.positionChip}>{p}</span>)}
-            </div>
-          </div>
-          <div className={styles.recruitAside}>
-            <div className={styles.checklistTitle}>Please send</div>
-            <ul className={styles.checklist}>
-              {CHECKLIST.map((item) => <li key={item}><FaCheck size={11} /> {item}</li>)}
-            </ul>
-            <a href={`mailto:${EMAIL}?subject=${encodeURIComponent('[SMID Lab] Application')}`} className={styles.recruitBtn}>
-              <FaEnvelope size={13} /> Email your application
-            </a>
           </div>
         </section>
 
