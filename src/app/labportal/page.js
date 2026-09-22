@@ -13,19 +13,23 @@ import PapersAdmin from '@/components/PapersAdmin';
 import NewsAdmin from '@/components/NewsAdmin';
 import PatentsAdmin from '@/components/PatentsAdmin';
 import useIsMobile from '@/hooks/useIsMobile';
+import AccountsAdmin from '@/components/AccountsAdmin';
+import ChangePasswordForm from '@/components/ChangePasswordForm';
+import { ROLE_LABELS, canManageContent } from '@/lib/roles';
 
 const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZFKBBsoaoqe9PV4aOz92jS-k5yMr6ynih1NBSFr7490KdMFkRHKsSwyBRha0CTgP-_WlvIiOoUwwh/pub?gid=0&single=true&output=csv"; 
 const GAS_MEMBER_URL = "https://script.google.com/macros/s/AKfycbwdgyNJ2J6L1nxiCy5DIIfNmsaFRiwg6uwTlWrbY3nnYvufz-wbN4vsWhoj71hWlM_Z7w/exec"; 
-const GAS_AUTH_URL = "https://script.google.com/macros/s/AKfycbyaTohnw8xR8yqX3lWUbGsMNaVVc2oL-3OGYQkpYeiKaXRVGKPN0bRcfg59zSkJni_Ppg/exec";
 
+// roles: 이 서브탭을 볼 수 있는 역할 (manager 는 논문/특허/뉴스만)
 const ADMIN_SUB_TABS = [
-  { id: 'approvals', label: '가입 승인' },
-  { id: 'requests', label: '수정 요청' },
-  { id: 'vacation', label: '휴가 관리' },
-  { id: 'classmaterial', label: '강의자료' },
-  { id: 'papers', label: '논문' },
-  { id: 'patents', label: '특허' },
-  { id: 'news', label: '뉴스' },  
+  { id: 'approvals', label: '가입 승인', roles: ['admin'] },
+  { id: 'accounts', label: '계정 관리', roles: ['admin'] },
+  { id: 'requests', label: '수정 요청', roles: ['admin'] },
+  { id: 'vacation', label: '휴가 관리', roles: ['admin'] },
+  { id: 'classmaterial', label: '강의자료', roles: ['admin'] },
+  { id: 'papers', label: '논문', roles: ['admin', 'manager'] },
+  { id: 'patents', label: '특허', roles: ['admin', 'manager'] },
+  { id: 'news', label: '뉴스', roles: ['admin', 'manager'] },
 ];
 
 export default function LabPortalPage() {
@@ -44,6 +48,13 @@ export default function LabPortalPage() {
   const [requestCategory, setRequestCategory] = useState("");
   const [requestContent, setRequestContent] = useState("");
   const [adminSubTab, setAdminSubTab] = useState('approvals');
+  const [isPwModalOpen, setIsPwModalOpen] = useState(false);
+  const [rejectTarget, setRejectTarget] = useState(null);   // 거절 모달 대상 (pending user)
+  const [rejectReason, setRejectReason] = useState("");
+
+  // 역할별로 보이는 Admin 서브탭. 현재 선택이 안 보이는 탭이면 첫 탭으로.
+  const visibleSubTabs = user ? ADMIN_SUB_TABS.filter(t => t.roles.includes(user.role)) : [];
+  const activeSubTab = visibleSubTabs.some(t => t.id === adminSubTab) ? adminSubTab : visibleSubTabs[0]?.id;
 
   // 로그인 체크 — httpOnly 세션 쿠키를 서버(/api/session)에서 검증합니다.
   // (예전처럼 localStorage 값을 믿지 않습니다. 관리자 API도 서버에서 별도로 role을 확인합니다.)
@@ -95,17 +106,12 @@ export default function LabPortalPage() {
   const fetchAdminData = async () => {
     setIsLoading(true);
     try {
-      const res1 = await fetch(GAS_AUTH_URL, {
-        method: "POST", headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({ action: 'getPendingUsers' })
-      });
-      if (res1.ok) setPendingUsers(await res1.json());
-
-      const res2 = await fetch(GAS_AUTH_URL, {
-        method: "POST", headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({ action: 'getRequests' })
-      });
-      if (res2.ok) setContentRequests(await res2.json());
+      const [res1, res2] = await Promise.all([
+        fetch('/api/admin/users?status=pending'),
+        fetch('/api/requests?status=open'),
+      ]);
+      if (res1.ok) setPendingUsers((await res1.json()).users || []);
+      if (res2.ok) setContentRequests((await res2.json()).requests || []);
     } catch (e) {
       console.error("데이터 로딩 실패:", e);
       alert("데이터를 불러오지 못했습니다.");
@@ -149,28 +155,48 @@ export default function LabPortalPage() {
     } catch (e) { console.error(e); } finally { setIsSaving(false); }
   };
 
-  const handleApproveUser = async (targetId) => {
-    if (!confirm("승인하시겠습니까?")) return;
-    setIsSaving(true);
-    await fetch(GAS_AUTH_URL, {
-      method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ action: 'approveUser', targetId })
+  const patchUser = async (id, action, extra = {}) => {
+    const res = await fetch('/api/admin/users', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, action, ...extra }),
     });
-    // no-cors 요청은 응답을 읽을 수 없으므로, 목록을 다시 불러와 실제로 반영됐는지 확인합니다.
-    await fetchAdminData();
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '실패');
+    return data;
+  };
+
+  const handleApproveUser = async (u) => {
+    if (!confirm(`${u.name} (${u.userId}) 계정을 승인하시겠습니까?`)) return;
+    setIsSaving(true);
+    try {
+      await patchUser(u.id, 'approve');
+      setPendingUsers(prev => prev.filter(p => p.id !== u.id));
+    } catch (e) { alert("승인 실패: " + e.message); }
+    setIsSaving(false);
+  };
+
+  const handleRejectUser = async () => {
+    if (!rejectTarget) return;
+    setIsSaving(true);
+    try {
+      await patchUser(rejectTarget.id, 'reject', { reason: rejectReason.trim() || null });
+      setPendingUsers(prev => prev.filter(p => p.id !== rejectTarget.id));
+      setRejectTarget(null);
+      setRejectReason("");
+    } catch (e) { alert("거절 실패: " + e.message); }
     setIsSaving(false);
   };
 
   const handleResolveRequest = async (req) => {
     if (!confirm("이 요청을 처리 완료로 변경하시겠습니까?")) return;
     try {
-      await fetch(GAS_AUTH_URL, {
-        method: "POST", headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({ action: 'resolveRequest', requester: req.from, content: req.message })
+      const res = await fetch('/api/requests', {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: req.id }),
       });
-      setContentRequests(prev => prev.filter(r => r.timestamp !== req.timestamp));
-      alert("처리되었습니다.");
-    } catch (e) { console.error(e); alert("오류가 발생했습니다."); }
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || '실패');
+      setContentRequests(prev => prev.filter(r => r.id !== req.id));
+    } catch (e) { console.error(e); alert("오류가 발생했습니다: " + e.message); }
   };
 
   const openRequestModal = (category) => {
@@ -182,13 +208,16 @@ export default function LabPortalPage() {
   const submitRequest = async () => {
     if (!requestContent.trim()) return alert("내용을 입력해주세요.");
     setIsSaving(true);
-    await fetch(GAS_AUTH_URL, {
-      method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ action: 'submitRequest', requester: user.name, category: requestCategory, content: requestContent })
-    });
+    try {
+      const res = await fetch('/api/requests', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: requestCategory, content: requestContent }),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || '실패');
+      setIsModalOpen(false);
+      alert("요청사항이 전달되었습니다.");
+    } catch (e) { alert("전송 실패: " + e.message); }
     setIsSaving(false);
-    setIsModalOpen(false);
-    alert("요청사항이 전달되었습니다.");
   };
 
   const handleLogout = async () => {
@@ -198,6 +227,19 @@ export default function LabPortalPage() {
 
   if (!user) return null;
 
+  // 관리자가 초기화한 임시 비밀번호로 들어온 상태면 새 비밀번호를 먼저 설정해야 함
+  if (user.mustChangePassword) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8f9fa', padding: '20px' }}>
+        <div style={{ padding: '40px', background: '#fff', borderRadius: '20px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', width: '100%', maxWidth: '400px' }}>
+          <h2 style={{ margin: '0 0 8px', color: '#333', fontSize: '1.3rem' }}>🔑 새 비밀번호 설정</h2>
+          <p style={{ fontSize: '0.85rem', color: '#666', margin: '0 0 16px' }}>임시 비밀번호로 로그인했습니다. 계속하려면 본인만 아는 새 비밀번호로 바꿔주세요.</p>
+          <ChangePasswordForm forced currentLabel="임시 비밀번호" onSuccess={() => setUser(prev => ({ ...prev, mustChangePassword: false }))} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: mobile ? '30px 16px' : '60px 20px', maxWidth: '1200px', margin: '0 auto', backgroundColor: '#fff', minHeight: '100vh' }}>
       
@@ -206,8 +248,11 @@ export default function LabPortalPage() {
         <h1 style={{ margin: 0, color: '#333', fontSize: mobile ? '1.6rem' : '2.2rem', fontWeight: '800' }}>SMID Lab Portal</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ color: '#666', fontWeight: 'bold', fontSize: mobile ? '0.9rem' : '1rem' }}>
-            {user.name} {user.role === 'admin' ? '(Admin)' : '연구원'}
+            {user.name} <span style={{ color: user.role === 'admin' ? '#d32f2f' : user.role === 'manager' ? '#004094' : '#888', fontWeight: 'normal', fontSize: '0.85rem' }}>({ROLE_LABELS[user.role] || user.role})</span>
           </span>
+          <button onClick={() => setIsPwModalOpen(true)} title="비밀번호 변경" style={{ cursor: 'pointer', border: '1px solid #ddd', background: '#fff', padding: '8px 12px', borderRadius: '20px', color: '#555', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.85rem' }}>
+            <FaIcons.FaKey /> {!mobile && '비밀번호'}
+          </button>
           <button onClick={handleLogout} style={{ cursor: 'pointer', border: '1px solid #ddd', background: '#fff', padding: '8px 15px', borderRadius: '20px', color: '#555', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.9rem' }}>
             <FaIcons.FaSignOutAlt /> Sign Out
           </button>
@@ -259,10 +304,10 @@ export default function LabPortalPage() {
             <span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>{t.label}</span>
           </button>
         ))}
-        {user.role === 'admin' && (
+        {canManageContent(user.role) && (
           <button onClick={() => setActiveTab('admin')} style={tabBtnStyle(activeTab === 'admin', true, mobile)}>
             <FaIcons.FaUserShield />
-            <span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>Admin</span>
+            <span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>{user.role === 'admin' ? 'Admin' : 'Manage'}</span>
           </button>
         )}
       </div>
@@ -455,19 +500,19 @@ export default function LabPortalPage() {
         )}
 
         {/* ===== Admin Dashboard ===== */}
-        {activeTab === 'admin' && user.role === 'admin' && (
+        {activeTab === 'admin' && canManageContent(user.role) && (
           <div>
-            <h2 style={{ color: '#d32f2f', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <MdAdminPanelSettings size={24} /> Admin Dashboard
+            <h2 style={{ color: user.role === 'admin' ? '#d32f2f' : '#004094', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <MdAdminPanelSettings size={24} /> {user.role === 'admin' ? 'Admin Dashboard' : '콘텐츠 관리'}
             </h2>
 
             {/* ===== Admin 서브 탭 ===== */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '2px' }}>
-              {ADMIN_SUB_TABS.map(t => (
+              {visibleSubTabs.map(t => (
                 <button
                   key={t.id}
                   onClick={() => setAdminSubTab(t.id)}
-                  style={adminSubTabBtnStyle(adminSubTab === t.id)}
+                  style={adminSubTabBtnStyle(activeSubTab === t.id)}
                 >
                   {t.label}
                 </button>
@@ -475,7 +520,7 @@ export default function LabPortalPage() {
             </div>
 
             {/* 가입 승인 대기 */}
-            {adminSubTab === 'approvals' && (
+            {activeSubTab === 'approvals' && (
               <div style={adminCardStyle}>
                 <h3 style={{ marginTop: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <MdPendingActions size={22} color="#d32f2f" /> 가입 승인 대기 ({pendingUsers.length})
@@ -485,14 +530,17 @@ export default function LabPortalPage() {
                 ) : mobile ? (
                   // 모바일: 카드
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
-                    {pendingUsers.map((u, idx) => (
-                      <div key={idx} style={{ background: '#f8f9fa', border: '1px solid #eee', borderRadius: '8px', padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
+                    {pendingUsers.map((u) => (
+                      <div key={u.id} style={{ background: '#f8f9fa', border: '1px solid #eee', borderRadius: '8px', padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ minWidth: 0 }}>
                           <div style={{ fontWeight: 'bold', color: '#333', marginBottom: '4px' }}>{u.name}</div>
-                          <div style={{ fontSize: '0.8rem', color: '#888' }}>{u.id}</div>
-                          <div style={{ fontSize: '0.8rem', color: '#888' }}>{u.timestamp}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#888' }}>{u.userId}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#888' }}>{new Date(u.createdAt).toLocaleString()}</div>
                         </div>
-                        <button onClick={() => handleApproveUser(u.id)} style={approveBtn}>승인</button>
+                        <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                          <button onClick={() => handleApproveUser(u)} disabled={isSaving} style={approveBtn}>승인</button>
+                          <button onClick={() => { setRejectTarget(u); setRejectReason(""); }} disabled={isSaving} style={rejectBtn}>거절</button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -503,18 +551,21 @@ export default function LabPortalPage() {
                         <tr style={{ background: '#f8f9fa', color: '#555', textAlign: 'left', fontSize: '0.9rem' }}>
                           <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>ID</th>
                           <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>Name</th>
-                          <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>Date</th>
+                          <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>신청일</th>
                           <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #eee' }}>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {pendingUsers.map((u, idx) => (
-                          <tr key={idx} style={{ borderBottom: '1px solid #f1f3f5' }}>
-                            <td style={{ padding: '12px', color: '#333' }}>{u.id}</td>
+                        {pendingUsers.map((u) => (
+                          <tr key={u.id} style={{ borderBottom: '1px solid #f1f3f5' }}>
+                            <td style={{ padding: '12px', color: '#333' }}>{u.userId}</td>
                             <td style={{ padding: '12px', fontWeight: 'bold', color: '#333' }}>{u.name}</td>
-                            <td style={{ padding: '12px', color: '#666', fontSize: '0.85rem' }}>{u.timestamp}</td>
+                            <td style={{ padding: '12px', color: '#666', fontSize: '0.85rem' }}>{new Date(u.createdAt).toLocaleString()}</td>
                             <td style={{ padding: '12px', textAlign: 'center' }}>
-                              <button onClick={() => handleApproveUser(u.id)} style={approveBtn}>승인</button>
+                              <div style={{ display: 'inline-flex', gap: '6px' }}>
+                                <button onClick={() => handleApproveUser(u)} disabled={isSaving} style={approveBtn}>승인</button>
+                                <button onClick={() => { setRejectTarget(u); setRejectReason(""); }} disabled={isSaving} style={rejectBtn}>거절</button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -525,8 +576,11 @@ export default function LabPortalPage() {
               </div>
             )}
 
+            {/* 계정 관리 */}
+            {activeSubTab === 'accounts' && <AccountsAdmin currentUserId={user.userID} />}
+
             {/* 콘텐츠 수정 요청 */}
-            {adminSubTab === 'requests' && (
+            {activeSubTab === 'requests' && (
               <div style={adminCardStyle}>
                 <h3 style={{ marginTop: 0, color: '#1565c0', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <MdPlaylistAddCheck size={26} color="#1565c0" /> 콘텐츠 수정/추가 요청 ({contentRequests.length})
@@ -535,15 +589,15 @@ export default function LabPortalPage() {
                   <p style={{ color: '#888', fontSize: '0.9rem' }}>접수된 요청사항이 없습니다.</p>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
-                    {contentRequests.map((req, index) => (
-                      <div key={index} style={{ border: '1px solid #e9ecef', borderRadius: '8px', padding: '15px', background: '#f8f9fa', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: mobile ? 'wrap' : 'nowrap' }}>
+                    {contentRequests.map((req) => (
+                      <div key={req.id} style={{ border: '1px solid #e9ecef', borderRadius: '8px', padding: '15px', background: '#f8f9fa', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: mobile ? 'wrap' : 'nowrap' }}>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                            <span style={{ background: '#e3f2fd', color: '#1565c0', fontSize: '0.75rem', fontWeight: 'bold', padding: '3px 8px', borderRadius: '4px' }}>{req.page}</span>
-                            <span style={{ color: '#adb5bd', fontSize: '0.75rem' }}>{new Date(req.timestamp).toLocaleString()}</span>
+                            <span style={{ background: '#e3f2fd', color: '#1565c0', fontSize: '0.75rem', fontWeight: 'bold', padding: '3px 8px', borderRadius: '4px' }}>{req.category}</span>
+                            <span style={{ color: '#adb5bd', fontSize: '0.75rem' }}>{new Date(req.createdAt).toLocaleString()}</span>
                           </div>
-                          <p style={{ color: '#495057', fontSize: '0.95rem', margin: '0 0 8px 0', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>{req.message}</p>
-                          <div style={{ fontSize: '0.85rem', color: '#868e96' }}>From: <span style={{ fontWeight: '600', color: '#495057' }}>{req.from}</span></div>
+                          <p style={{ color: '#495057', fontSize: '0.95rem', margin: '0 0 8px 0', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>{req.content}</p>
+                          <div style={{ fontSize: '0.85rem', color: '#868e96' }}>From: <span style={{ fontWeight: '600', color: '#495057' }}>{req.requesterName}</span></div>
                         </div>
                         <button onClick={() => handleResolveRequest(req)} style={{ background: '#2e7d32', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
                           처리 완료
@@ -556,7 +610,7 @@ export default function LabPortalPage() {
             )}
 
             {/* 휴가 관리 */}
-            {adminSubTab === 'vacation' && (
+            {activeSubTab === 'vacation' && (
               <div style={{ ...adminCardStyle }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '8px' }}>
                   <h3 style={{ margin: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -620,16 +674,42 @@ export default function LabPortalPage() {
             )}
 
             {/* 강의자료 관리 */}
-            {adminSubTab === 'classmaterial' && <ClassMaterialAdmin />}
+            {activeSubTab === 'classmaterial' && <ClassMaterialAdmin />}
 
             {/* 논문 관리 */}
-            {adminSubTab === 'papers' && <PapersAdmin />}
-            {adminSubTab === 'patents' && <PatentsAdmin />}
+            {activeSubTab === 'papers' && <PapersAdmin />}
+            {activeSubTab === 'patents' && <PatentsAdmin />}
             {/* 뉴스 관리 */}
-            {adminSubTab === 'news' && <NewsAdmin />}
+            {activeSubTab === 'news' && <NewsAdmin />}
           </div>
         )}
       </div>
+
+      {/* ===== 가입 거절 모달 ===== */}
+      {rejectTarget && (
+        <div style={modalBackdrop}>
+          <div style={modalBox(mobile)}>
+            <h3 style={{ marginTop: 0, marginBottom: '12px', color: '#333' }}>가입 거절 — {rejectTarget.name} ({rejectTarget.userId})</h3>
+            <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '12px' }}>사유는 선택입니다. 거절된 ID로는 다시 가입 신청할 수 있습니다.</p>
+            <textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} placeholder="예: 연구실 구성원이 아님"
+              style={{ width: '100%', height: '80px', padding: '10px', borderRadius: '6px', border: '1px solid #ddd', fontSize: '0.95rem', resize: 'vertical', marginBottom: '16px', boxSizing: 'border-box' }} />
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setRejectTarget(null)} style={modalCancelBtn}>취소</button>
+              <button onClick={handleRejectUser} disabled={isSaving} style={{ ...modalPrimaryBtn, background: '#d32f2f', opacity: isSaving ? 0.7 : 1 }}>{isSaving ? '처리 중...' : '거절'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== 비밀번호 변경 모달 ===== */}
+      {isPwModalOpen && (
+        <div style={modalBackdrop}>
+          <div style={{ ...modalBox(mobile), maxWidth: '400px' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '16px', color: '#333' }}>🔑 비밀번호 변경</h3>
+            <ChangePasswordForm onSuccess={() => { setIsPwModalOpen(false); alert('비밀번호가 변경되었습니다.'); }} onCancel={() => setIsPwModalOpen(false)} />
+          </div>
+        </div>
+      )}
 
       {/* ===== Request Modal ===== */}
       {isModalOpen && (
@@ -725,3 +805,8 @@ const contactRow = { display: 'flex', alignItems: 'center', gap: '8px', marginBo
 const iconBtnStyle = (bg) => ({ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', background: bg, color: '#fff', borderRadius: '6px', fontSize: '1rem', textDecoration: 'none' });
 const approveBtn = { background: '#4dabf7', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', whiteSpace: 'nowrap' };
 const requestBtnStyle = { fontSize: '0.85rem', padding: '6px 12px', borderRadius: '20px', border: '1px solid #eee', background: '#fff', cursor: 'pointer', color: '#555', fontWeight: 'bold' };
+const rejectBtn = { background: '#fce8e6', color: '#c5221f', border: 'none', padding: '6px 14px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', whiteSpace: 'nowrap' };
+const modalBackdrop = { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px', boxSizing: 'border-box' };
+const modalBox = (mobile) => ({ background: '#fff', padding: mobile ? '20px' : '30px', borderRadius: '12px', width: '100%', maxWidth: '500px', boxShadow: '0 5px 20px rgba(0,0,0,0.2)' });
+const modalCancelBtn = { padding: '10px 15px', background: '#f1f3f5', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', color: '#555' };
+const modalPrimaryBtn = { padding: '10px 15px', background: '#004094', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', color: '#fff' };

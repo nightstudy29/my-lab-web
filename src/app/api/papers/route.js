@@ -3,13 +3,14 @@
 // 논문(papers) 추가/수정/삭제 API.
 
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
+import { CONTENT_ROLES } from "@/lib/roles";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 // 논문 추가
 export async function POST(request) {
   try {
-    const auth = await requireAdmin(request);
+    const auth = await requireRole(request, CONTENT_ROLES);
     if (auth.response) return auth.response;
 
     const body = await request.json();
@@ -47,7 +48,7 @@ export async function POST(request) {
 // 논문 수정
 export async function PATCH(request) {
   try {
-    const auth = await requireAdmin(request);
+    const auth = await requireRole(request, CONTENT_ROLES);
     if (auth.response) return auth.response;
 
     const body = await request.json();
@@ -87,7 +88,7 @@ export async function PATCH(request) {
 // 논문 삭제 (?id=... 쿼리 파라미터로 받음)
 export async function DELETE(request) {
   try {
-    const auth = await requireAdmin(request);
+    const auth = await requireRole(request, CONTENT_ROLES);
     if (auth.response) return auth.response;
 
     const { searchParams } = new URL(request.url);

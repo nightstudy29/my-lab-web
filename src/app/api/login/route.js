@@ -1,6 +1,6 @@
 // src/app/api/login/route.js
 //
-// 2단계 로그인 (비밀번호 → OTP).
+// 2단계 로그인 (비밀번호 → OTP). 계정 저장소: Supabase users 테이블.
 //
 // [단계 1] loginStep: 'check_pw'  { userID, password }
 //   - 비밀번호/status 확인 후,
@@ -10,16 +10,14 @@
 // [단계 2] loginStep: 'verify_otp' { userID, token, stepToken }
 //   - stepToken(서버 서명)이 없거나 위조/만료면 거절 → 비밀번호 단계를 건너뛸 수 없음
 //   - status를 다시 확인 (차단/대기 계정은 OTP가 있어도 로그인 불가)
-//   - TOTP 검증 성공 시 httpOnly 세션 쿠키 발급
-//
-// 예전 방식(클라이언트가 tempSecret을 보내고 서버가 그대로 믿던 것)은 비밀번호 없이
-// 남의 계정에 자기 OTP를 등록할 수 있었기 때문에 제거했습니다.
+//   - TOTP 검증 성공 시 httpOnly 세션 쿠키 발급. must_change_password 면 응답에 표시
+//     (클라이언트가 새 비밀번호 설정 화면으로 보냄)
 
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import speakeasy from 'speakeasy';
 import QRCode from 'qrcode';
-import { getDoc } from '@/lib/googleSheet';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import {
   createStepToken,
   verifyStepToken,
@@ -35,6 +33,7 @@ const INVALID_LOGIN_MSG = 'ID 또는 비밀번호가 올바르지 않습니다.'
 function statusError(status) {
   if (status === 'pending') return NextResponse.json({ message: '승인 대기 중입니다.' }, { status: 403 });
   if (status === 'blocked') return NextResponse.json({ message: '차단된 계정입니다.' }, { status: 403 });
+  if (status === 'rejected') return NextResponse.json({ message: '가입 신청이 거절된 계정입니다. 관리자에게 문의하세요.' }, { status: 403 });
   return null;
 }
 
@@ -47,27 +46,29 @@ export async function POST(req) {
       return NextResponse.json({ message: INVALID_LOGIN_MSG }, { status: 401 });
     }
 
-    const doc = await getDoc();
-    const sheet = doc.sheetsByIndex[0];
-    const rows = await sheet.getRows();
-    const userRow = rows.find((row) => row.get('userID') === userID);
+    const { data: user, error } = await supabaseAdmin
+      .from('users')
+      .select('user_id, name, password_hash, otp_secret, role, status, must_change_password')
+      .eq('user_id', userID.trim())
+      .maybeSingle();
 
-    if (!userRow) {
+    if (error) throw error;
+    if (!user) {
       return NextResponse.json({ message: INVALID_LOGIN_MSG }, { status: 401 });
     }
 
-    const storedSecret = (userRow.get('otpSecret') || '').trim();
+    const storedSecret = (user.otp_secret || '').trim();
 
     // =================================================
     // [단계 1] 비밀번호 확인
     // =================================================
     if (loginStep === 'check_pw') {
-      const isMatch = await bcrypt.compare(String(password || ''), userRow.get('password') || '');
+      const isMatch = await bcrypt.compare(String(password || ''), user.password_hash || '');
       if (!isMatch) {
         return NextResponse.json({ message: INVALID_LOGIN_MSG }, { status: 401 });
       }
 
-      const blocked = statusError(userRow.get('status'));
+      const blocked = statusError(user.status);
       if (blocked) return blocked;
 
       if (!storedSecret) {
@@ -76,16 +77,16 @@ export async function POST(req) {
         const otpauthUrl = speakeasy.otpauthURL({
           secret,
           encoding: 'base32',
-          label: `${OTP_ISSUER}:${userID}`,
+          label: `${OTP_ISSUER}:${user.user_id}`,
           issuer: OTP_ISSUER,
         });
         const qrDataUrl = await QRCode.toDataURL(otpauthUrl, { width: 180, margin: 1 });
-        const setupToken = await createStepToken({ purpose: 'otp_setup', userID, secret });
+        const setupToken = await createStepToken({ purpose: 'otp_setup', userID: user.user_id, secret });
 
         return NextResponse.json({ status: 'setup_needed', setupToken, qrDataUrl });
       }
 
-      const pwToken = await createStepToken({ purpose: 'pw_ok', userID });
+      const pwToken = await createStepToken({ purpose: 'pw_ok', userID: user.user_id });
       return NextResponse.json({ status: 'otp_needed', pwToken });
     }
 
@@ -93,20 +94,20 @@ export async function POST(req) {
     // [단계 2] OTP 검증 → 세션 발급
     // =================================================
     if (loginStep === 'verify_otp') {
-      const blocked = statusError(userRow.get('status'));
+      const blocked = statusError(user.status);
       if (blocked) return blocked;
 
       let secret;
       let isFirstSetup = false;
 
       if (storedSecret) {
-        const step = await verifyStepToken(stepToken, 'pw_ok', userID);
+        const step = await verifyStepToken(stepToken, 'pw_ok', user.user_id);
         if (!step) {
           return NextResponse.json({ message: '인증 절차가 만료되었습니다. 처음부터 다시 로그인해주세요.' }, { status: 401 });
         }
         secret = storedSecret;
       } else {
-        const step = await verifyStepToken(stepToken, 'otp_setup', userID);
+        const step = await verifyStepToken(stepToken, 'otp_setup', user.user_id);
         if (!step?.secret) {
           return NextResponse.json({ message: '인증 절차가 만료되었습니다. 처음부터 다시 로그인해주세요.' }, { status: 401 });
         }
@@ -125,19 +126,17 @@ export async function POST(req) {
         return NextResponse.json({ message: '인증번호가 틀렸습니다. 다시 확인해주세요.' }, { status: 401 });
       }
 
-      if (isFirstSetup) {
-        userRow.set('otpSecret', secret);
-        await userRow.save();
-      }
+      const updates = { last_login_at: new Date().toISOString() };
+      if (isFirstSetup) updates.otp_secret = secret;
+      await supabaseAdmin.from('users').update(updates).eq('user_id', user.user_id);
 
-      const user = {
-        userID: userRow.get('userID'),
-        name: userRow.get('name'),
-        role: userRow.get('role'),
-      };
-
-      const response = NextResponse.json({ status: 'success', user });
-      response.cookies.set(SESSION_COOKIE, await createSessionToken(user), sessionCookieOptions());
+      const sessionUser = { userID: user.user_id, name: user.name, role: user.role };
+      const response = NextResponse.json({
+        status: 'success',
+        user: sessionUser,
+        mustChangePassword: !!user.must_change_password,
+      });
+      response.cookies.set(SESSION_COOKIE, await createSessionToken(sessionUser), sessionCookieOptions());
       return response;
     }
 

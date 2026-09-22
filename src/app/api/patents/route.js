@@ -3,13 +3,14 @@
 // 특허(patents) 추가/수정/삭제 API.
 
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
+import { CONTENT_ROLES } from "@/lib/roles";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 // 특허 추가
 export async function POST(request) {
   try {
-    const auth = await requireAdmin(request);
+    const auth = await requireRole(request, CONTENT_ROLES);
     if (auth.response) return auth.response;
 
     const body = await request.json();
@@ -54,7 +55,7 @@ export async function POST(request) {
 // 특허 수정
 export async function PATCH(request) {
   try {
-    const auth = await requireAdmin(request);
+    const auth = await requireRole(request, CONTENT_ROLES);
     if (auth.response) return auth.response;
 
     const body = await request.json();
@@ -101,7 +102,7 @@ export async function PATCH(request) {
 // 특허 삭제 (?id=... 쿼리 파라미터로 받음)
 export async function DELETE(request) {
   try {
-    const auth = await requireAdmin(request);
+    const auth = await requireRole(request, CONTENT_ROLES);
     if (auth.response) return auth.response;
 
     const { searchParams } = new URL(request.url);

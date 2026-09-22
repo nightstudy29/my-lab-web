@@ -1,13 +1,22 @@
 // src/app/api/register/route.js
 //
-// 신입 연구원 가입 신청. status: 'pending'으로 시트에 추가되고 관리자가 승인해야 로그인 가능.
+// 신입 연구원 가입 신청. status: 'pending'으로 저장되고 관리자가 승인해야 로그인 가능.
+// - 거절(rejected)된 ID로 다시 신청하면 그 행을 pending으로 되살립니다 (ID 재사용 허용).
+// - 같은 IP에서 24시간 내 pending 신청이 MAX_PENDING_PER_IP 건을 넘으면 거절 (스팸 방지).
 
 import { NextResponse } from 'next/server';
-import { getDoc } from '@/lib/googleSheet';
 import bcrypt from 'bcryptjs';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 const ID_REGEX = /^[a-zA-Z0-9]{3,20}$/;
 const MIN_PW_LENGTH = 8;
+const MAX_PENDING_PER_IP = 5;
+
+function clientIp(req) {
+  const fwd = req.headers.get('x-forwarded-for');
+  if (fwd) return fwd.split(',')[0].trim();
+  return req.headers.get('x-real-ip') || null;
+}
 
 export async function POST(req) {
   try {
@@ -23,40 +32,68 @@ export async function POST(req) {
       );
     }
     if (password.length < MIN_PW_LENGTH) {
-      return NextResponse.json(
-        { message: `비밀번호는 ${MIN_PW_LENGTH}자 이상이어야 합니다.` },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: `비밀번호는 ${MIN_PW_LENGTH}자 이상이어야 합니다.` }, { status: 400 });
     }
     if (!name || name.length > 30) {
       return NextResponse.json({ message: '이름을 입력해주세요. (30자 이내)' }, { status: 400 });
     }
 
-    const doc = await getDoc();
-    const sheet = doc.sheetsByIndex[0]; // users 시트
-    const rows = await sheet.getRows();
+    const ip = clientIp(req);
 
-    const existingUser = rows.find((row) => row.get('userID') === userID);
-    if (existingUser) {
-      return NextResponse.json({ message: '이미 존재하는 ID입니다.' }, { status: 409 });
+    // 스팸 제한
+    if (ip) {
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { count } = await supabaseAdmin
+        .from('users')
+        .select('*', { count: 'exact', head: true })
+        .eq('registration_ip', ip)
+        .eq('status', 'pending')
+        .gte('created_at', since);
+      if ((count || 0) >= MAX_PENDING_PER_IP) {
+        return NextResponse.json({ message: '가입 신청이 너무 많습니다. 잠시 후 다시 시도해주세요.' }, { status: 429 });
+      }
     }
+
+    const { data: existing } = await supabaseAdmin
+      .from('users')
+      .select('user_id, status')
+      .eq('user_id', userID)
+      .maybeSingle();
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const kstTimestamp = new Date().toLocaleString('ko-KR', {
-      timeZone: 'Asia/Seoul',
-      hour12: false,
-    });
-
-    await sheet.addRow({
-      userID,
-      password: hashedPassword,
-      name,
-      status: 'pending',
-      otpSecret: '',
-      role: 'student',
-      Timestamp: kstTimestamp,
-    });
+    if (existing) {
+      if (existing.status !== 'rejected') {
+        return NextResponse.json({ message: '이미 존재하는 ID입니다.' }, { status: 409 });
+      }
+      // 거절된 계정의 재신청 → pending 으로 되살림
+      const { error } = await supabaseAdmin
+        .from('users')
+        .update({
+          name,
+          password_hash: hashedPassword,
+          otp_secret: null,
+          role: 'member',
+          status: 'pending',
+          must_change_password: false,
+          rejected_reason: null,
+          registration_ip: ip,
+          created_at: new Date().toISOString(),
+          approved_at: null,
+        })
+        .eq('user_id', userID);
+      if (error) throw error;
+    } else {
+      const { error } = await supabaseAdmin.from('users').insert({
+        user_id: userID,
+        name,
+        password_hash: hashedPassword,
+        role: 'member',
+        status: 'pending',
+        registration_ip: ip,
+      });
+      if (error) throw error;
+    }
 
     return NextResponse.json({ message: '가입 신청 완료. 교수님 승인 후 로그인 가능합니다.' });
   } catch (error) {

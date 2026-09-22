@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import * as FaIcons from "react-icons/fa";
+import ChangePasswordForm from '@/components/ChangePasswordForm';
 
 export default function LoginPage() {
   const router = useRouter();
 
-  // 'login_input' | 'setup_needed' | 'otp_needed' | 'register'
+  // 'login_input' | 'setup_needed' | 'otp_needed' | 'change_password' | 'register'
   const [step, setStep] = useState('login_input');
 
   // 로그인 입력값
@@ -39,6 +40,7 @@ export default function LoginPage() {
     setOtpToken('');
     setStepToken('');
     setQrDataUrl('');
+    setPassword('');
   };
 
   // 2. [로그인 1단계] 아이디/비번 확인
@@ -89,6 +91,11 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok && data.status === 'success') {
+        // 관리자가 초기화한 임시 비밀번호로 들어왔으면 새 비밀번호를 먼저 설정
+        if (data.mustChangePassword) {
+          setStep('change_password');
+          return;
+        }
         router.replace('/labportal');
         return;
       }
@@ -160,11 +167,14 @@ export default function LoginPage() {
               {isLoading ? 'Checking...' : 'Login'}
             </button>
 
-            <div style={{ marginTop: '15px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
+            <div style={{ marginTop: '15px', borderTop: '1px solid #eee', paddingTop: '15px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <button type="button" onClick={() => setStep('register')}
                 style={{ background: 'none', border: 'none', color: '#666', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', width: '100%' }}>
                 <FaIcons.FaUserPlus /> 신입생 가입 신청
               </button>
+              <p style={{ margin: 0, fontSize: '0.75rem', color: '#aaa' }}>
+                비밀번호나 OTP를 잃어버렸다면 교수님께 초기화를 요청하세요.
+              </p>
             </div>
           </form>
         )}
@@ -210,7 +220,22 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* 4. 회원가입 신청 화면 */}
+        {/* 4. 임시 비밀번호로 로그인한 경우 — 새 비밀번호 설정 (건너뛸 수 없음) */}
+        {step === 'change_password' && (
+          <div style={{ animation: 'fadeIn 0.5s' }}>
+            <div style={{ backgroundColor: '#fff4e5', padding: '15px', borderRadius: '10px', marginBottom: '15px', textAlign: 'left' }}>
+              <p style={{ fontSize: '0.9rem', color: '#b26a00', fontWeight: 'bold', margin: '0 0 6px 0' }}>🔑 새 비밀번호를 설정해주세요</p>
+              <p style={{ fontSize: '0.8rem', color: '#555', margin: 0 }}>관리자가 발급한 임시 비밀번호로 로그인했습니다. 계속하려면 본인만 아는 새 비밀번호로 바꿔야 합니다.</p>
+            </div>
+            <ChangePasswordForm
+              forced
+              currentLabel="임시 비밀번호"
+              onSuccess={() => router.replace('/labportal')}
+            />
+          </div>
+        )}
+
+        {/* 5. 회원가입 신청 화면 */}
         {step === 'register' && (
           <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <h3 style={{ margin: '0 0 10px', fontSize: '1.1rem', color: '#004094' }}>연구원 등록 신청</h3>
