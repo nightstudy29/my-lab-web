@@ -5,6 +5,23 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { CONTENT_ROLES } from "@/lib/roles";
+import { ACH_FIELDS, ACH_NUMERIC, ROLES as ACH_ROLES, PUB_TYPES } from "@/lib/achievementConstants";
+
+// 업적 컬럼 화이트리스트 — body 에 있는 것만 반영. 빈 문자열은 null.
+function pickAchievement(body) {
+  const out = {};
+  for (const f of ACH_FIELDS) {
+    if (!(f in body)) continue;
+    let v = body[f];
+    if (v === "" || v === undefined) v = null;
+    if (v != null && ACH_NUMERIC.includes(f)) { v = Number(v); if (!Number.isFinite(v)) v = null; }
+    if (v != null && typeof v === "string") v = v.trim() || null;
+    out[f] = v;
+  }
+  if (out.role && !ACH_ROLES.includes(out.role)) throw new Error("역할은 제1저자/교신저자/공동저자 중 하나여야 합니다.");
+  if (out.pub_type && !PUB_TYPES.includes(out.pub_type)) throw new Error("게재지구분 값이 올바르지 않습니다.");
+  return out;
+}
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 // 논문 추가
@@ -20,6 +37,9 @@ export async function POST(request) {
       return NextResponse.json({ error: "필수 항목(연도/제목/저자)이 누락되었습니다." }, { status: 400 });
     }
 
+    let ach;
+    try { ach = pickAchievement(body); } catch (e) { return NextResponse.json({ error: e.message }, { status: 400 }); }
+
     const { data, error } = await supabaseAdmin
       .from("papers")
       .insert({
@@ -29,6 +49,7 @@ export async function POST(request) {
         journal: journal || null,
         url: url || null,
         news: news && news.length > 0 ? news : [],
+        ...ach,
       })
       .select()
       .single();
@@ -65,6 +86,7 @@ export async function PATCH(request) {
     if (journal !== undefined) updates.journal = journal || null;
     if (url !== undefined) updates.url = url || null;
     if (news !== undefined) updates.news = news;
+    try { Object.assign(updates, pickAchievement(body)); } catch (e) { return NextResponse.json({ error: e.message }, { status: 400 }); }
 
     const { data, error } = await supabaseAdmin
       .from("papers")

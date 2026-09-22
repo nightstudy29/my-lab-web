@@ -6,16 +6,18 @@ import { useState, useEffect, useMemo } from "react";
 import { FaPen, FaTrash, FaPlus } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
+import PaperAchievementFields, { achievementFromPaper, emptyAchievement } from "./PaperAchievementFields";
+import { ACH_FIELDS, ACH_NUMERIC, hasAchievement } from "@/lib/achievementConstants";
 import {
   Button, Input, Select, Field, Card, Toolbar, SearchInput, Table, td, Badge, Empty, FormGrid, span2,
   SlidePanel, RichTextInput, useToast, useConfirm,
 } from "./ui";
 
 function defaultForm() {
-  return { year: new Date().getFullYear(), title: "", authors: "", journal: "", url: "", news: [] };
+  return { year: new Date().getFullYear(), title: "", authors: "", journal: "", url: "", news: [], ach: emptyAchievement() };
 }
 function formFromPaper(p) {
-  return { year: p.year, title: p.title, authors: p.authors, journal: p.journal || "", url: p.url || "", news: p.news?.length ? p.news : [] };
+  return { year: p.year, title: p.title, authors: p.authors, journal: p.journal || "", url: p.url || "", news: p.news?.length ? p.news : [], ach: achievementFromPaper(p) };
 }
 const strip = (html) => String(html || "").replace(/<[^>]+>/g, "");
 
@@ -29,6 +31,7 @@ export default function PapersAdmin() {
   const [year, setYear] = useState("all");
   const [panel, setPanel] = useState(null); // { id: null | string, form }
   const [isSaving, setIsSaving] = useState(false);
+  const [showAch, setShowAch] = useState(false);
 
   useEffect(() => { load(); }, []);
 
@@ -61,6 +64,10 @@ export default function PapersAdmin() {
         year: f.year, title: f.title.trim(), authors: f.authors.trim(), journal: f.journal.trim(), url: f.url.trim(),
         news: f.news.filter((n) => n.name.trim() && n.url.trim()),
       };
+      for (const k of ACH_FIELDS) {
+        const v = f.ach[k];
+        payload[k] = v === "" || v == null ? null : ACH_NUMERIC.includes(k) ? Number(v) : v;
+      }
       const res = await fetch("/api/papers", {
         method: panel.id ? "PATCH" : "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(panel.id ? { id: panel.id, ...payload } : payload),
@@ -101,7 +108,7 @@ export default function PapersAdmin() {
         {isLoading ? <Empty>불러오는 중...</Empty> : visible.length === 0 ? <Empty>{papers.length === 0 ? "등록된 논문이 없습니다." : "검색 결과가 없습니다."}</Empty> : (
           <Table>
             <thead>
-              <tr><th style={{ width: 70 }}>연도</th><th>제목 / 저자</th><th style={{ width: 220 }}>저널</th><th style={{ width: 70 }}>언론</th><th style={{ width: 90 }}></th></tr>
+              <tr><th style={{ width: 70 }}>연도</th><th>제목 / 저자</th><th style={{ width: 220 }}>저널</th><th style={{ width: 70 }}>언론</th><th style={{ width: 70 }}>업적</th><th style={{ width: 90 }}></th></tr>
             </thead>
             <tbody>
               {visible.map((p) => (
@@ -113,6 +120,7 @@ export default function PapersAdmin() {
                   </td>
                   <td className={td.muted} style={{ whiteSpace: "normal" }}>{p.journal || "-"}</td>
                   <td>{p.news?.length > 0 ? <Badge color="blue">{p.news.length}</Badge> : <span style={{ color: "#ccc" }}>-</span>}</td>
+                  <td>{hasAchievement(p) ? <Badge color="green">{p.role || "입력"}</Badge> : <Badge color="orange">미입력</Badge>}</td>
                   <td className={td.right}>
                     <span className={td.actions}>
                       <Button variant="ghost" size="icon" title="수정" onClick={() => setPanel({ id: p.id, form: formFromPaper(p) })}><FaPen size={11} /></Button>
@@ -152,6 +160,15 @@ export default function PapersAdmin() {
                 </div>
               ))}
               <Button variant="secondary" size="sm" onClick={() => setF("news", [...panel.form.news, { name: "", url: "" }])}><FaPlus size={10} /> 언론 링크 추가</Button>
+            </div>
+
+            {/* 업적 정보 (접이식) — 공개 페이지에는 안 나가고 Admin 업적 탭/CSV 에 쓰임 */}
+            <div className={span2} style={{ borderTop: "1px solid #eef0f3", paddingTop: 12 }}>
+              <button type="button" onClick={() => setShowAch((v) => !v)} style={{ border: "none", background: "none", padding: 0, font: "inherit", fontSize: "0.85rem", fontWeight: 700, color: "#004094", cursor: "pointer" }}>
+                {showAch ? "▾" : "▸"} 업적 정보 {hasAchievement(panel.form.ach) ? "" : <span style={{ color: "#b26a00", fontWeight: 500 }}>(미입력)</span>}
+              </button>
+              <div style={{ fontSize: "0.74rem", color: "#98a2ae", margin: "2px 0 10px" }}>게재지구분·역할·IF 등 업적 보고용. 공개 페이지에는 표시되지 않습니다.</div>
+              {showAch && <PaperAchievementFields form={panel.form.ach} onChange={(k, v) => setF("ach", { ...panel.form.ach, [k]: v })} />}
             </div>
           </FormGrid>
         )}

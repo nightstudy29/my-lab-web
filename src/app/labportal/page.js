@@ -14,6 +14,7 @@ import NewsAdmin from '@/components/NewsAdmin';
 import PatentsAdmin from '@/components/PatentsAdmin';
 import AccountsAdmin from '@/components/AccountsAdmin';
 import AdminDashboard from '@/components/AdminDashboard';
+import AchievementsAdmin from '@/components/AchievementsAdmin';
 import DirectoryMaster from '@/components/DirectoryMaster';
 import VacationAdmin from '@/components/VacationAdmin';
 import MemberDirectory from '@/components/MemberDirectory';
@@ -30,6 +31,7 @@ const ADMIN_SUB_TABS = [
   { id: 'patents', label: '특허', roles: ['admin', 'manager'], group: '콘텐츠' },
   { id: 'news', label: '뉴스', roles: ['admin', 'manager'], group: '콘텐츠' },
   { id: 'classmaterial', label: '강의자료', roles: ['admin'], group: '콘텐츠' },
+  { id: 'achievements', label: '업적', roles: ['admin'], group: '콘텐츠' },
   { id: 'approvals', label: '가입 승인', roles: ['admin'], group: '사람', badge: 'pending' },
   { id: 'accounts', label: '계정 관리', roles: ['admin'], group: '사람' },
   { id: 'directory', label: '멤버 관리', roles: ['admin'], group: '사람' },
@@ -551,6 +553,7 @@ function LabPortalInner() {
             {activeSubTab === 'papers' && <PapersAdmin />}
             {activeSubTab === 'patents' && <PatentsAdmin />}
             {activeSubTab === 'news' && <NewsAdmin />}
+            {activeSubTab === 'achievements' && <AchievementsAdmin />}
               </div>
             </div>
           </div>
