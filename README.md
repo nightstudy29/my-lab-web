@@ -31,7 +31,7 @@ src/
   proxy.js                  CSP 등 보안 헤더 (Next 16 의 middleware)
   data/*.json               정적 콘텐츠 (뉴비 가이드, 규칙, 위키, 연구, 장비)
 supabase/*.sql              스키마 변경 기록 (SQL Editor 에서 실행한 순서대로)
-scripts/                    import-paper-achievements.mjs (업적 시트 → papers)
+scripts/                    import-paper-achievements.mjs (업적 시트 → papers), backup-db.mjs (전 테이블 JSON 백업)
 ```
 
 ## 인증 / 권한
@@ -88,7 +88,7 @@ npm run lint
 npm run build
 ```
 
-배포는 `main` 브랜치 push → Vercel 자동. 스키마 변경은 Supabase SQL Editor 에서 실행 후 `supabase/NNN_*.sql` 로 기록.
+배포는 `main` 브랜치 push → Vercel 자동. DB 백업은 `node scripts/backup-db.mjs` → `backups/` (git 제외, 별도 보관). 스키마 변경은 Supabase SQL Editor 에서 실행 후 `supabase/NNN_*.sql` 로 기록.
 
 ## 보안 메모
 

@@ -43,3 +43,6 @@ next-env.d.ts
 # Google service account key files (절대 커밋 금지)
 crafty-automata-*.json
 *-service-account*.json
+
+# DB 백업 (scripts/backup-db.mjs 결과물 — 비밀 포함, 커밋 금지)
+/backups/
