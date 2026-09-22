@@ -37,7 +37,7 @@ export const MEMBER_STATUS_LABELS = { active: "Active", graduated: "Graduated" }
 // 본인이 포털 「Account」에서 편집할 수 있는 필드 (API 화이트리스트와 동일)
 export const SELF_EDITABLE_FIELDS = [
   "name_kor", "name_eng", "email", "phone", "kakao_id",
-  "cv_link", "scholar_link", "linkedin_link", "orcid_link", "photo_url", "research_area", "motto",
+  "cv_link", "scholar_link", "linkedin_link", "orcid_link", "photo_url", "research_area",
 ];
 // 교수님만 편집 (입학/합류 시기, 현재 소속·직위 포함)
 export const ADMIN_ONLY_FIELDS = [

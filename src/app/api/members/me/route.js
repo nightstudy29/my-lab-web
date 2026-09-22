@@ -11,7 +11,7 @@ import { requireLogin } from "@/lib/auth";
 import { MEMBER_COLUMNS, toDirectory } from "@/lib/memberShapes";
 import { SELF_EDITABLE_FIELDS } from "@/lib/memberConstants";
 
-const MAX_LEN = { research_area: 120, motto: 120, current_position: 120 };
+const MAX_LEN = { research_area: 120 };
 const URL_FIELDS = ["cv_link", "scholar_link", "linkedin_link", "orcid_link", "photo_url"];
 
 function cleanValue(field, value) {

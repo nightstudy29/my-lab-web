@@ -64,7 +64,6 @@ export default async function MembersPage() {
                 joined: m.yearJoined,
                 email: m.email,
                 area: m.researchArea,
-                motto: m.motto,
                 image: m.photoUrl,
                 links: { cv: m.links.cv, googleScholar: m.links.scholar, linkedin: m.links.linkedin, orcid: m.links.orcid },
               }}
