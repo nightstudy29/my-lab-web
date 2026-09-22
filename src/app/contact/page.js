@@ -17,19 +17,8 @@ export default function ContactPage() {
   return (
     <div className={styles.pageWrapper}>
 
-      {/* ===== Hero ===== */}
-      <section className={styles.hero}>
-        <div className={styles.heroPattern} aria-hidden="true" />
-        <div className={styles.heroInner}>
-          <span className={styles.eyebrow}>Contact</span>
-          <h1 className={styles.heroTitle}>Get in touch</h1>
-          <p className={styles.heroLead}>
-            Questions about our research, collaboration, or joining the lab — we&apos;d love to hear from you.
-          </p>
-        </div>
-      </section>
-
       <div className={styles.content}>
+        <h1 className={styles.pageTitle}>Contact</h1>
 
         {/* ===== Join Us (맨 위) ===== */}
         <section className={styles.recruit}>
