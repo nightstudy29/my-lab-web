@@ -32,6 +32,28 @@ function generateTempPassword(length = 10) {
   return out;
 }
 
+// 승인된 계정에 members 행이 없으면 만들어 연결합니다.
+// 같은 한국 이름의 미연결 멤버 행이 이미 있으면(시트에서 이전된 사람 등) 새로 만들지 않고 그 행에 연결.
+async function ensureMemberRow(user) {
+  const { data: linked } = await supabaseAdmin.from('members').select('id').eq('user_id', user.user_id).maybeSingle();
+  if (linked) return;
+
+  const { data: sameName } = await supabaseAdmin
+    .from('members').select('id').is('user_id', null).eq('name_kor', user.name).limit(1).maybeSingle();
+
+  if (sameName) {
+    await supabaseAdmin.from('members').update({ user_id: user.user_id }).eq('id', sameName.id);
+  } else {
+    await supabaseAdmin.from('members').insert({
+      user_id: user.user_id,
+      name_kor: user.name,
+      position: 'MS-PhD Student',
+      degree: 'TBD',
+      status: 'active',
+    });
+  }
+}
+
 function toPublic(row) {
   return {
     id: row.id,
@@ -137,6 +159,9 @@ export async function PATCH(request) {
       .select(SAFE_COLUMNS)
       .single();
     if (error) throw error;
+
+    // 승인 시 멤버 정보(members) 행을 자동으로 준비 — 온보딩 자동화
+    if (action === 'approve') await ensureMemberRow(data);
 
     return NextResponse.json({ user: toPublic(data), ...extra });
   } catch (err) {

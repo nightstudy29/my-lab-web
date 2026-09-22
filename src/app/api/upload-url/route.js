@@ -17,7 +17,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3 } from "@/lib/r2Client";
 import { requireRole } from "@/lib/auth";
-import { CONTENT_ROLES } from "@/lib/roles";
+import { CONTENT_ROLES, ROLES } from "@/lib/roles";
 
 const FOLDERS = new Set(["news", "classmaterial", "members"]);
 const MAX_SIZE = 200 * 1024 * 1024; // 200MB
@@ -35,7 +35,8 @@ function splitName(filename) {
 
 export async function POST(request) {
   try {
-    const auth = await requireRole(request, CONTENT_ROLES);
+    // 폴더별 권한: members(프로필 사진) = 로그인한 누구나, news = admin/manager, classmaterial = admin
+    const auth = await requireRole(request, ROLES);
     if (auth.response) return auth.response;
 
     const { filename, contentType, size, folder } = await request.json();
@@ -43,9 +44,11 @@ export async function POST(request) {
     if (!FOLDERS.has(folder)) {
       return NextResponse.json({ error: "허용되지 않은 업로드 위치입니다." }, { status: 400 });
     }
-    // 강의자료는 admin 만 (manager 는 뉴스 사진 등 콘텐츠용 업로드만)
     if (folder === "classmaterial" && auth.user.role !== "admin") {
       return NextResponse.json({ error: "강의자료 업로드는 관리자만 가능합니다." }, { status: 403 });
+    }
+    if (folder === "news" && !CONTENT_ROLES.includes(auth.user.role)) {
+      return NextResponse.json({ error: "뉴스 사진 업로드 권한이 없습니다." }, { status: 403 });
     }
     if (!Number.isFinite(size) || size <= 0 || size > MAX_SIZE) {
       return NextResponse.json({ error: `파일 크기는 ${MAX_SIZE / 1024 / 1024}MB 이하여야 합니다.` }, { status: 400 });

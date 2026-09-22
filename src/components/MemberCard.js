@@ -8,7 +8,7 @@ import { SiGooglescholar, SiOrcid } from 'react-icons/si';
 import styles from './MemberCard.module.css';
 
 export default function MemberCard({ member }) {
-  const { name, role, joined, email, area, image, links } = member;
+  const { name, role, joined, email, area, motto, image, links } = member;
 
   return (
     <div className={styles.card}>
@@ -69,8 +69,9 @@ export default function MemberCard({ member }) {
         {/* 세부 정보 */}
         <div className={styles.details}>
           {joined && <div className={styles.joined}>Joined {joined}</div>}
-          <div className={styles.email}>✉️ {email}</div>
+          {email && <div className={styles.email}>✉️ {email}</div>}
           {area && <div className={styles.area}>{area}</div>}
+          {motto && <div className={styles.area} style={{ fontStyle: 'italic', color: '#888' }}>“{motto}”</div>}
         </div>
 
       </div>

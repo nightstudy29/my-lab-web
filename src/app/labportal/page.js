@@ -2,28 +2,30 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import rulesData from '@/data/rules.json'; 
+import rulesData from '@/data/rules.json';
 import guideData from '@/data/newbieGuide.json';
-import wikiData from '@/data/labwiki.json'; 
+import wikiData from '@/data/labwiki.json';
 import * as FaIcons from "react-icons/fa";
-import { SiGoogle, SiLinkedin, SiOrcid, SiKakaotalk, SiSlack } from "react-icons/si"; 
-import { MdAdminPanelSettings, MdPendingActions, MdPlaylistAddCheck } from "react-icons/md"; 
+import { SiKakaotalk, SiSlack } from "react-icons/si";
+import { MdAdminPanelSettings, MdPendingActions, MdPlaylistAddCheck } from "react-icons/md";
 import ClassMaterialAdmin from '@/components/ClassMaterialAdmin';
 import PapersAdmin from '@/components/PapersAdmin';
 import NewsAdmin from '@/components/NewsAdmin';
 import PatentsAdmin from '@/components/PatentsAdmin';
-import useIsMobile from '@/hooks/useIsMobile';
 import AccountsAdmin from '@/components/AccountsAdmin';
+import DirectoryMaster from '@/components/DirectoryMaster';
+import VacationAdmin from '@/components/VacationAdmin';
+import MemberDirectory from '@/components/MemberDirectory';
+import MyProfileForm, { missingProfileFields } from '@/components/MyProfileForm';
 import ChangePasswordForm from '@/components/ChangePasswordForm';
+import useIsMobile from '@/hooks/useIsMobile';
 import { ROLE_LABELS, canManageContent } from '@/lib/roles';
-
-const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZFKBBsoaoqe9PV4aOz92jS-k5yMr6ynih1NBSFr7490KdMFkRHKsSwyBRha0CTgP-_WlvIiOoUwwh/pub?gid=0&single=true&output=csv"; 
-const GAS_MEMBER_URL = "https://script.google.com/macros/s/AKfycbwdgyNJ2J6L1nxiCy5DIIfNmsaFRiwg6uwTlWrbY3nnYvufz-wbN4vsWhoj71hWlM_Z7w/exec"; 
 
 // roles: 이 서브탭을 볼 수 있는 역할 (manager 는 논문/특허/뉴스만)
 const ADMIN_SUB_TABS = [
   { id: 'approvals', label: '가입 승인', roles: ['admin'] },
   { id: 'accounts', label: '계정 관리', roles: ['admin'] },
+  { id: 'directory', label: 'Directory Master', roles: ['admin'] },
   { id: 'requests', label: '수정 요청', roles: ['admin'] },
   { id: 'vacation', label: '휴가 관리', roles: ['admin'] },
   { id: 'classmaterial', label: '강의자료', roles: ['admin'] },
@@ -36,11 +38,13 @@ export default function LabPortalPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("rules");
-  const [members, setMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const isMobile = useIsMobile(768);
   const mobile = isMobile !== false;
+
+  // 내 멤버 정보 (필수 항목 비어 있으면 배너)
+  const [myMember, setMyMember] = useState(undefined); // undefined = 아직 안 불러옴, null = 연결 없음
 
   const [pendingUsers, setPendingUsers] = useState([]);
   const [contentRequests, setContentRequests] = useState([]);
@@ -57,7 +61,6 @@ export default function LabPortalPage() {
   const activeSubTab = visibleSubTabs.some(t => t.id === adminSubTab) ? adminSubTab : visibleSubTabs[0]?.id;
 
   // 로그인 체크 — httpOnly 세션 쿠키를 서버(/api/session)에서 검증합니다.
-  // (예전처럼 localStorage 값을 믿지 않습니다. 관리자 API도 서버에서 별도로 role을 확인합니다.)
   useEffect(() => {
     let cancelled = false;
     fetch('/api/session')
@@ -71,35 +74,19 @@ export default function LabPortalPage() {
     return () => { cancelled = true; };
   }, [router]);
 
-  // 데이터 로딩
+  // 내 멤버 정보 (배너용)
   useEffect(() => {
-    if (activeTab === 'directory' || (activeTab === 'admin' && user?.role === 'admin')) {
-      if (members.length > 0 && activeTab === 'directory') return;
-      setIsLoading(true);
-      fetch(GOOGLE_SHEET_CSV_URL)
-        .then(res => res.text())
-        .then(csvText => {
-          const rows = csvText.split(/\r?\n/);
-          const headerIdx = rows.findIndex(r => r.includes("Name") && r.includes("E-mail"));
-          if (headerIdx === -1) { setIsLoading(false); return; }
-          const headers = rows[headerIdx].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(h => h.replace(/^"|"$/g, '').trim());
-          const data = rows.slice(headerIdx + 1).map(row => {
-            const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
-            const getV = (name) => { const i = headers.indexOf(name); return i !== -1 ? cols[i] : ""; };
-            const checks = ['V1','V2','V3','V4','V5','V6','V7'].map(v => getV(v) === "TRUE");
-            return {
-              nameKor: getV("Name"), nameEng: getV("Eng. Name"), kakao: getV("Kakao ID"),
-              year: getV("Year Joined"), email: getV("E-mail"), phone: getV("Phone"),
-              status: getV("Status"), degree: getV("Degree"), position: getV("Current Position"),
-              lastUpdated: getV("Last updated"),
-              links: { cv: getV("CV_Link"), scholar: getV("Scholar_Link"), linkedin: getV("Linkedin_Link"), orcid: getV("ORCID_Link") },
-              vacation: { checks, memo: getV("V_Memo"), year: getV("V_Year") || new Date().getFullYear() }
-            };
-          });
-          setMembers(data.filter(m => m.nameKor));
-          setIsLoading(false);
-        }).catch(() => setIsLoading(false));
-    }
+    if (!user) return;
+    let cancelled = false;
+    fetch('/api/members/me')
+      .then((r) => r.json())
+      .then((d) => { if (!cancelled) setMyMember(d.member ?? null); })
+      .catch(() => { if (!cancelled) setMyMember(null); });
+    return () => { cancelled = true; };
+  }, [user]);
+
+  // Admin 데이터 로딩
+  useEffect(() => {
     if (activeTab === 'admin' && user?.role === 'admin') fetchAdminData();
   }, [activeTab, user]);
 
@@ -119,42 +106,6 @@ export default function LabPortalPage() {
     setIsLoading(false);
   };
 
-  const handleCheckUpdate = async (memberIndex, dayIndex, currentVal) => {
-    const newVal = !currentVal;
-    const targetName = members[memberIndex].nameKor;
-    // 중첩 객체를 직접 mutate 하지 않고 새 객체로 교체
-    setMembers((prev) => prev.map((m, i) => {
-      if (i !== memberIndex) return m;
-      const checks = m.vacation.checks.map((c, d) => (d === dayIndex ? newVal : c));
-      return { ...m, vacation: { ...m.vacation, checks } };
-    }));
-    setIsSaving(true);
-    try {
-      await fetch(GAS_MEMBER_URL, {
-        method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({ action: 'check', name: targetName, dayIndex, checked: newVal })
-      });
-    } catch (e) { console.error(e); } finally { setIsSaving(false); }
-  };
-
-  const handleMemoChange = (e, memberIndex) => {
-    const memo = e.target.value;
-    setMembers((prev) => prev.map((m, i) => (i === memberIndex ? { ...m, vacation: { ...m.vacation, memo } } : m)));
-  };
-
-  const handleMemoSave = async (memberIndex, text) => {
-    const targetMember = members[memberIndex];
-    if (targetMember.vacation.prevMemo === text) return;
-    setIsSaving(true);
-    try {
-      await fetch(GAS_MEMBER_URL, {
-        method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({ action: 'memo', name: targetMember.nameKor, text })
-      });
-      setMembers((prev) => prev.map((m, i) => (i === memberIndex ? { ...m, vacation: { ...m.vacation, prevMemo: text } } : m)));
-    } catch (e) { console.error(e); } finally { setIsSaving(false); }
-  };
-
   const patchUser = async (id, action, extra = {}) => {
     const res = await fetch('/api/admin/users', {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
@@ -166,7 +117,7 @@ export default function LabPortalPage() {
   };
 
   const handleApproveUser = async (u) => {
-    if (!confirm(`${u.name} (${u.userId}) 계정을 승인하시겠습니까?`)) return;
+    if (!confirm(`${u.name} (${u.userId}) 계정을 승인하시겠습니까?\n멤버 정보(Directory) 행이 자동으로 만들어집니다.`)) return;
     setIsSaving(true);
     try {
       await patchUser(u.id, 'approve');
@@ -240,9 +191,12 @@ export default function LabPortalPage() {
     );
   }
 
+  const missingProfile = myMember ? missingProfileFields(myMember) : [];
+  const showProfileBanner = activeTab !== 'profile' && (myMember === null || missingProfile.length > 0);
+
   return (
     <div style={{ padding: mobile ? '30px 16px' : '60px 20px', maxWidth: '1200px', margin: '0 auto', backgroundColor: '#fff', minHeight: '100vh' }}>
-      
+
       {/* ===== Header ===== */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: mobile ? 'flex-start' : 'center', flexDirection: mobile ? 'column' : 'row', gap: mobile ? '12px' : '0', marginBottom: '30px' }}>
         <h1 style={{ margin: 0, color: '#333', fontSize: mobile ? '1.6rem' : '2.2rem', fontWeight: '800' }}>SMID Lab Portal</h1>
@@ -259,36 +213,49 @@ export default function LabPortalPage() {
         </div>
       </div>
 
+      {/* ===== 내 정보 채우기 배너 ===== */}
+      {showProfileBanner && myMember !== undefined && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', background: '#fff4e5', border: '1px solid #ffd9a8', borderRadius: '10px', padding: '12px 16px', marginBottom: '24px', fontSize: '0.9rem', color: '#8a5200' }}>
+          <FaIcons.FaUserEdit />
+          <span style={{ flex: 1 }}>
+            {myMember === null
+              ? '계정에 연결된 멤버 정보가 아직 없습니다. 교수님이 연결하면 「내 정보」에서 채울 수 있어요.'
+              : `「내 정보」에 아직 비어 있는 항목이 있어요 — 채워두면 홈페이지 Members 와 Directory 에 자동 반영됩니다.`}
+          </span>
+          {myMember !== null && <button onClick={() => setActiveTab('profile')} style={{ ...requestBtnStyle, background: '#004094', color: '#fff', border: 'none' }}>내 정보 채우기</button>}
+        </div>
+      )}
+
       {/* ===== Shortcuts ===== */}
       <div style={{ display: 'grid', gridTemplateColumns: mobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: mobile ? '12px' : '20px', marginBottom: '40px' }}>
-        <a href="https://smidlab.slack.com" target="_blank" style={cardLinkStyle(mobile)}>
+        <a href="https://smidlab.slack.com" target="_blank" rel="noopener noreferrer" style={cardLinkStyle(mobile)}>
           <div style={shortcutIconStyle}><SiSlack /></div>
           <div>
             <div style={shortcutTitleStyle}>Slack</div>
             <div style={shortcutSubStyle}>공식 소통 채널</div>
           </div>
         </a>
-        <a href="https://open.kakao.com/o/gYhxuwci" target="_blank" style={cardLinkStyle(mobile)}>
+        <a href="https://open.kakao.com/o/gYhxuwci" target="_blank" rel="noopener noreferrer" style={cardLinkStyle(mobile)}>
           <div style={shortcutIconStyle}><SiKakaotalk /></div>
           <div>
             <div style={shortcutTitleStyle}>Kakao (전체)</div>
             <div style={shortcutSubStyle}>교수님 포함 톡방</div>
           </div>
         </a>
-        <a href="https://open.kakao.com/o/g62RoPAi" target="_blank" style={cardLinkStyle(mobile)}>
+        <a href="https://open.kakao.com/o/g62RoPAi" target="_blank" rel="noopener noreferrer" style={cardLinkStyle(mobile)}>
           <div style={shortcutIconStyle}><SiKakaotalk /></div>
           <div>
             <div style={shortcutTitleStyle}>Kakao (학생)</div>
             <div style={shortcutSubStyle}>교수님 미포함 톡방</div>
           </div>
         </a>
-        <a href="https://docs.google.com/spreadsheets/d/1AwKmN6tcea_8_CDlvfwTEtAiBNQFiAiR6tRQVOgdMQM/edit" target="_blank" style={cardLinkStyle(mobile)}>
-          <div style={shortcutIconStyle}><FaIcons.FaFileExcel /></div>
+        <button onClick={() => setActiveTab('profile')} style={{ ...cardLinkStyle(mobile), textAlign: 'left', font: 'inherit' }}>
+          <div style={shortcutIconStyle}><FaIcons.FaIdCard /></div>
           <div>
-            <div style={shortcutTitleStyle}>Address Book</div>
-            <div style={shortcutSubStyle}>주소록 업데이트</div>
+            <div style={shortcutTitleStyle}>내 정보</div>
+            <div style={shortcutSubStyle}>연락처·링크·사진 관리</div>
           </div>
-        </a>
+        </button>
       </div>
 
       {/* ===== Tabs ===== */}
@@ -298,6 +265,7 @@ export default function LabPortalPage() {
           { id: 'rules', label: 'Lab Rules', icon: <FaIcons.FaGavel /> },
           { id: 'wiki', label: 'Lab Wiki', icon: <FaIcons.FaBook /> },
           { id: 'directory', label: 'Directory', icon: <FaIcons.FaAddressBook /> },
+          { id: 'profile', label: mobile ? 'My Info' : '내 정보', icon: <FaIcons.FaIdCard /> },
         ].map(t => (
           <button key={t.id} onClick={() => setActiveTab(t.id)} style={tabBtnStyle(activeTab === t.id, false, mobile)}>
             {t.icon}
@@ -324,18 +292,9 @@ export default function LabPortalPage() {
             <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))', gap: '16px' }}>
               {guideData.map((item) => {
                 const guideIconMap = {
-                  1: <FaIcons.FaSignInAlt />,
-                  2: <FaIcons.FaDesktop />,
-                  3: <FaIcons.FaBoxOpen />,
-                  4: <FaIcons.FaHardHat />,
-                  5: <FaIcons.FaShieldAlt />,
-                  6: <FaIcons.FaCalendarAlt />,
-                  7: <FaIcons.FaDoorOpen />,
-                  8: <FaIcons.FaFlask />,
-                  9: <FaIcons.FaPrint />,
-                  10: <FaIcons.FaChalkboardTeacher />,
-                  11: <FaIcons.FaHeartbeat />,
-                  12: <FaIcons.FaDumbbell />,
+                  1: <FaIcons.FaSignInAlt />, 2: <FaIcons.FaDesktop />, 3: <FaIcons.FaBoxOpen />, 4: <FaIcons.FaHardHat />,
+                  5: <FaIcons.FaShieldAlt />, 6: <FaIcons.FaCalendarAlt />, 7: <FaIcons.FaDoorOpen />, 8: <FaIcons.FaFlask />,
+                  9: <FaIcons.FaPrint />, 10: <FaIcons.FaChalkboardTeacher />, 11: <FaIcons.FaHeartbeat />, 12: <FaIcons.FaDumbbell />,
                 };
                 return (
                   <div key={item.id} style={wikiCardStyle}>
@@ -402,7 +361,7 @@ export default function LabPortalPage() {
                     </div>
                     <div style={{ fontSize: '0.95rem', color: '#555', lineHeight: '1.6', whiteSpace: 'pre-wrap', flex: 1 }}>{item.content}</div>
                     {item.link && (
-                      <a href={item.link} target="_blank" style={{ marginTop: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem', color: '#004094', textDecoration: 'none', fontWeight: 'bold' }}>
+                      <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ marginTop: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem', color: '#004094', textDecoration: 'none', fontWeight: 'bold' }}>
                         🔗 바로가기 <FaIcons.FaExternalLinkAlt size={12} />
                       </a>
                     )}
@@ -414,88 +373,18 @@ export default function LabPortalPage() {
         )}
 
         {/* ===== Member Directory ===== */}
-        {activeTab === 'directory' && (
+        {activeTab === 'directory' && <MemberDirectory mobile={mobile} />}
+
+        {/* ===== 내 정보 ===== */}
+        {activeTab === 'profile' && (
           <div>
-            <h2 style={{ color: '#333', marginBottom: '20px' }}>📇 Member Directory</h2>
-            {isLoading ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#888' }}>데이터를 불러오는 중입니다...</div>
-            ) : mobile ? (
-              // 모바일: 카드 형태
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {members.map((m, i) => (
-                  <div key={i} style={{ background: '#fff', border: '1px solid #eee', borderRadius: '12px', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-                      <div>
-                        <strong style={{ fontSize: '1rem', color: '#333' }}>{m.nameKor}</strong>
-                        <span style={{ color: '#888', fontSize: '0.85rem', marginLeft: '5px' }}>({m.nameEng})</span>
-                      </div>
-                      <span style={{ fontSize: '0.8rem', color: '#004094', fontWeight: 'bold', background: '#e7f5ff', padding: '2px 6px', borderRadius: '4px' }}>{m.year}</span>
-                    </div>
-                    <div style={{ fontSize: '0.85rem', color: '#555', marginBottom: '8px' }}>{m.position}</div>
-                    <div style={{ display: 'flex', gap: '5px', marginBottom: '10px', flexWrap: 'wrap' }}>
-                      <span style={getStatusStyle(m.status)}>{m.status}</span>
-                      <span style={getDegreeStyle(m.degree)}>{m.degree}</span>
-                    </div>
-                    <div style={{ fontSize: '0.85rem', color: '#555', marginBottom: '8px' }}>
-                      {m.email && <div style={{ marginBottom: '4px' }}>✉️ {m.email}</div>}
-                      {m.phone && <div style={{ marginBottom: '4px' }}>📞 {m.phone}</div>}
-                    </div>
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                      {m.links.cv && <a href={m.links.cv} target="_blank" style={iconBtnStyle('#d32f2f')} title="CV"><FaIcons.FaFilePdf /></a>}
-                      {m.links.scholar && <a href={m.links.scholar} target="_blank" style={iconBtnStyle('#4285F4')} title="Scholar"><SiGoogle /></a>}
-                      {m.links.linkedin && <a href={m.links.linkedin} target="_blank" style={iconBtnStyle('#0077B5')} title="LinkedIn"><SiLinkedin /></a>}
-                      {m.links.orcid && <a href={m.links.orcid} target="_blank" style={iconBtnStyle('#A6CE39')} title="ORCID"><SiOrcid /></a>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              // 데스크탑: 테이블
-              <div style={{ overflowX: 'auto', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', borderRadius: '12px', border: '1px solid #eee' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
-                  <thead style={{ background: '#f8f9fa' }}>
-                    <tr style={{ textAlign: 'left', borderBottom: '2px solid #eee' }}>
-                      <th style={{ padding: '15px', color: '#555' }}>Member Info</th>
-                      <th style={{ padding: '15px', color: '#555' }}>Contact</th>
-                      <th style={{ padding: '15px', textAlign: 'center', color: '#555' }}>Links</th>
-                      <th style={{ padding: '15px', textAlign: 'center', color: '#555' }}>Last Updated</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {members.map((m, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid #f1f3f5' }}>
-                        <td style={{ padding: '15px' }}>
-                          <div style={{ marginBottom: '4px' }}>
-                            <strong style={{ fontSize: '1.1rem', color: '#333' }}>{m.nameKor}</strong>
-                            <span style={{ color: '#888', fontSize: '0.9rem', marginLeft: '5px' }}>({m.nameEng})</span>
-                            <span style={{ fontSize: '0.85rem', color: '#004094', fontWeight: 'bold', marginLeft: '8px', background: '#e7f5ff', padding: '2px 6px', borderRadius: '4px' }}>{m.year}</span>
-                          </div>
-                          <div style={{ fontSize: '0.9rem', color: '#555', marginBottom: '6px' }}>{m.position}</div>
-                          <div style={{ display: 'flex', gap: '5px' }}>
-                            <span style={getStatusStyle(m.status)}>{m.status}</span>
-                            <span style={getDegreeStyle(m.degree)}>{m.degree}</span>
-                          </div>
-                        </td>
-                        <td style={{ padding: '15px', fontSize: '0.9rem' }}>
-                          <div style={contactRow}><FaIcons.FaEnvelope color="#adb5bd" /> {m.email}</div>
-                          {m.phone && <div style={contactRow}><FaIcons.FaPhoneAlt color="#adb5bd" /> {m.phone}</div>}
-                          {m.kakao && <div style={contactRow}><SiKakaotalk color="#FEE500" /> {m.kakao}</div>}
-                        </td>
-                        <td style={{ padding: '15px', textAlign: 'center' }}>
-                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                            {m.links.cv && <a href={m.links.cv} target="_blank" style={iconBtnStyle('#d32f2f')} title="CV"><FaIcons.FaFilePdf /></a>}
-                            {m.links.scholar && <a href={m.links.scholar} target="_blank" style={iconBtnStyle('#4285F4')} title="Scholar"><SiGoogle /></a>}
-                            {m.links.linkedin && <a href={m.links.linkedin} target="_blank" style={iconBtnStyle('#0077B5')} title="LinkedIn"><SiLinkedin /></a>}
-                            {m.links.orcid && <a href={m.links.orcid} target="_blank" style={iconBtnStyle('#A6CE39')} title="ORCID"><SiOrcid /></a>}
-                          </div>
-                        </td>
-                        <td style={{ padding: '15px', textAlign: 'center', fontSize: '0.85rem', color: '#adb5bd' }}>{m.lastUpdated || "-"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <h2 style={{ color: '#333', marginBottom: '6px' }}>🪪 내 정보</h2>
+            <p style={{ color: '#666', fontSize: '0.9rem', margin: '0 0 20px' }}>
+              여기 입력한 내용은 홈페이지 <strong>Members</strong> 페이지(공개)와 포털 <strong>Directory</strong>(멤버만)에 자동 반영됩니다. 전화번호·Kakao ID는 공개되지 않습니다.
+            </p>
+            <div style={adminCardStyle}>
+              <MyProfileForm onSaved={(m) => setMyMember(m)} />
+            </div>
           </div>
         )}
 
@@ -509,11 +398,7 @@ export default function LabPortalPage() {
             {/* ===== Admin 서브 탭 ===== */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '2px' }}>
               {visibleSubTabs.map(t => (
-                <button
-                  key={t.id}
-                  onClick={() => setAdminSubTab(t.id)}
-                  style={adminSubTabBtnStyle(activeSubTab === t.id)}
-                >
+                <button key={t.id} onClick={() => setAdminSubTab(t.id)} style={adminSubTabBtnStyle(activeSubTab === t.id)}>
                   {t.label}
                 </button>
               ))}
@@ -525,10 +410,11 @@ export default function LabPortalPage() {
                 <h3 style={{ marginTop: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <MdPendingActions size={22} color="#d32f2f" /> 가입 승인 대기 ({pendingUsers.length})
                 </h3>
-                {pendingUsers.length === 0 ? (
+                {isLoading ? (
+                  <p style={{ color: '#888', fontSize: '0.9rem' }}>불러오는 중...</p>
+                ) : pendingUsers.length === 0 ? (
                   <p style={{ color: '#888', fontSize: '0.9rem' }}>대기 중인 가입 요청이 없습니다.</p>
                 ) : mobile ? (
-                  // 모바일: 카드
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
                     {pendingUsers.map((u) => (
                       <div key={u.id} style={{ background: '#f8f9fa', border: '1px solid #eee', borderRadius: '8px', padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
@@ -579,6 +465,9 @@ export default function LabPortalPage() {
             {/* 계정 관리 */}
             {activeSubTab === 'accounts' && <AccountsAdmin currentUserId={user.userID} />}
 
+            {/* Directory Master */}
+            {activeSubTab === 'directory' && <DirectoryMaster />}
+
             {/* 콘텐츠 수정 요청 */}
             {activeSubTab === 'requests' && (
               <div style={adminCardStyle}>
@@ -611,75 +500,15 @@ export default function LabPortalPage() {
 
             {/* 휴가 관리 */}
             {activeSubTab === 'vacation' && (
-              <div style={{ ...adminCardStyle }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '8px' }}>
-                  <h3 style={{ margin: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <FaIcons.FaPlane size={20} color="#004094" /> 연구원 휴가 관리
-                  </h3>
-                  {isSaving && <span style={{ fontSize: '0.9rem', color: '#004094', fontWeight: 'bold' }}>💾 Saving...</span>}
-                </div>
-                {isLoading ? (
-                  <div style={{ textAlign: 'center', padding: '40px', color: '#888' }}>데이터 로딩 중...</div>
-                ) : (
-                  <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-                    {members.filter(m => m.status === 'Active').map((m, mIdx) => {
-                      const originalIndex = members.findIndex(orig => orig.nameKor === m.nameKor);
-                      const usedCount = m.vacation.checks.filter(Boolean).length;
-                      const remain = 7 - usedCount;
-                      return (
-                        <div key={mIdx} style={{ 
-                          padding: '16px', background: '#fff',
-                          border: '1px solid #e9ecef', borderRadius: '12px',
-                          borderTop: remain === 0 ? '4px solid #d32f2f' : '4px solid #4dabf7',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
-                        }}>
-                          {/* 1행: 이름 + 몇일 남음 */}
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                            <div>
-                              <span style={{ fontSize: '1rem', fontWeight: 'bold', color: '#333' }}>{m.nameKor}</span>
-                              <span style={{ fontSize: '0.75rem', color: '#888', marginLeft: '6px' }}>{m.position}</span>
-                            </div>
-                            <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: remain === 0 ? '#d32f2f' : '#004094', whiteSpace: 'nowrap', marginLeft: '8px' }}>
-                              {remain}일 남음 <span style={{ fontWeight: 'normal', color: '#999', fontSize: '0.75rem' }}>({usedCount}/7)</span>
-                            </div>
-                          </div>
-                          {/* 2행: 체크박스 7개 */}
-                          <div style={{ display: 'flex', gap: '5px', marginBottom: '10px' }}>
-                            {m.vacation.checks.map((isChecked, dayIdx) => (
-                              <div key={dayIdx} onClick={() => handleCheckUpdate(originalIndex, dayIdx, isChecked)}
-                                style={{ 
-                                  flex: 1,
-                                  height: '40px',
-                                  backgroundColor: isChecked ? '#4dabf7' : '#fff',
-                                  border: isChecked ? '2px solid #4dabf7' : '2px solid #dee2e6',
-                                  borderRadius: '6px', cursor: 'pointer',
-                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                  color: '#fff', transition: 'all 0.2s',
-                                }}>
-                                {isChecked && <FaIcons.FaCheck size={12} />}
-                              </div>
-                            ))}
-                          </div>
-                          {/* 메모 */}
-                          <input type="text" placeholder="휴가일자 기록 (예: 8/15-18)" value={m.vacation.memo}
-                            onChange={(e) => handleMemoChange(e, originalIndex)}
-                            onBlur={(e) => handleMemoSave(originalIndex, e.target.value)}
-                            style={{ width: '100%', padding: '7px 10px', borderRadius: '6px', border: '1px solid #eee', background: '#f8f9fa', fontSize: '0.85rem', outline: 'none', boxSizing: 'border-box', color: '#555' }} />
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+              <div style={adminCardStyle}>
+                <VacationAdmin mobile={mobile} />
               </div>
             )}
 
-            {/* 강의자료 관리 */}
+            {/* 강의자료 / 논문 / 특허 / 뉴스 */}
             {activeSubTab === 'classmaterial' && <ClassMaterialAdmin />}
-
-            {/* 논문 관리 */}
             {activeSubTab === 'papers' && <PapersAdmin />}
             {activeSubTab === 'patents' && <PatentsAdmin />}
-            {/* 뉴스 관리 */}
             {activeSubTab === 'news' && <NewsAdmin />}
           </div>
         )}
@@ -713,16 +542,16 @@ export default function LabPortalPage() {
 
       {/* ===== Request Modal ===== */}
       {isModalOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px', boxSizing: 'border-box' }}>
-          <div style={{ background: '#fff', padding: mobile ? '20px' : '30px', borderRadius: '12px', width: '100%', maxWidth: '500px', boxShadow: '0 5px 20px rgba(0,0,0,0.2)' }}>
+        <div style={modalBackdrop}>
+          <div style={modalBox(mobile)}>
             <h3 style={{ marginTop: 0, marginBottom: '12px', color: '#333' }}>✏️ {requestCategory} 수정/추가 요청</h3>
             <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '12px' }}>내용이 틀렸거나, 새로 추가하고 싶은 정보가 있다면 자유롭게 적어주세요.</p>
             <textarea value={requestContent} onChange={(e) => setRequestContent(e.target.value)}
               placeholder="예: 장비 목록에 3D 프린터 모델명(Ultimaker) 추가 부탁드립니다."
               style={{ width: '100%', height: '120px', padding: '10px', borderRadius: '6px', border: '1px solid #ddd', fontSize: '0.95rem', resize: 'vertical', marginBottom: '16px', boxSizing: 'border-box' }} />
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setIsModalOpen(false)} style={{ padding: '10px 15px', background: '#f1f3f5', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', color: '#555' }}>취소</button>
-              <button onClick={submitRequest} disabled={isSaving} style={{ padding: '10px 15px', background: '#004094', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', color: '#fff', opacity: isSaving ? 0.7 : 1 }}>
+              <button onClick={() => setIsModalOpen(false)} style={modalCancelBtn}>취소</button>
+              <button onClick={submitRequest} disabled={isSaving} style={{ ...modalPrimaryBtn, opacity: isSaving ? 0.7 : 1 }}>
                 {isSaving ? '전송 중...' : '전송하기'}
               </button>
             </div>
@@ -732,7 +561,6 @@ export default function LabPortalPage() {
 
       <style jsx>{`
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes blink { 50% { opacity: 0.5; } }
         div[style*="overflowX: auto"]::-webkit-scrollbar { display: none; }
       `}</style>
     </div>
@@ -740,24 +568,6 @@ export default function LabPortalPage() {
 }
 
 // ===== 스타일 헬퍼 =====
-const getStatusStyle = (status) => {
-  let bg = '#f1f3f4', col = '#3c4043';
-  if (status === 'Active') { bg = '#e6f4ea'; col = '#137333'; }
-  else if (status === 'Graduated') { bg = '#fce8e6'; col = '#c5221f'; }
-  return { fontSize: '0.75rem', padding: '3px 8px', background: bg, color: col, borderRadius: '4px', fontWeight: 'bold' };
-};
-
-const getDegreeStyle = (degree) => {
-  let bg = '#e8eaed', col = '#3c4043';
-  const d = degree ? degree.toUpperCase() : '';
-  if (d.includes('PHD')) { bg = '#188038'; col = '#fff'; }
-  else if (d.includes('MS')) { bg = '#c5221f'; col = '#fff'; }
-  else if (d.includes('BS') || d.includes('UNDER')) { bg = '#1967d2'; col = '#fff'; }
-  else if (d.includes('POSTDOC')) { bg = '#ea8600'; col = '#fff'; }
-  else if (d.includes('VISITOR')) { bg = '#8e24aa'; col = '#fff'; }
-  return { fontSize: '0.75rem', padding: '3px 8px', background: bg, color: col, borderRadius: '4px', fontWeight: 'bold' };
-};
-
 const cardLinkStyle = (mobile) => ({
   display: 'flex', alignItems: 'center',
   padding: mobile ? '16px 12px' : '25px',
@@ -777,23 +587,15 @@ const tabBtnStyle = (isActive, isAdmin, mobile) => ({
   gap: mobile ? '3px' : '8px',
   fontSize: mobile ? '0.68rem' : '1rem',
   whiteSpace: 'nowrap', transition: 'all 0.2s',
-  minWidth: 0,
-  lineHeight: 1,
-  boxSizing: 'border-box',
+  minWidth: 0, lineHeight: 1, boxSizing: 'border-box',
 });
 
 const adminSubTabBtnStyle = (isActive) => ({
-  padding: '8px 14px',
-  border: 'none',
+  padding: '8px 14px', border: 'none',
   background: isActive ? '#fce8e6' : 'transparent',
   color: isActive ? '#d32f2f' : '#888',
-  fontWeight: 'bold',
-  fontSize: '0.85rem',
-  borderRadius: '20px 20px 0 0',
-  cursor: 'pointer',
-  whiteSpace: 'nowrap',
-  transition: 'all 0.2s',
-  flexShrink: 0,
+  fontWeight: 'bold', fontSize: '0.85rem',
+  borderRadius: '20px 20px 0 0', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s', flexShrink: 0,
 });
 
 const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px', display: 'flex', alignItems: 'center', flexShrink: 0 };
@@ -801,11 +603,9 @@ const shortcutTitleStyle = { fontWeight: 'bold', fontSize: '1rem', color: '#333'
 const shortcutSubStyle = { fontSize: '0.85rem', color: '#777' };
 const wikiCardStyle = { display: 'flex', flexDirection: 'column', padding: '20px', background: '#fff', border: '1px solid #e9ecef', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' };
 const adminCardStyle = { marginBottom: '20px', background: '#fff', border: '1px solid #eee', borderRadius: '12px', padding: '25px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' };
-const contactRow = { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px', color: '#495057' };
-const iconBtnStyle = (bg) => ({ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', background: bg, color: '#fff', borderRadius: '6px', fontSize: '1rem', textDecoration: 'none' });
 const approveBtn = { background: '#4dabf7', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', whiteSpace: 'nowrap' };
-const requestBtnStyle = { fontSize: '0.85rem', padding: '6px 12px', borderRadius: '20px', border: '1px solid #eee', background: '#fff', cursor: 'pointer', color: '#555', fontWeight: 'bold' };
 const rejectBtn = { background: '#fce8e6', color: '#c5221f', border: 'none', padding: '6px 14px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', whiteSpace: 'nowrap' };
+const requestBtnStyle = { fontSize: '0.85rem', padding: '6px 12px', borderRadius: '20px', border: '1px solid #eee', background: '#fff', cursor: 'pointer', color: '#555', fontWeight: 'bold' };
 const modalBackdrop = { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px', boxSizing: 'border-box' };
 const modalBox = (mobile) => ({ background: '#fff', padding: mobile ? '20px' : '30px', borderRadius: '12px', width: '100%', maxWidth: '500px', boxShadow: '0 5px 20px rgba(0,0,0,0.2)' });
 const modalCancelBtn = { padding: '10px 15px', background: '#f1f3f5', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', color: '#555' };
