@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall, dangerBtnSmall } from "./adminStyles";
 
 const CATEGORY_OPTIONS = ["Announcement", "Award", "Paper Accepted", "Group Outing", "Event"];
 
@@ -256,52 +257,3 @@ export default function NewsAdmin() {
   );
 }
 
-const boxStyle = {
-  background: "#fff",
-  border: "1px solid #eee",
-  borderRadius: "10px",
-  padding: "16px",
-  marginBottom: "16px",
-};
-
-const inputStyle = {
-  padding: "8px 10px",
-  borderRadius: "6px",
-  border: "1px solid #ddd",
-  fontSize: "0.9rem",
-};
-
-const primaryBtn = {
-  background: "#004094",
-  color: "#fff",
-  border: "none",
-  padding: "8px 14px",
-  borderRadius: "6px",
-  cursor: "pointer",
-  fontWeight: "bold",
-  fontSize: "0.85rem",
-  whiteSpace: "nowrap",
-};
-
-const secondaryBtnSmall = {
-  background: "#e7f5ff",
-  color: "#004094",
-  border: "none",
-  padding: "5px 10px",
-  borderRadius: "4px",
-  cursor: "pointer",
-  fontSize: "0.8rem",
-  fontWeight: "bold",
-};
-
-const dangerBtnSmall = {
-  background: "#fce8e6",
-  color: "#c5221f",
-  border: "none",
-  padding: "4px 10px",
-  borderRadius: "4px",
-  cursor: "pointer",
-  fontSize: "0.8rem",
-  fontWeight: "bold",
-  flexShrink: 0,
-};

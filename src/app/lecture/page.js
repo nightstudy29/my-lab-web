@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { FaFileLines, FaChartSimple, FaBullhorn, FaArrowUpRightFromSquare } from "react-icons/fa6";
+import { FaFileLines, FaChartSimple, FaBullhorn, FaArrowUpRightFromSquare, FaBookOpen } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
 import styles from "./page.module.css";
 
@@ -144,7 +144,10 @@ export default function LecturePage() {
 
       {/* 선택된 과목 풀네임 */}
       {activeCourse && (
-        <div className={styles.activeCourseName}>{activeCourse.name}</div>
+        <div className={styles.activeCourseName}>
+          <FaBookOpen size={14} />
+          {activeCourse.name}
+        </div>
       )}
 
       {/* 자료 리스트 */}

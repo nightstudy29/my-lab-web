@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall, dangerBtnSmall } from "./adminStyles";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 
 function emptyNewsRow() {
   return { name: "", url: "" };
@@ -233,7 +235,7 @@ export default function PapersAdmin() {
           <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "10px 0", borderBottom: "1px solid #f1f3f5", gap: "10px" }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: "0.85rem", color: "#888" }}>{p.year} · {p.journal}</div>
-              <div style={{ fontSize: "0.95rem", fontWeight: "bold" }} dangerouslySetInnerHTML={{ __html: p.title }} />
+              <div style={{ fontSize: "0.95rem", fontWeight: "bold" }} dangerouslySetInnerHTML={{ __html: sanitizeHtml(p.title) }} />
             </div>
             <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
               <button onClick={() => openEditForm(p)} style={secondaryBtnSmall}>수정</button>
@@ -246,52 +248,3 @@ export default function PapersAdmin() {
   );
 }
 
-const boxStyle = {
-  background: "#fff",
-  border: "1px solid #eee",
-  borderRadius: "10px",
-  padding: "16px",
-  marginBottom: "16px",
-};
-
-const inputStyle = {
-  padding: "8px 10px",
-  borderRadius: "6px",
-  border: "1px solid #ddd",
-  fontSize: "0.9rem",
-};
-
-const primaryBtn = {
-  background: "#004094",
-  color: "#fff",
-  border: "none",
-  padding: "8px 14px",
-  borderRadius: "6px",
-  cursor: "pointer",
-  fontWeight: "bold",
-  fontSize: "0.85rem",
-  whiteSpace: "nowrap",
-};
-
-const secondaryBtnSmall = {
-  background: "#e7f5ff",
-  color: "#004094",
-  border: "none",
-  padding: "5px 10px",
-  borderRadius: "4px",
-  cursor: "pointer",
-  fontSize: "0.8rem",
-  fontWeight: "bold",
-};
-
-const dangerBtnSmall = {
-  background: "#fce8e6",
-  color: "#c5221f",
-  border: "none",
-  padding: "4px 10px",
-  borderRadius: "4px",
-  cursor: "pointer",
-  fontSize: "0.8rem",
-  fontWeight: "bold",
-  flexShrink: 0,
-};

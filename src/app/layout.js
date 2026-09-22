@@ -5,7 +5,7 @@ import Footer from "../components/Footer"; // ✅ Footer 컴포넌트 분리
 import ScrollToTop from "../components/ScrollToTop";
 import "./globals.css";
 
-// ✅ Inter → Noto Sans KR로 변경 (한국어 연구실 홈페이지에 적합)
+// 라틴 문자는 Inter, 한글은 브라우저 기본 한글 폰트로 폴백됩니다.
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -22,7 +22,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body className={inter.className} style={{
         display: 'flex', 
         flexDirection: 'column', 
