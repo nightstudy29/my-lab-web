@@ -5,6 +5,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { FaPen, FaTrash, FaPlus } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
+import { apiFetch } from "@/lib/apiClient";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import PaperAchievementFields, { achievementFromPaper, emptyAchievement } from "./PaperAchievementFields";
 import { ACH_FIELDS, ACH_NUMERIC, hasAchievement } from "@/lib/achievementConstants";
@@ -68,12 +69,7 @@ export default function PapersAdmin() {
         const v = f.ach[k];
         payload[k] = v === "" || v == null ? null : ACH_NUMERIC.includes(k) ? Number(v) : v;
       }
-      const res = await fetch("/api/papers", {
-        method: panel.id ? "PATCH" : "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(panel.id ? { id: panel.id, ...payload } : payload),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "저장 실패");
+      await apiFetch("/api/papers", { method: panel.id ? "PATCH" : "POST", body: panel.id ? { id: panel.id, ...payload } : payload });
       toast.success(panel.id ? "논문을 수정했습니다." : "논문을 추가했습니다.");
       setPanel(null);
       load();
@@ -86,11 +82,8 @@ export default function PapersAdmin() {
 
   async function remove(p) {
     if (!(await confirm({ title: "논문 삭제", message: `"${strip(p.title)}"\n삭제하면 되돌릴 수 없습니다.`, confirmText: "삭제", danger: true }))) return;
-    const res = await fetch(`/api/papers?id=${p.id}`, { method: "DELETE" });
-    const result = await res.json().catch(() => ({}));
-    if (!res.ok) return toast.error("삭제 실패: " + (result.error || ""));
-    toast.success("삭제했습니다.");
-    load();
+    try { await apiFetch(`/api/papers?id=${p.id}`, { method: "DELETE" }); toast.success("삭제했습니다."); load(); }
+    catch (e) { toast.error("삭제 실패: " + e.message); }
   }
 
   return (

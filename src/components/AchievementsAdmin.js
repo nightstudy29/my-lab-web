@@ -6,6 +6,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { FaPen, FaTrash, FaPlus, FaFileCsv, FaTriangleExclamation } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
+import { apiFetch } from "@/lib/apiClient";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import PaperAchievementFields, { achievementFromPaper } from "./PaperAchievementFields";
 import {
@@ -42,7 +43,7 @@ export default function AchievementsAdmin() {
   async function load() {
     const [{ data: p }, t] = await Promise.all([
       supabase.from("papers").select("*").order("year", { ascending: false }).order("seq", { ascending: false }),
-      fetch("/api/talks").then((r) => r.json()).catch(() => ({})),
+      apiFetch("/api/talks").catch(() => ({})),
     ]);
     setPapers(p || []);
     setTalks(t.talks || []);
@@ -88,19 +89,12 @@ export default function AchievementsAdmin() {
           const v = panel.form[k];
           body[k] = v === "" || v == null ? null : ACH_NUMERIC.includes(k) ? Number(v) : v;
         }
-        const res = await fetch("/api/papers", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "저장 실패");
+        await apiFetch("/api/papers", { method: "PATCH", body });
         toast.success("업적 정보를 저장했습니다.");
       } else {
         const f = panel.form;
         if (!f.conference.trim() || !f.title.trim()) throw new Error("학술대회명과 발표제목은 필수입니다.");
-        const res = await fetch("/api/talks", {
-          method: panel.id ? "PATCH" : "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(panel.id ? { id: panel.id, ...f } : f),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "저장 실패");
+        await apiFetch("/api/talks", { method: panel.id ? "PATCH" : "POST", body: panel.id ? { id: panel.id, ...f } : f });
         toast.success(panel.id ? "발표를 수정했습니다." : "발표를 추가했습니다.");
       }
       setPanel(null);
@@ -114,10 +108,8 @@ export default function AchievementsAdmin() {
 
   async function removeTalk(t) {
     if (!(await confirm({ title: "발표 삭제", message: `"${t.title}"\n삭제하면 되돌릴 수 없습니다.`, confirmText: "삭제", danger: true }))) return;
-    const res = await fetch(`/api/talks?id=${t.id}`, { method: "DELETE" });
-    if (!res.ok) return toast.error("삭제 실패");
-    toast.success("삭제했습니다.");
-    load();
+    try { await apiFetch(`/api/talks?id=${t.id}`, { method: "DELETE" }); toast.success("삭제했습니다."); load(); }
+    catch (e) { toast.error("삭제 실패: " + e.message); }
   }
 
   // ---- 내보내기 (업적정리 시트와 같은 컬럼 순서) ----

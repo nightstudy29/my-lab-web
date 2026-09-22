@@ -6,6 +6,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { FaPlus, FaPen, FaTrash, FaArrowUpRightFromSquare, FaCheck, FaRotate } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
+import { apiFetch } from "@/lib/apiClient";
 import FileUploader from "./FileUploader";
 import { itemsFromUrls, uploadItems } from "@/lib/uploadClient";
 import {
@@ -17,12 +18,7 @@ const TYPES = [["slide", "강의자료"], ["notice", "공지"], ["grade", "성�
 const TYPE_LABEL = Object.fromEntries(TYPES);
 const TYPE_COLOR = { slide: "blue", notice: "orange", grade: "green" };
 
-const api = async (url, method, body) => {
-  const res = await fetch(url, { method, headers: body ? { "Content-Type": "application/json" } : undefined, body: body ? JSON.stringify(body) : undefined });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "요청 실패");
-  return data;
-};
+const api = (url, method, body) => apiFetch(url, { method, body });
 
 export default function ClassMaterialAdmin() {
   const toast = useToast();
@@ -37,6 +33,7 @@ export default function ClassMaterialAdmin() {
   const [isLoading, setIsLoading] = useState(true);
   const [panel, setPanel] = useState(null); // { kind: 'material'|'semester'|'course', id, form }
   const [isSaving, setIsSaving] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0); // 과목/자료 변경 후 선택 학기 다시 불러오기
 
   // ---- 로딩 ----
   useEffect(() => { loadSemesters(); }, []);
@@ -65,14 +62,9 @@ export default function ClassMaterialAdmin() {
       } else setMaterials([]);
     })();
     return () => { cancelled = true; };
-  }, [semesterId]);
+  }, [semesterId, refreshKey]);
 
-  async function reloadSemester() {
-    const id = semesterId;
-    setSemesterId(null);
-    // 같은 id 로 다시 세팅해서 effect 재실행
-    setTimeout(() => setSemesterId(id), 0);
-  }
+  const reloadSemester = () => setRefreshKey((k) => k + 1);
 
   const semester = semesters.find((s) => s.id === semesterId) || null;
   const course = courses.find((c) => c.id === courseId) || null;

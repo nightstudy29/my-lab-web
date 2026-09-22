@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+// Lab Portal — 로그인한 멤버용. Newbie Guide / Lab Rules / Lab Wiki / Directory / Account, 관리자는 Admin 탭.
+// 인증은 httpOnly 세션 쿠키(/api/session)로 서버가 확인하고, 관리자 API 는 서버에서 별도로 role 을 검사합니다.
+
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import rulesData from '@/data/rules.json';
 import guideData from '@/data/newbieGuide.json';
 import wikiData from '@/data/labwiki.json';
 import * as FaIcons from "react-icons/fa";
 import { SiKakaotalk, SiSlack } from "react-icons/si";
-import { MdAdminPanelSettings, MdPendingActions, MdPlaylistAddCheck } from "react-icons/md";
+import { MdAdminPanelSettings } from "react-icons/md";
 import ClassMaterialAdmin from '@/components/ClassMaterialAdmin';
 import PapersAdmin from '@/components/PapersAdmin';
 import NewsAdmin from '@/components/NewsAdmin';
@@ -15,16 +18,19 @@ import PatentsAdmin from '@/components/PatentsAdmin';
 import AccountsAdmin from '@/components/AccountsAdmin';
 import AdminDashboard from '@/components/AdminDashboard';
 import AchievementsAdmin from '@/components/AchievementsAdmin';
+import ApprovalsAdmin from '@/components/ApprovalsAdmin';
+import RequestsAdmin from '@/components/RequestsAdmin';
 import DirectoryMaster from '@/components/DirectoryMaster';
 import VacationAdmin from '@/components/VacationAdmin';
 import MemberDirectory from '@/components/MemberDirectory';
 import MyProfileForm, { missingProfileFields } from '@/components/MyProfileForm';
 import ChangePasswordForm from '@/components/ChangePasswordForm';
 import useIsMobile from '@/hooks/useIsMobile';
+import { apiFetch } from '@/lib/apiClient';
 import { ROLE_LABELS, canManageContent } from '@/lib/roles';
-import { ToastProvider, ConfirmProvider, useToast, useConfirm } from '@/components/ui';
+import { ToastProvider, ConfirmProvider, Button, Textarea, SlidePanel, useToast } from '@/components/ui';
 
-// roles: 이 메뉴를 볼 수 있는 역할 (manager 는 논문/특허/뉴스만). group: 왼쪽 메뉴 묶음.
+// roles: 이 메뉴를 볼 수 있는 역할 (manager 는 논문/특허/뉴스만). group: 왼쪽 메뉴 묶음. badge: 상위에서 내려주는 건수 키.
 const ADMIN_SUB_TABS = [
   { id: 'dashboard', label: '대시보드', roles: ['admin', 'manager'], group: null },
   { id: 'papers', label: '논문', roles: ['admin', 'manager'], group: '콘텐츠' },
@@ -40,6 +46,24 @@ const ADMIN_SUB_TABS = [
 ];
 const ADMIN_GROUPS = [null, '콘텐츠', '사람', '기타'];
 
+const PORTAL_TABS = [
+  { id: 'manual', label: 'Newbie Guide', icon: <FaIcons.FaBookOpen /> },
+  { id: 'rules', label: 'Lab Rules', icon: <FaIcons.FaGavel /> },
+  { id: 'wiki', label: 'Lab Wiki', icon: <FaIcons.FaBook /> },
+  { id: 'directory', label: 'Directory', icon: <FaIcons.FaAddressBook /> },
+  { id: 'profile', label: 'Account', icon: <FaIcons.FaIdCard /> },
+];
+
+const GUIDE_ICONS = {
+  1: <FaIcons.FaSignInAlt />, 2: <FaIcons.FaDesktop />, 3: <FaIcons.FaBoxOpen />, 4: <FaIcons.FaHardHat />,
+  5: <FaIcons.FaShieldAlt />, 6: <FaIcons.FaCalendarAlt />, 7: <FaIcons.FaDoorOpen />, 8: <FaIcons.FaFlask />,
+  9: <FaIcons.FaPrint />, 10: <FaIcons.FaChalkboardTeacher />, 11: <FaIcons.FaHeartbeat />, 12: <FaIcons.FaDumbbell />,
+};
+const WIKI_ICONS = {
+  Equipment: <FaIcons.FaTools />, Research: <FaIcons.FaBookOpen />, Admin: <FaIcons.FaClipboardList />,
+  Ethics: <FaIcons.FaBalanceScale />, Software: <FaIcons.FaLaptopCode />, Data: <FaIcons.FaChartBar />,
+};
+
 export default function LabPortalPage() {
   return (
     <ToastProvider>
@@ -53,40 +77,26 @@ export default function LabPortalPage() {
 function LabPortalInner() {
   const router = useRouter();
   const toast = useToast();
-  const confirm = useConfirm();
-  const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState("rules");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const isMobile = useIsMobile(768);
   const mobile = isMobile !== false;
 
-  // 내 멤버 정보 (필수 항목 비어 있으면 배너)
+  const [user, setUser] = useState(null);
+  const [activeTab, setActiveTab] = useState("rules");
   const [myMember, setMyMember] = useState(undefined); // undefined = 아직 안 불러옴, null = 연결 없음
-
-  const [pendingUsers, setPendingUsers] = useState([]);
-  const [contentRequests, setContentRequests] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [requestCategory, setRequestCategory] = useState("");
-  const [requestContent, setRequestContent] = useState("");
   const [adminSubTab, setAdminSubTab] = useState('dashboard');
-  const [rejectTarget, setRejectTarget] = useState(null);   // 거절 모달 대상 (pending user)
-  const [rejectReason, setRejectReason] = useState("");
+  const [counts, setCounts] = useState({ pending: 0, requests: 0 }); // 메뉴 배지 / 대시보드
+  const [requestModal, setRequestModal] = useState(null); // { category, content }
+  const [isSaving, setIsSaving] = useState(false);
 
-  // 역할별로 보이는 Admin 서브탭. 현재 선택이 안 보이는 탭이면 첫 탭으로.
+  // 역할별로 보이는 Admin 메뉴. 현재 선택이 안 보이는 탭이면 첫 탭으로.
   const visibleSubTabs = user ? ADMIN_SUB_TABS.filter(t => t.roles.includes(user.role)) : [];
   const activeSubTab = visibleSubTabs.some(t => t.id === adminSubTab) ? adminSubTab : visibleSubTabs[0]?.id;
 
-  // 로그인 체크 — httpOnly 세션 쿠키를 서버(/api/session)에서 검증합니다.
+  // 로그인 체크
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/session')
-      .then(async (res) => {
-        if (cancelled) return;
-        const data = res.ok ? await res.json() : null;
-        if (!data?.user) { router.replace('/login'); return; }
-        setUser(data.user);
-      })
+    apiFetch('/api/session')
+      .then((data) => { if (cancelled) return; if (!data?.user) { router.replace('/login'); return; } setUser(data.user); })
       .catch(() => { if (!cancelled) router.replace('/login'); });
     return () => { cancelled = true; };
   }, [router]);
@@ -95,97 +105,30 @@ function LabPortalInner() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    fetch('/api/members/me')
-      .then((r) => r.json())
+    apiFetch('/api/members/me')
       .then((d) => { if (!cancelled) setMyMember(d.member ?? null); })
       .catch(() => { if (!cancelled) setMyMember(null); });
     return () => { cancelled = true; };
   }, [user]);
 
-  // Admin 데이터 로딩
+  // Admin 배지 건수 (승인 대기 / 미처리 요청) — 하위 컴포넌트가 변경하면 onChanged → refreshCounts 로 다시 읽음
+  const [countsVersion, setCountsVersion] = useState(0);
+  const refreshCounts = useCallback(() => setCountsVersion((v) => v + 1), []);
   useEffect(() => {
-    if (activeTab === 'admin' && user?.role === 'admin') fetchAdminData();
-  }, [activeTab, user]);
-
-  const fetchAdminData = async () => {
-    setIsLoading(true);
-    try {
-      const [res1, res2] = await Promise.all([
-        fetch('/api/admin/users?status=pending'),
-        fetch('/api/requests?status=open'),
-      ]);
-      if (res1.ok) setPendingUsers((await res1.json()).users || []);
-      if (res2.ok) setContentRequests((await res2.json()).requests || []);
-    } catch (e) {
-      console.error("데이터 로딩 실패:", e);
-      toast.error("데이터를 불러오지 못했습니다.");
-    }
-    setIsLoading(false);
-  };
-
-  const patchUser = async (id, action, extra = {}) => {
-    const res = await fetch('/api/admin/users', {
-      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, action, ...extra }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || '실패');
-    return data;
-  };
-
-  const handleApproveUser = async (u) => {
-    if (!(await confirm({ title: '가입 승인', message: `${u.name} (${u.userId}) 계정을 승인합니다.\n멤버 정보(Directory) 행이 자동으로 만들어집니다.`, confirmText: '승인' }))) return;
-    setIsSaving(true);
-    try {
-      await patchUser(u.id, 'approve');
-      setPendingUsers(prev => prev.filter(p => p.id !== u.id));
-      toast.success(`${u.name} 계정을 승인했습니다.`);
-    } catch (e) { toast.error("승인 실패: " + e.message); }
-    setIsSaving(false);
-  };
-
-  const handleRejectUser = async () => {
-    if (!rejectTarget) return;
-    setIsSaving(true);
-    try {
-      await patchUser(rejectTarget.id, 'reject', { reason: rejectReason.trim() || null });
-      setPendingUsers(prev => prev.filter(p => p.id !== rejectTarget.id));
-      setRejectTarget(null);
-      setRejectReason("");
-      toast.success('가입 신청을 거절했습니다.');
-    } catch (e) { toast.error("거절 실패: " + e.message); }
-    setIsSaving(false);
-  };
-
-  const handleResolveRequest = async (req) => {
-    if (!(await confirm({ title: '처리 완료', message: '이 요청을 처리 완료로 표시합니다.', confirmText: '완료' }))) return;
-    try {
-      const res = await fetch('/api/requests', {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: req.id }),
-      });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || '실패');
-      setContentRequests(prev => prev.filter(r => r.id !== req.id));
-      toast.success('처리 완료로 표시했습니다.');
-    } catch (e) { console.error(e); toast.error("오류가 발생했습니다: " + e.message); }
-  };
-
-  const openRequestModal = (category) => {
-    setRequestCategory(category);
-    setRequestContent("");
-    setIsModalOpen(true);
-  };
+    if (!(activeTab === 'admin' && user?.role === 'admin')) return;
+    let cancelled = false;
+    Promise.all([apiFetch('/api/admin/users?status=pending'), apiFetch('/api/requests?status=open')])
+      .then(([a, b]) => { if (!cancelled) setCounts({ pending: a.users?.length || 0, requests: b.requests?.length || 0 }); })
+      .catch(() => { /* 배지는 실패해도 화면에 영향 없음 */ });
+    return () => { cancelled = true; };
+  }, [activeTab, user, countsVersion]);
 
   const submitRequest = async () => {
-    if (!requestContent.trim()) return toast.error("내용을 입력해주세요.");
+    if (!requestModal.content.trim()) return toast.error("내용을 입력해주세요.");
     setIsSaving(true);
     try {
-      const res = await fetch('/api/requests', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category: requestCategory, content: requestContent }),
-      });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || '실패');
-      setIsModalOpen(false);
+      await apiFetch('/api/requests', { method: 'POST', body: { category: requestModal.category, content: requestModal.content } });
+      setRequestModal(null);
       toast.success("요청사항이 전달되었습니다.");
     } catch (e) { toast.error("전송 실패: " + e.message); }
     setIsSaving(false);
@@ -212,7 +155,8 @@ function LabPortalInner() {
   }
 
   const missingProfile = myMember ? missingProfileFields(myMember) : [];
-  const showProfileBanner = activeTab !== 'profile' && (myMember === null || missingProfile.length > 0);
+  const showProfileBanner = activeTab !== 'profile' && myMember !== undefined && (myMember === null || missingProfile.length > 0);
+  const badgeOf = (t) => (t.badge ? counts[t.badge] : 0);
 
   return (
     <div style={{ padding: mobile ? '30px 16px' : '60px 20px', maxWidth: '1200px', margin: '0 auto', backgroundColor: '#fff', minHeight: '100vh' }}>
@@ -224,68 +168,50 @@ function LabPortalInner() {
           <span style={{ color: '#666', fontWeight: 'bold', fontSize: mobile ? '0.9rem' : '1rem' }}>
             {user.name} <span style={{ color: user.role === 'admin' ? '#d32f2f' : user.role === 'manager' ? '#004094' : '#888', fontWeight: 'normal', fontSize: '0.85rem' }}>({ROLE_LABELS[user.role] || user.role})</span>
           </span>
-          <button onClick={handleLogout} style={{ cursor: 'pointer', border: '1px solid #ddd', background: '#fff', padding: '8px 15px', borderRadius: '20px', color: '#555', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.9rem' }}>
-            <FaIcons.FaSignOutAlt /> Sign Out
-          </button>
+          <Button variant="ghost" onClick={handleLogout}><FaIcons.FaSignOutAlt /> Sign Out</Button>
         </div>
       </div>
 
-      {/* ===== 내 정보 채우기 배너 ===== */}
-      {showProfileBanner && myMember !== undefined && (
+      {/* ===== Account 채우기 배너 ===== */}
+      {showProfileBanner && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', background: '#fff4e5', border: '1px solid #ffd9a8', borderRadius: '10px', padding: '12px 16px', marginBottom: '24px', fontSize: '0.9rem', color: '#8a5200' }}>
           <FaIcons.FaUserEdit />
           <span style={{ flex: 1 }}>
             {myMember === null
               ? '계정에 연결된 멤버 정보가 아직 없습니다. 교수님이 연결하면 「Account」에서 채울 수 있어요.'
-              : `「Account」에 아직 비어 있는 항목이 있어요 — 채워두면 홈페이지 Members 와 Directory 에 자동 반영됩니다.`}
+              : '「Account」에 아직 비어 있는 항목이 있어요 — 채워두면 홈페이지 Members 와 Directory 에 자동 반영됩니다.'}
           </span>
-          {myMember !== null && <button onClick={() => setActiveTab('profile')} style={{ ...requestBtnStyle, background: '#004094', color: '#fff', border: 'none' }}>Account에서 채우기</button>}
+          {myMember !== null && <Button size="sm" onClick={() => setActiveTab('profile')}>Account에서 채우기</Button>}
         </div>
       )}
 
       {/* ===== Shortcuts ===== */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: mobile ? '10px' : '20px', marginBottom: '40px' }}>
-        <a href="https://smidlab.slack.com" target="_blank" rel="noopener noreferrer" style={cardLinkStyle(mobile)}>
-          <div style={shortcutIconStyle}><SiSlack /></div>
-          <div>
-            <div style={shortcutTitleStyle}>Slack</div>
-            <div style={shortcutSubStyle}>공식 소통 채널</div>
-          </div>
-        </a>
-        <a href="https://open.kakao.com/o/gYhxuwci" target="_blank" rel="noopener noreferrer" style={cardLinkStyle(mobile)}>
-          <div style={shortcutIconStyle}><SiKakaotalk /></div>
-          <div>
-            <div style={shortcutTitleStyle}>Kakao (전체)</div>
-            <div style={shortcutSubStyle}>교수님 포함 톡방</div>
-          </div>
-        </a>
-        <a href="https://open.kakao.com/o/g62RoPAi" target="_blank" rel="noopener noreferrer" style={cardLinkStyle(mobile)}>
-          <div style={shortcutIconStyle}><SiKakaotalk /></div>
-          <div>
-            <div style={shortcutTitleStyle}>Kakao (학생)</div>
-            <div style={shortcutSubStyle}>교수님 미포함 톡방</div>
-          </div>
-        </a>
+        {[
+          ['https://smidlab.slack.com', <SiSlack key="s" />, 'Slack', '공식 소통 채널'],
+          ['https://open.kakao.com/o/gYhxuwci', <SiKakaotalk key="k1" />, 'Kakao (전체)', '교수님 포함 톡방'],
+          ['https://open.kakao.com/o/g62RoPAi', <SiKakaotalk key="k2" />, 'Kakao (학생)', '교수님 미포함 톡방'],
+        ].map(([href, icon, title, sub]) => (
+          <a key={href} href={href} target="_blank" rel="noopener noreferrer" style={cardLinkStyle(mobile)}>
+            <div style={shortcutIconStyle}>{icon}</div>
+            <div>
+              <div style={shortcutTitleStyle}>{title}</div>
+              <div style={shortcutSubStyle}>{sub}</div>
+            </div>
+          </a>
+        ))}
       </div>
 
       {/* ===== Tabs ===== */}
       <div style={{ display: 'flex', gap: mobile ? '0px' : '20px', marginBottom: '30px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none', padding: mobile ? '0 4px' : '0' }}>
-        {[
-          { id: 'manual', label: 'Newbie Guide', icon: <FaIcons.FaBookOpen /> },
-          { id: 'rules', label: 'Lab Rules', icon: <FaIcons.FaGavel /> },
-          { id: 'wiki', label: 'Lab Wiki', icon: <FaIcons.FaBook /> },
-          { id: 'directory', label: 'Directory', icon: <FaIcons.FaAddressBook /> },
-          { id: 'profile', label: 'Account', icon: <FaIcons.FaIdCard /> },
-        ].map(t => (
-          <button key={t.id} onClick={() => setActiveTab(t.id)} style={tabBtnStyle(activeTab === t.id, false, mobile)}>
-            {t.icon}
-            <span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>{t.label}</span>
+        {PORTAL_TABS.map(t => (
+          <button key={t.id} onClick={() => setActiveTab(t.id)} style={tabBtnStyle(activeTab === t.id, mobile)}>
+            {t.icon}<span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>{t.label}</span>
           </button>
         ))}
         {canManageContent(user.role) && (
-          <button onClick={() => setActiveTab('admin')} style={tabBtnStyle(activeTab === 'admin', true, mobile)}>
-            <FaIcons.FaUserShield />
-            <span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>{user.role === 'admin' ? 'Admin' : 'Manage'}</span>
+          <button onClick={() => setActiveTab('admin')} style={tabBtnStyle(activeTab === 'admin', mobile)}>
+            <FaIcons.FaUserShield /><span style={{ fontSize: mobile ? '0.68rem' : '1rem' }}>{user.role === 'admin' ? 'Admin' : 'Manage'}</span>
           </button>
         )}
       </div>
@@ -295,29 +221,17 @@ function LabPortalInner() {
         {/* ===== Newbie Guide ===== */}
         {activeTab === 'manual' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
-              <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#333', margin: 0 }}>👋 Newbie Guide</h2>
-              <button onClick={() => openRequestModal('Newbie Guide')} style={requestBtnStyle}>✏️ 수정 요청</button>
-            </div>
+            <SectionHeader title="👋 Newbie Guide" onRequest={() => setRequestModal({ category: 'Newbie Guide', content: '' })} />
             <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))', gap: '16px' }}>
-              {guideData.map((item) => {
-                const guideIconMap = {
-                  1: <FaIcons.FaSignInAlt />, 2: <FaIcons.FaDesktop />, 3: <FaIcons.FaBoxOpen />, 4: <FaIcons.FaHardHat />,
-                  5: <FaIcons.FaShieldAlt />, 6: <FaIcons.FaCalendarAlt />, 7: <FaIcons.FaDoorOpen />, 8: <FaIcons.FaFlask />,
-                  9: <FaIcons.FaPrint />, 10: <FaIcons.FaChalkboardTeacher />, 11: <FaIcons.FaHeartbeat />, 12: <FaIcons.FaDumbbell />,
-                };
-                return (
-                  <div key={item.id} style={wikiCardStyle}>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                      <div style={{ color: '#004094', fontSize: '1.1rem', marginRight: '10px', flexShrink: 0 }}>
-                        {guideIconMap[item.id] || <FaIcons.FaInfoCircle />}
-                      </div>
-                      <h3 style={{ margin: 0, fontSize: '1rem', color: '#333', fontWeight: '700' }}>{item.title}</h3>
-                    </div>
-                    <div style={{ fontSize: '0.9rem', color: '#555', lineHeight: '1.7' }} dangerouslySetInnerHTML={{ __html: item.desc }} />
+              {guideData.map((item) => (
+                <div key={item.id} style={wikiCardStyle}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                    <div style={{ color: '#004094', fontSize: '1.1rem', marginRight: '10px', flexShrink: 0 }}>{GUIDE_ICONS[item.id] || <FaIcons.FaInfoCircle />}</div>
+                    <h3 style={{ margin: 0, fontSize: '1rem', color: '#333', fontWeight: '700' }}>{item.title}</h3>
                   </div>
-                );
-              })}
+                  <div style={{ fontSize: '0.9rem', color: '#555', lineHeight: '1.7' }} dangerouslySetInnerHTML={{ __html: item.desc }} />
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -347,45 +261,28 @@ function LabPortalInner() {
         {/* ===== Lab Wiki ===== */}
         {activeTab === 'wiki' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
-              <h2 style={{ color: '#333', margin: 0 }}>📚 Lab Wiki</h2>
-              <button onClick={() => openRequestModal('Lab Wiki')} style={requestBtnStyle}>✏️ 수정 요청</button>
-            </div>
+            <SectionHeader title="📚 Lab Wiki" onRequest={() => setRequestModal({ category: 'Lab Wiki', content: '' })} />
             <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(auto-fit, minmax(400px, 1fr))', gap: '16px' }}>
-              {wikiData.map((item) => {
-                let categoryIcon;
-                switch (item.category) {
-                  case 'Equipment': categoryIcon = <FaIcons.FaTools />; break;
-                  case 'Research':  categoryIcon = <FaIcons.FaBookOpen />; break;
-                  case 'Admin':     categoryIcon = <FaIcons.FaClipboardList />; break;
-                  case 'Ethics':    categoryIcon = <FaIcons.FaBalanceScale />; break;
-                  case 'Software':  categoryIcon = <FaIcons.FaLaptopCode />; break;
-                  case 'Data':      categoryIcon = <FaIcons.FaChartBar />; break;
-                  default:          categoryIcon = <FaIcons.FaInfoCircle />;
-                }
-                return (
-                  <div key={item.id} style={wikiCardStyle}>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                      <div style={{ color: '#004094', fontSize: '1.1rem', marginRight: '10px' }}>{categoryIcon}</div>
-                      <h3 style={{ margin: 0, fontSize: '1rem', color: '#333' }}>{item.title}</h3>
-                    </div>
-                    <div style={{ fontSize: '0.95rem', color: '#555', lineHeight: '1.6', whiteSpace: 'pre-wrap', flex: 1 }}>{item.content}</div>
-                    {item.link && (
-                      <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ marginTop: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem', color: '#004094', textDecoration: 'none', fontWeight: 'bold' }}>
-                        🔗 바로가기 <FaIcons.FaExternalLinkAlt size={12} />
-                      </a>
-                    )}
+              {wikiData.map((item) => (
+                <div key={item.id} style={wikiCardStyle}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                    <div style={{ color: '#004094', fontSize: '1.1rem', marginRight: '10px' }}>{WIKI_ICONS[item.category] || <FaIcons.FaInfoCircle />}</div>
+                    <h3 style={{ margin: 0, fontSize: '1rem', color: '#333' }}>{item.title}</h3>
                   </div>
-                );
-              })}
+                  <div style={{ fontSize: '0.95rem', color: '#555', lineHeight: '1.6', whiteSpace: 'pre-wrap', flex: 1 }}>{item.content}</div>
+                  {item.link && (
+                    <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ marginTop: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem', color: '#004094', textDecoration: 'none', fontWeight: 'bold' }}>
+                      🔗 바로가기 <FaIcons.FaExternalLinkAlt size={12} />
+                    </a>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* ===== Member Directory ===== */}
+        {/* ===== Directory / Account ===== */}
         {activeTab === 'directory' && <MemberDirectory mobile={mobile} />}
-
-        {/* ===== Account: 내 정보 + 비밀번호 변경 ===== */}
         {activeTab === 'profile' && (
           <div>
             <h2 style={{ color: '#333', marginBottom: '6px' }}>🪪 Account</h2>
@@ -398,25 +295,22 @@ function LabPortalInner() {
           </div>
         )}
 
-        {/* ===== Admin Dashboard ===== */}
+        {/* ===== Admin ===== */}
         {activeTab === 'admin' && canManageContent(user.role) && (
           <div>
             <h2 style={{ color: '#004094', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <MdAdminPanelSettings size={24} /> {user.role === 'admin' ? 'Admin' : '콘텐츠 관리'}
             </h2>
 
-            {/* ===== 2단: 왼쪽 세로 메뉴(데스크톱) / 가로 칩(모바일) + 오른쪽 내용 ===== */}
             <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '190px minmax(0, 1fr)', gap: mobile ? '16px' : '28px', alignItems: 'start' }}>
+              {/* 왼쪽 메뉴 (데스크톱) / 가로 칩 (모바일) */}
               {mobile ? (
                 <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
-                  {visibleSubTabs.map(t => {
-                    const badge = t.badge === 'pending' ? pendingUsers.length : t.badge === 'requests' ? contentRequests.length : 0;
-                    return (
-                      <button key={t.id} onClick={() => setAdminSubTab(t.id)} style={adminChipStyle(activeSubTab === t.id)}>
-                        {t.label}{badge > 0 && <span style={menuBadge}>{badge}</span>}
-                      </button>
-                    );
-                  })}
+                  {visibleSubTabs.map(t => (
+                    <button key={t.id} onClick={() => setAdminSubTab(t.id)} style={adminChipStyle(activeSubTab === t.id)}>
+                      {t.label}{badgeOf(t) > 0 && <span style={menuBadge}>{badgeOf(t)}</span>}
+                    </button>
+                  ))}
                 </div>
               ) : (
                 <nav style={{ position: 'sticky', top: '20px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -426,184 +320,70 @@ function LabPortalInner() {
                     return (
                       <div key={g ?? 'top'} style={{ marginBottom: '10px' }}>
                         {g && <div style={menuGroupLabel}>{g}</div>}
-                        {items.map(t => {
-                          const badge = t.badge === 'pending' ? pendingUsers.length : t.badge === 'requests' ? contentRequests.length : 0;
-                          return (
-                            <button key={t.id} onClick={() => setAdminSubTab(t.id)} style={adminMenuItemStyle(activeSubTab === t.id)}>
-                              <span>{t.label}</span>
-                              {badge > 0 && <span style={menuBadge}>{badge}</span>}
-                            </button>
-                          );
-                        })}
+                        {items.map(t => (
+                          <button key={t.id} onClick={() => setAdminSubTab(t.id)} style={adminMenuItemStyle(activeSubTab === t.id)}>
+                            <span>{t.label}</span>{badgeOf(t) > 0 && <span style={menuBadge}>{badgeOf(t)}</span>}
+                          </button>
+                        ))}
                       </div>
                     );
                   })}
                 </nav>
               )}
 
+              {/* 내용 */}
               <div style={{ minWidth: 0 }}>
-            {/* 대시보드 */}
-            {activeSubTab === 'dashboard' && (
-              <AdminDashboard user={user} mobile={mobile} pendingCount={pendingUsers.length} requestsCount={contentRequests.length} onNavigate={setAdminSubTab} />
-            )}
-
-            {/* 가입 승인 대기 */}
-            {activeSubTab === 'approvals' && (
-              <div style={adminCardStyle}>
-                <h3 style={{ marginTop: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <MdPendingActions size={22} color="#d32f2f" /> 가입 승인 대기 ({pendingUsers.length})
-                </h3>
-                {isLoading ? (
-                  <p style={{ color: '#888', fontSize: '0.9rem' }}>불러오는 중...</p>
-                ) : pendingUsers.length === 0 ? (
-                  <p style={{ color: '#888', fontSize: '0.9rem' }}>대기 중인 가입 요청이 없습니다.</p>
-                ) : mobile ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
-                    {pendingUsers.map((u) => (
-                      <div key={u.id} style={{ background: '#f8f9fa', border: '1px solid #eee', borderRadius: '8px', padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ fontWeight: 'bold', color: '#333', marginBottom: '4px' }}>{u.name}</div>
-                          <div style={{ fontSize: '0.8rem', color: '#888' }}>{u.userId}</div>
-                          <div style={{ fontSize: '0.8rem', color: '#888' }}>{new Date(u.createdAt).toLocaleString()}</div>
-                        </div>
-                        <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                          <button onClick={() => handleApproveUser(u)} disabled={isSaving} style={approveBtn}>승인</button>
-                          <button onClick={() => { setRejectTarget(u); setRejectReason(""); }} disabled={isSaving} style={rejectBtn}>거절</button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px' }}>
-                      <thead>
-                        <tr style={{ background: '#f8f9fa', color: '#555', textAlign: 'left', fontSize: '0.9rem' }}>
-                          <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>ID</th>
-                          <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>Name</th>
-                          <th style={{ padding: '12px', borderBottom: '2px solid #eee' }}>신청일</th>
-                          <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #eee' }}>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {pendingUsers.map((u) => (
-                          <tr key={u.id} style={{ borderBottom: '1px solid #f1f3f5' }}>
-                            <td style={{ padding: '12px', color: '#333' }}>{u.userId}</td>
-                            <td style={{ padding: '12px', fontWeight: 'bold', color: '#333' }}>{u.name}</td>
-                            <td style={{ padding: '12px', color: '#666', fontSize: '0.85rem' }}>{new Date(u.createdAt).toLocaleString()}</td>
-                            <td style={{ padding: '12px', textAlign: 'center' }}>
-                              <div style={{ display: 'inline-flex', gap: '6px' }}>
-                                <button onClick={() => handleApproveUser(u)} disabled={isSaving} style={approveBtn}>승인</button>
-                                <button onClick={() => { setRejectTarget(u); setRejectReason(""); }} disabled={isSaving} style={rejectBtn}>거절</button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 계정 관리 */}
-            {activeSubTab === 'accounts' && <AccountsAdmin currentUserId={user.userID} />}
-
-            {/* 멤버 관리 */}
-            {activeSubTab === 'directory' && <DirectoryMaster />}
-
-            {/* 콘텐츠 수정 요청 */}
-            {activeSubTab === 'requests' && (
-              <div style={adminCardStyle}>
-                <h3 style={{ marginTop: 0, color: '#1565c0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <MdPlaylistAddCheck size={26} color="#1565c0" /> 콘텐츠 수정/추가 요청 ({contentRequests.length})
-                </h3>
-                {contentRequests.length === 0 ? (
-                  <p style={{ color: '#888', fontSize: '0.9rem' }}>접수된 요청사항이 없습니다.</p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
-                    {contentRequests.map((req) => (
-                      <div key={req.id} style={{ border: '1px solid #e9ecef', borderRadius: '8px', padding: '15px', background: '#f8f9fa', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: mobile ? 'wrap' : 'nowrap' }}>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                            <span style={{ background: '#e3f2fd', color: '#1565c0', fontSize: '0.75rem', fontWeight: 'bold', padding: '3px 8px', borderRadius: '4px' }}>{req.category}</span>
-                            <span style={{ color: '#adb5bd', fontSize: '0.75rem' }}>{new Date(req.createdAt).toLocaleString()}</span>
-                          </div>
-                          <p style={{ color: '#495057', fontSize: '0.95rem', margin: '0 0 8px 0', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>{req.content}</p>
-                          <div style={{ fontSize: '0.85rem', color: '#868e96' }}>From: <span style={{ fontWeight: '600', color: '#495057' }}>{req.requesterName}</span></div>
-                        </div>
-                        <button onClick={() => handleResolveRequest(req)} style={{ background: '#2e7d32', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
-                          처리 완료
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 휴가 관리 */}
-            {activeSubTab === 'vacation' && (
-              <div style={adminCardStyle}>
-                <VacationAdmin mobile={mobile} />
-              </div>
-            )}
-
-            {/* 강의자료 / 논문 / 특허 / 뉴스 */}
-            {activeSubTab === 'classmaterial' && <ClassMaterialAdmin />}
-            {activeSubTab === 'papers' && <PapersAdmin />}
-            {activeSubTab === 'patents' && <PatentsAdmin />}
-            {activeSubTab === 'news' && <NewsAdmin />}
-            {activeSubTab === 'achievements' && <AchievementsAdmin />}
+                {activeSubTab === 'dashboard' && <AdminDashboard user={user} mobile={mobile} pendingCount={counts.pending} requestsCount={counts.requests} onNavigate={setAdminSubTab} />}
+                {activeSubTab === 'approvals' && <ApprovalsAdmin onChanged={refreshCounts} />}
+                {activeSubTab === 'accounts' && <AccountsAdmin currentUserId={user.userID} />}
+                {activeSubTab === 'directory' && <DirectoryMaster />}
+                {activeSubTab === 'requests' && <RequestsAdmin onChanged={refreshCounts} />}
+                {activeSubTab === 'vacation' && <VacationAdmin mobile={mobile} />}
+                {activeSubTab === 'classmaterial' && <ClassMaterialAdmin />}
+                {activeSubTab === 'papers' && <PapersAdmin />}
+                {activeSubTab === 'patents' && <PatentsAdmin />}
+                {activeSubTab === 'news' && <NewsAdmin />}
+                {activeSubTab === 'achievements' && <AchievementsAdmin />}
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* ===== 가입 거절 모달 ===== */}
-      {rejectTarget && (
-        <div style={modalBackdrop}>
-          <div style={modalBox(mobile)}>
-            <h3 style={{ marginTop: 0, marginBottom: '12px', color: '#333' }}>가입 거절 — {rejectTarget.name} ({rejectTarget.userId})</h3>
-            <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '12px' }}>사유는 선택입니다. 거절된 ID로는 다시 가입 신청할 수 있습니다.</p>
-            <textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} placeholder="예: 연구실 구성원이 아님"
-              style={{ width: '100%', height: '80px', padding: '10px', borderRadius: '6px', border: '1px solid #ddd', fontSize: '0.95rem', resize: 'vertical', marginBottom: '16px', boxSizing: 'border-box' }} />
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setRejectTarget(null)} style={modalCancelBtn}>취소</button>
-              <button onClick={handleRejectUser} disabled={isSaving} style={{ ...modalPrimaryBtn, background: '#d32f2f', opacity: isSaving ? 0.7 : 1 }}>{isSaving ? '처리 중...' : '거절'}</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ===== 수정 요청 패널 ===== */}
+      <SlidePanel
+        open={!!requestModal}
+        title={requestModal ? `✏️ ${requestModal.category} 수정/추가 요청` : ''}
+        onClose={() => !isSaving && setRequestModal(null)}
+        footer={<>
+          <Button variant="ghost" onClick={() => setRequestModal(null)} disabled={isSaving}>취소</Button>
+          <Button onClick={submitRequest} disabled={isSaving}>{isSaving ? '전송 중...' : '전송하기'}</Button>
+        </>}
+      >
+        {requestModal && (
+          <>
+            <p style={{ fontSize: '0.9rem', color: '#666', margin: '0 0 12px' }}>내용이 틀렸거나, 새로 추가하고 싶은 정보가 있다면 자유롭게 적어주세요. 교수님께 전달됩니다.</p>
+            <Textarea rows={6} autoFocus value={requestModal.content} onChange={(e) => setRequestModal((r) => ({ ...r, content: e.target.value }))}
+              placeholder="예: 장비 목록에 3D 프린터 모델명(Ultimaker) 추가 부탁드립니다." />
+          </>
+        )}
+      </SlidePanel>
 
-      {/* ===== Request Modal ===== */}
-      {isModalOpen && (
-        <div style={modalBackdrop}>
-          <div style={modalBox(mobile)}>
-            <h3 style={{ marginTop: 0, marginBottom: '12px', color: '#333' }}>✏️ {requestCategory} 수정/추가 요청</h3>
-            <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '12px' }}>내용이 틀렸거나, 새로 추가하고 싶은 정보가 있다면 자유롭게 적어주세요.</p>
-            <textarea value={requestContent} onChange={(e) => setRequestContent(e.target.value)}
-              placeholder="예: 장비 목록에 3D 프린터 모델명(Ultimaker) 추가 부탁드립니다."
-              style={{ width: '100%', height: '120px', padding: '10px', borderRadius: '6px', border: '1px solid #ddd', fontSize: '0.95rem', resize: 'vertical', marginBottom: '16px', boxSizing: 'border-box' }} />
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setIsModalOpen(false)} style={modalCancelBtn}>취소</button>
-              <button onClick={submitRequest} disabled={isSaving} style={{ ...modalPrimaryBtn, opacity: isSaving ? 0.7 : 1 }}>
-                {isSaving ? '전송 중...' : '전송하기'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <style jsx>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        div[style*="overflowX: auto"]::-webkit-scrollbar { display: none; }
-      `}</style>
+      <style jsx>{`div[style*="overflowX: auto"]::-webkit-scrollbar { display: none; }`}</style>
     </div>
   );
 }
 
-// ===== 스타일 헬퍼 =====
+function SectionHeader({ title, onRequest }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+      <h2 style={{ color: '#333', margin: 0 }}>{title}</h2>
+      <Button variant="ghost" size="sm" onClick={onRequest}>✏️ 수정 요청</Button>
+    </div>
+  );
+}
+
+// ===== 스타일 =====
 const cardLinkStyle = (mobile) => ({
   display: 'flex', alignItems: 'center',
   flexDirection: mobile ? 'column' : 'row', textAlign: mobile ? 'center' : 'left', gap: mobile ? '6px' : 0,
@@ -611,48 +391,32 @@ const cardLinkStyle = (mobile) => ({
   backgroundColor: '#fff', borderRadius: '12px', textDecoration: 'none',
   border: '1px solid #eee', boxShadow: '0 2px 8px rgba(0,0,0,0.03)', cursor: 'pointer',
 });
+const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 };
+const shortcutTitleStyle = { fontWeight: 'bold', fontSize: 'clamp(0.8rem, 3vw, 1rem)', color: '#333', marginBottom: '3px' };
+const shortcutSubStyle = { fontSize: 'clamp(0.7rem, 2.5vw, 0.85rem)', color: '#777' };
 
-const tabBtnStyle = (isActive, isAdmin, mobile) => ({
-  padding: mobile ? '10px 0' : '12px 5px',
-  border: 'none', background: 'none', fontWeight: 'bold',
-  color: isActive ? '#004094' : '#adb5bd',
-  borderBottom: isActive ? '3px solid #004094' : '3px solid transparent',
-  cursor: 'pointer', display: 'flex', alignItems: 'center',
-  flexDirection: mobile ? 'column' : 'row',
-  flex: mobile ? '1 1 0' : 'unset',
-  justifyContent: 'center',
-  gap: mobile ? '3px' : '8px',
-  fontSize: mobile ? '0.68rem' : '1rem',
-  whiteSpace: 'nowrap', transition: 'all 0.2s',
-  minWidth: 0, lineHeight: 1, boxSizing: 'border-box',
+const tabBtnStyle = (isActive, mobile) => ({
+  padding: mobile ? '10px 0' : '12px 5px', border: 'none', background: 'none', fontWeight: 'bold',
+  color: isActive ? '#004094' : '#adb5bd', borderBottom: isActive ? '3px solid #004094' : '3px solid transparent',
+  cursor: 'pointer', display: 'flex', alignItems: 'center', flexDirection: mobile ? 'column' : 'row',
+  flex: mobile ? '1 1 0' : 'unset', justifyContent: 'center', gap: mobile ? '3px' : '8px',
+  fontSize: mobile ? '0.68rem' : '1rem', whiteSpace: 'nowrap', transition: 'all 0.2s', minWidth: 0, lineHeight: 1, boxSizing: 'border-box',
 });
 
-// Admin 왼쪽 세로 메뉴 (데스크톱)
+const wikiCardStyle = { display: 'flex', flexDirection: 'column', padding: '20px', background: '#fff', border: '1px solid #e9ecef', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' };
+const adminCardStyle = { marginBottom: '20px', background: '#fff', border: '1px solid #eee', borderRadius: '12px', padding: '25px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' };
+
+// Admin 왼쪽 세로 메뉴 (데스크톱) / 가로 칩 (모바일)
 const adminMenuItemStyle = (isActive) => ({
   width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
   padding: '8px 12px', border: 'none', borderRadius: '8px', textAlign: 'left', font: 'inherit',
-  background: isActive ? '#eef4ff' : 'transparent',
-  color: isActive ? '#004094' : '#4a5a6d',
+  background: isActive ? '#eef4ff' : 'transparent', color: isActive ? '#004094' : '#4a5a6d',
   fontWeight: isActive ? 700 : 500, fontSize: '0.9rem', cursor: 'pointer', transition: 'background 0.15s',
 });
 const menuGroupLabel = { fontSize: '0.7rem', fontWeight: 700, color: '#aab2bd', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '6px 12px 4px' };
 const menuBadge = { minWidth: '18px', height: '18px', padding: '0 5px', borderRadius: '9px', background: '#d32f2f', color: '#fff', fontSize: '0.7rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginLeft: '6px' };
-// Admin 가로 칩 (모바일)
 const adminChipStyle = (isActive) => ({
   padding: '7px 12px', border: '1px solid', borderColor: isActive ? '#004094' : '#e3e7ed', borderRadius: '20px',
   background: isActive ? '#004094' : '#fff', color: isActive ? '#fff' : '#555',
   fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0, display: 'inline-flex', alignItems: 'center',
 });
-
-const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 };
-const shortcutTitleStyle = { fontWeight: 'bold', fontSize: 'clamp(0.8rem, 3vw, 1rem)', color: '#333', marginBottom: '3px' };
-const shortcutSubStyle = { fontSize: 'clamp(0.7rem, 2.5vw, 0.85rem)', color: '#777' };
-const wikiCardStyle = { display: 'flex', flexDirection: 'column', padding: '20px', background: '#fff', border: '1px solid #e9ecef', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' };
-const adminCardStyle = { marginBottom: '20px', background: '#fff', border: '1px solid #eee', borderRadius: '12px', padding: '25px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' };
-const approveBtn = { background: '#4dabf7', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', whiteSpace: 'nowrap' };
-const rejectBtn = { background: '#fce8e6', color: '#c5221f', border: 'none', padding: '6px 14px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', whiteSpace: 'nowrap' };
-const requestBtnStyle = { fontSize: '0.85rem', padding: '6px 12px', borderRadius: '20px', border: '1px solid #eee', background: '#fff', cursor: 'pointer', color: '#555', fontWeight: 'bold' };
-const modalBackdrop = { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px', boxSizing: 'border-box' };
-const modalBox = (mobile) => ({ background: '#fff', padding: mobile ? '20px' : '30px', borderRadius: '12px', width: '100%', maxWidth: '500px', boxShadow: '0 5px 20px rgba(0,0,0,0.2)' });
-const modalCancelBtn = { padding: '10px 15px', background: '#f1f3f5', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', color: '#555' };
-const modalPrimaryBtn = { padding: '10px 15px', background: '#004094', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', color: '#fff' };

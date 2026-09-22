@@ -5,6 +5,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { FaPen, FaTrash, FaPlus } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
+import { apiFetch } from "@/lib/apiClient";
 import {
   Button, Input, Select, Field, Card, Toolbar, SearchInput, Table, td, Badge, Empty, FormGrid, span2, Segment,
   SlidePanel, useToast, useConfirm,
@@ -60,12 +61,7 @@ export default function PatentsAdmin() {
     setIsSaving(true);
     try {
       const payload = Object.fromEntries(Object.entries(f).map(([k, v]) => [k, typeof v === "string" ? v.trim() : v]));
-      const res = await fetch("/api/patents", {
-        method: panel.id ? "PATCH" : "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(panel.id ? { id: panel.id, ...payload } : payload),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "저장 실패");
+      await apiFetch("/api/patents", { method: panel.id ? "PATCH" : "POST", body: panel.id ? { id: panel.id, ...payload } : payload });
       toast.success(panel.id ? "특허를 수정했습니다." : "특허를 추가했습니다.");
       setPanel(null);
       load();
@@ -78,11 +74,8 @@ export default function PatentsAdmin() {
 
   async function remove(p) {
     if (!(await confirm({ title: "특허 삭제", message: `"${p.title}"\n삭제하면 되돌릴 수 없습니다.`, confirmText: "삭제", danger: true }))) return;
-    const res = await fetch(`/api/patents?id=${p.id}`, { method: "DELETE" });
-    const result = await res.json().catch(() => ({}));
-    if (!res.ok) return toast.error("삭제 실패: " + (result.error || ""));
-    toast.success("삭제했습니다.");
-    load();
+    try { await apiFetch(`/api/patents?id=${p.id}`, { method: "DELETE" }); toast.success("삭제했습니다."); load(); }
+    catch (e) { toast.error("삭제 실패: " + e.message); }
   }
 
   const isReg = panel?.form.type === "Registered";

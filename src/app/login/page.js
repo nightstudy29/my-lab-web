@@ -26,6 +26,7 @@ export default function LoginPage() {
   const [regPW, setRegPW] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState(null); // { type: 'error' | 'info', text }
 
   // 1. 이미 로그인된 세션(httpOnly 쿠키)이 있으면 바로 포털로
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function LoginPage() {
   }, [router]);
 
   const resetToLogin = () => {
+    setMessage(null);
     setStep('login_input');
     setOtpToken('');
     setStepToken('');
@@ -57,9 +59,10 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || '로그인 실패');
+        setMessage({ type: 'error', text: data.message || '로그인 실패' });
         return;
       }
+      setMessage(null);
 
       if (data.status === 'setup_needed') {
         setStepToken(data.setupToken);
@@ -71,7 +74,7 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error(err);
-      alert('서버 연결 오류');
+      setMessage({ type: 'error', text: '서버에 연결할 수 없습니다.' });
     } finally {
       setIsLoading(false);
     }
@@ -100,12 +103,12 @@ export default function LoginPage() {
         return;
       }
 
-      alert(data.message || '인증번호가 틀렸습니다.');
       // 중간 토큰이 만료된 경우엔 처음부터
-      if (res.status === 401 && /만료/.test(data.message || '')) resetToLogin();
+      if (res.status === 401 && /만료/.test(data.message || '')) { resetToLogin(); setMessage({ type: 'error', text: data.message }); return; }
+      setMessage({ type: 'error', text: data.message || '인증번호가 틀렸습니다.' });
     } catch (error) {
       console.error("OTP Error:", error);
-      alert('인증 오류 발생: 서버와 연결할 수 없습니다.');
+      setMessage({ type: 'error', text: '서버에 연결할 수 없습니다.' });
     } finally {
       setIsLoading(false);
     }
@@ -125,14 +128,14 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert('가입 신청 완료! 관리자 승인을 기다려주세요.');
         setStep('login_input');
         setRegName(''); setRegID(''); setRegPW('');
+        setMessage({ type: 'info', text: '가입 신청 완료! 교수님 승인 후 로그인할 수 있습니다.' });
       } else {
-        alert(data.message || '가입 신청 실패');
+        setMessage({ type: 'error', text: data.message || '가입 신청 실패' });
       }
     } catch (err) {
-      alert('오류가 발생했습니다.');
+      setMessage({ type: 'error', text: '오류가 발생했습니다.' });
     } finally {
       setIsLoading(false);
     }
@@ -148,6 +151,12 @@ export default function LoginPage() {
           <h2 style={{ margin: '15px 0 5px', color: '#333' }}>SMID Lab Portal</h2>
           <p style={{ margin: 0, color: '#888', fontSize: '0.9rem' }}>Secure Access System</p>
         </div>
+
+        {message && (
+          <div role="alert" style={{ marginBottom: '14px', padding: '10px 12px', borderRadius: '8px', fontSize: '0.85rem', textAlign: 'left', background: message.type === 'error' ? '#fce8e6' : '#e6f4ea', color: message.type === 'error' ? '#c5221f' : '#137333' }}>
+            {message.text}
+          </div>
+        )}
 
         {/* 1. ID/PW 입력 단계 */}
         {step === 'login_input' && (

@@ -6,6 +6,7 @@ import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { FaPen, FaTrash, FaPlus, FaImage } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
+import { apiFetch } from "@/lib/apiClient";
 import FileUploader from "./FileUploader";
 import { itemsFromUrls, uploadItems } from "@/lib/uploadClient";
 import {
@@ -69,12 +70,7 @@ export default function NewsAdmin() {
         date: f.date, category: f.category, title: f.title.trim(), description: f.description.trim(),
         link: f.link.trim() || null, images: uploaded.map((it) => it.url),
       };
-      const res = await fetch("/api/news", {
-        method: panel.id ? "PATCH" : "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(panel.id ? { id: panel.id, ...payload } : payload),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "저장 실패");
+      await apiFetch("/api/news", { method: panel.id ? "PATCH" : "POST", body: panel.id ? { id: panel.id, ...payload } : payload });
       toast.success(panel.id ? "뉴스를 수정했습니다." : "뉴스를 추가했습니다. 홈과 News 페이지에 바로 반영됩니다.");
       setPanel(null);
       load();
@@ -87,11 +83,8 @@ export default function NewsAdmin() {
 
   async function remove(n) {
     if (!(await confirm({ title: "뉴스 삭제", message: `"${n.title}"\n첨부된 사진 ${n.images?.length || 0}장도 함께 삭제됩니다.`, confirmText: "삭제", danger: true }))) return;
-    const res = await fetch(`/api/news?id=${n.id}`, { method: "DELETE" });
-    const result = await res.json().catch(() => ({}));
-    if (!res.ok) return toast.error("삭제 실패: " + (result.error || ""));
-    toast.success("삭제했습니다.");
-    load();
+    try { await apiFetch(`/api/news?id=${n.id}`, { method: "DELETE" }); toast.success("삭제했습니다."); load(); }
+    catch (e) { toast.error("삭제 실패: " + e.message); }
   }
 
   return (

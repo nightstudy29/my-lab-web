@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import equipmentData from '../../data/equipment.json'; 
+import Image from 'next/image';
+import equipmentData from '../../data/equipment.json';
 import { FaMicroscope } from "react-icons/fa6"; 
 
 export default function EquipmentPage() {
@@ -67,16 +68,12 @@ function EquipmentCard({ item }) {
         position: 'relative'
       }}>
         {item.image ? (
-          <img 
-            src={item.image} 
+          <Image
+            src={item.image}
             alt={item.name}
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'cover', 
-              transition: 'transform 0.5s ease'
-            }}
-            className={isHovered ? "zoom-image" : ""}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            style={{ objectFit: 'cover', transition: 'transform 0.5s ease', transform: isHovered ? 'scale(1.05)' : 'none' }}
           />
         ) : (
           <FaMicroscope size={50} color="#ccc" />

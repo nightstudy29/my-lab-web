@@ -2,8 +2,9 @@
 
 // 계정 관리 (admin 전용): 전체 계정 표 + 역할 변경 / 차단 / 비번 초기화 / OTP 초기화 / 삭제
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaCopy, FaCheck } from "react-icons/fa6";
+import { apiFetch } from "@/lib/apiClient";
 import { ROLES, ROLE_LABELS, STATUS_LABELS } from "@/lib/roles";
 import { Button, Select, Card, Toolbar, Table, td, Badge, Empty, Segment, useToast, useConfirm } from "./ui";
 
@@ -21,22 +22,18 @@ export default function AccountsAdmin({ currentUserId }) {
   const [tempPw, setTempPw] = useState(null); // { userId, name, tempPassword } — 한 번만 표시
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => { load(); }, []);
-
-  async function load() {
-    const res = await fetch("/api/admin/users?status=all");
-    const data = await res.json().catch(() => ({}));
-    setUsers(data.users || []);
-    setIsLoading(false);
-  }
+  const load = useCallback(async () => {
+    try { setUsers((await apiFetch("/api/admin/users?status=all")).users || []); }
+    catch (e) { toast.error(e.message); }
+    finally { setIsLoading(false); }
+  }, [toast]);
+  useEffect(() => { load(); }, [load]);
 
   async function act(user, action, extra = {}, ask) {
     if (ask && !(await confirm(ask))) return;
     setBusyId(user.id);
     try {
-      const res = await fetch("/api/admin/users", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: user.id, action, ...extra }) });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || "실패");
+      const data = await apiFetch("/api/admin/users", { method: "PATCH", body: { id: user.id, action, ...extra } });
       if (data.deleted) setUsers((prev) => prev.filter((u) => u.id !== user.id));
       else if (data.user) setUsers((prev) => prev.map((u) => (u.id === user.id ? data.user : u)));
       if (data.tempPassword) { setTempPw({ userId: user.userId, name: user.name, tempPassword: data.tempPassword }); setCopied(false); }
