@@ -3,12 +3,16 @@
 // 뉴스(news) 추가/수정/삭제 API.
 
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { deleteR2UrlIfOwned } from "@/lib/r2Client";
 
 // 뉴스 추가
 export async function POST(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const body = await request.json();
     const { date, category, title, description, link, images } = body;
 
@@ -45,6 +49,9 @@ export async function POST(request) {
 // 기존에 있었는데 이번 최종 배열에서 빠진 이미지는 R2에서 자동으로 삭제합니다.
 export async function PATCH(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const body = await request.json();
     const { id, date, category, title, description, link, images } = body;
 
@@ -98,6 +105,9 @@ export async function PATCH(request) {
 // 뉴스 삭제 (?id=... 쿼리 파라미터로 받음) — images 배열의 R2 파일도 함께 삭제
 export async function DELETE(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 

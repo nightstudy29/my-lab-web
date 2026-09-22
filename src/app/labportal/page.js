@@ -12,6 +12,7 @@ import ClassMaterialAdmin from '@/components/ClassMaterialAdmin';
 import PapersAdmin from '@/components/PapersAdmin';
 import NewsAdmin from '@/components/NewsAdmin';
 import PatentsAdmin from '@/components/PatentsAdmin';
+import useIsMobile from '@/hooks/useIsMobile';
 
 const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZFKBBsoaoqe9PV4aOz92jS-k5yMr6ynih1NBSFr7490KdMFkRHKsSwyBRha0CTgP-_WlvIiOoUwwh/pub?gid=0&single=true&output=csv"; 
 const GAS_MEMBER_URL = "https://script.google.com/macros/s/AKfycbwdgyNJ2J6L1nxiCy5DIIfNmsaFRiwg6uwTlWrbY3nnYvufz-wbN4vsWhoj71hWlM_Z7w/exec"; 
@@ -34,7 +35,7 @@ export default function LabPortalPage() {
   const [members, setMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isMobile, setIsMobile] = useState(null);
+  const isMobile = useIsMobile(768);
   const mobile = isMobile !== false;
 
   const [pendingUsers, setPendingUsers] = useState([]);
@@ -44,27 +45,20 @@ export default function LabPortalPage() {
   const [requestContent, setRequestContent] = useState("");
   const [adminSubTab, setAdminSubTab] = useState('approvals');
 
-  // 모바일 감지
+  // 로그인 체크 — httpOnly 세션 쿠키를 서버(/api/session)에서 검증합니다.
+  // (예전처럼 localStorage 값을 믿지 않습니다. 관리자 API도 서버에서 별도로 role을 확인합니다.)
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-
-  // 로그인 체크
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (!storedUser) { router.push('/login'); return; }
-    const userData = JSON.parse(storedUser);
-    if (!userData.expiry || Date.now() > userData.expiry) {
-      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-      localStorage.removeItem('user');
-      router.push('/login');
-      return;
-    }
-    setUser(userData);
-  }, []);
+    let cancelled = false;
+    fetch('/api/session')
+      .then(async (res) => {
+        if (cancelled) return;
+        if (!res.ok) { router.replace('/login'); return; }
+        const data = await res.json();
+        setUser(data.user);
+      })
+      .catch(() => { if (!cancelled) router.replace('/login'); });
+    return () => { cancelled = true; };
+  }, [router]);
 
   // 데이터 로딩
   useEffect(() => {
@@ -121,22 +115,25 @@ export default function LabPortalPage() {
 
   const handleCheckUpdate = async (memberIndex, dayIndex, currentVal) => {
     const newVal = !currentVal;
-    const newMembers = [...members];
-    newMembers[memberIndex].vacation.checks[dayIndex] = newVal;
-    setMembers(newMembers);
+    const targetName = members[memberIndex].nameKor;
+    // 중첩 객체를 직접 mutate 하지 않고 새 객체로 교체
+    setMembers((prev) => prev.map((m, i) => {
+      if (i !== memberIndex) return m;
+      const checks = m.vacation.checks.map((c, d) => (d === dayIndex ? newVal : c));
+      return { ...m, vacation: { ...m.vacation, checks } };
+    }));
     setIsSaving(true);
     try {
       await fetch(GAS_MEMBER_URL, {
         method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({ action: 'check', name: newMembers[memberIndex].nameKor, dayIndex, checked: newVal })
+        body: JSON.stringify({ action: 'check', name: targetName, dayIndex, checked: newVal })
       });
     } catch (e) { console.error(e); } finally { setIsSaving(false); }
   };
 
   const handleMemoChange = (e, memberIndex) => {
-    const newMembers = [...members];
-    newMembers[memberIndex].vacation.memo = e.target.value;
-    setMembers(newMembers);
+    const memo = e.target.value;
+    setMembers((prev) => prev.map((m, i) => (i === memberIndex ? { ...m, vacation: { ...m.vacation, memo } } : m)));
   };
 
   const handleMemoSave = async (memberIndex, text) => {
@@ -148,9 +145,7 @@ export default function LabPortalPage() {
         method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({ action: 'memo', name: targetMember.nameKor, text })
       });
-      const newMembers = [...members];
-      newMembers[memberIndex].vacation.prevMemo = text;
-      setMembers(newMembers);
+      setMembers((prev) => prev.map((m, i) => (i === memberIndex ? { ...m, vacation: { ...m.vacation, prevMemo: text } } : m)));
     } catch (e) { console.error(e); } finally { setIsSaving(false); }
   };
 
@@ -161,8 +156,8 @@ export default function LabPortalPage() {
       method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ action: 'approveUser', targetId })
     });
-    alert("승인 요청 전송됨");
-    setPendingUsers(prev => prev.filter(u => u.id !== targetId));
+    // no-cors 요청은 응답을 읽을 수 없으므로, 목록을 다시 불러와 실제로 반영됐는지 확인합니다.
+    await fetchAdminData();
     setIsSaving(false);
   };
 
@@ -196,7 +191,10 @@ export default function LabPortalPage() {
     alert("요청사항이 전달되었습니다.");
   };
 
-  const handleLogout = () => { localStorage.removeItem('user'); router.push('/login'); };
+  const handleLogout = async () => {
+    await fetch('/api/session', { method: 'DELETE' }).catch(() => {});
+    router.replace('/login');
+  };
 
   if (!user) return null;
 
@@ -721,7 +719,6 @@ const adminSubTabBtnStyle = (isActive) => ({
 const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px', display: 'flex', alignItems: 'center', flexShrink: 0 };
 const shortcutTitleStyle = { fontWeight: 'bold', fontSize: '1rem', color: '#333', marginBottom: '3px' };
 const shortcutSubStyle = { fontSize: '0.85rem', color: '#777' };
-const guideCardStyle = { display: 'flex', alignItems: 'flex-start', padding: '20px', background: '#fff', border: '1px solid #e9ecef', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' };
 const wikiCardStyle = { display: 'flex', flexDirection: 'column', padding: '20px', background: '#fff', border: '1px solid #e9ecef', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' };
 const adminCardStyle = { marginBottom: '20px', background: '#fff', border: '1px solid #eee', borderRadius: '12px', padding: '25px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' };
 const contactRow = { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px', color: '#495057' };

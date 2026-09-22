@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import { FaNewspaper } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 
 // ✅ JSON/DB 데이터에서 연도 자동 추출 (코드 수정 없이 자동 반영)
 const getYearsFromData = (data) =>
@@ -25,13 +26,13 @@ function PaperItem({ item }) {
             fontWeight: '700', marginBottom: '8px', lineHeight: '1.4',
             cursor: 'pointer', transition: 'color 0.2s', wordBreak: 'break-word'
           }}
-          dangerouslySetInnerHTML={{ __html: item.title }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.title) }}
         />
       </Link>
       {item.authors && (
         <div
           style={{ fontSize: '0.95rem', color: '#555', marginBottom: '6px', lineHeight: '1.6' }}
-          dangerouslySetInnerHTML={{ __html: item.authors.replace(/\s*[‐–-]\s*/g, '-') }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.authors.replace(/\s*[‐–-]\s*/g, '-')) }}
         />
       )}
       {item.conference && (

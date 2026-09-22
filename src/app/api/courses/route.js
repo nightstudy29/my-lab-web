@@ -4,12 +4,16 @@
 // cascade로 자동 삭제되지만, R2에 올라간 실제 파일은 별도로 지워야 합니다.
 
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { deleteR2FileIfOwned } from "@/lib/r2Client";
 
 // 과목 추가
 export async function POST(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const body = await request.json();
     const { semester_id, name, sort_order } = body;
 
@@ -42,6 +46,9 @@ export async function POST(request) {
 // 과목 삭제 (딸린 materials는 DB에서 cascade 삭제, R2 파일은 여기서 직접 정리)
 export async function DELETE(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 

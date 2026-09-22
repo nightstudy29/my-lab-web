@@ -7,12 +7,16 @@
 //              파일들은 여기서 먼저 전부 조회해서 지운 다음 DB를 삭제합니다.
 
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { deleteR2FileIfOwned } from "@/lib/r2Client";
 
 // 새 학기 생성 (자동으로 현재 학기로 설정, 기존 학기들은 비활성화)
 export async function POST(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const body = await request.json();
     const { label } = body;
 
@@ -51,6 +55,9 @@ export async function POST(request) {
 // 기존 학기를 다시 "현재 학기"로 전환 (지난 학기 복원/보관 학기 간 전환용)
 export async function PATCH(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const body = await request.json();
     const { id } = body;
 
@@ -90,6 +97,9 @@ export async function PATCH(request) {
 // 학기 완전 삭제 — R2 파일 먼저 전부 정리한 다음 DB 삭제 (cascade로 과목/자료도 함께)
 export async function DELETE(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 

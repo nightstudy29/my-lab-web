@@ -3,12 +3,16 @@
 // 강의자료(materials) 추가/수정/삭제 API.
 
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { deleteR2FileIfOwned } from "@/lib/r2Client";
 
 // 자료 추가
 export async function POST(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const body = await request.json();
     const { course_id, type, date, week, title, file_url, is_external_link } = body;
 
@@ -46,6 +50,9 @@ export async function POST(request) {
 // 실제 업로드된 파일 자체를 교체하려면 삭제 후 다시 추가해주세요.
 export async function PATCH(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const body = await request.json();
     const { id, type, date, week, title, file_url, is_external_link } = body;
 
@@ -84,6 +91,9 @@ export async function PATCH(request) {
 // 자료 삭제 (?id=... 쿼리 파라미터로 받음) — R2 파일도 함께 삭제
 export async function DELETE(request) {
   try {
+    const auth = await requireAdmin(request);
+    if (auth.response) return auth.response;
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
