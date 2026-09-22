@@ -10,7 +10,7 @@ import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall, dangerBtnSmall } f
 
 const EMPTY_MEMBER = {
   name_kor: "", name_eng: "", email: "", phone: "", kakao_id: "", year_joined: "", current_position: "",
-  cv_link: "", scholar_link: "", linkedin_link: "", orcid_link: "", research_area: "",
+  cv_link: "", scholar_link: "", linkedin_link: "", orcid_link: "",
   position: "MS-PhD Student", degree: "TBD", status: "active", year_left: "", co_advisor: "", is_public: true, sort_order: "", user_id: "",
 };
 
@@ -329,7 +329,6 @@ function MemberForm({ form, setForm, linkableUsers, disabled }) {
         {T("email", "E-mail")}{T("phone", "전화번호")}
         {T("kakao_id", "Kakao ID")}
       </div>
-      {T("research_area", "연구 분야 (한 줄)")}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 12px" }}>
         {T("cv_link", "CV 링크")}{T("scholar_link", "Google Scholar")}
         {T("linkedin_link", "LinkedIn")}{T("orcid_link", "ORCID")}

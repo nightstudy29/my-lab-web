@@ -9,7 +9,7 @@ import { POSITION_LABELS_EN } from "@/lib/memberConstants";
 
 export const MEMBER_COLUMNS =
   "id, user_id, name_kor, name_eng, email, phone, kakao_id, year_joined, current_position, " +
-  "cv_link, scholar_link, linkedin_link, orcid_link, photo_url, research_area, " +
+  "cv_link, scholar_link, linkedin_link, orcid_link, photo_url, " +
   "position, degree, status, year_left, co_advisor, is_public, sort_order, created_at, updated_at";
 
 function links(row) {
@@ -36,7 +36,6 @@ export function toPublic(row) {
     coAdvisor: row.co_advisor,
     email: row.email,
     photoUrl: row.photo_url,
-    researchArea: row.research_area,
     links: links(row),
     sortOrder: row.sort_order,
   };

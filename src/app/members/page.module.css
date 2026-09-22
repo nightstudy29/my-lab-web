@@ -56,15 +56,15 @@
 /* ===== Alumni 그리드 ===== */
 .alumniGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
 }
 
 .alumniCard {
-  padding: 12px 15px;
+  padding: 10px 12px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #444;
 }
 
@@ -72,33 +72,37 @@
 .internGrid {
   list-style: none;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-  gap: 8px;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
+/* 한 줄 pill: 이름 · 프로그램 배지 · 기간 */
 .internCard {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 10px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px 5px 12px;
   background-color: #fff;
-  border-radius: 8px;
-  border: 1px solid #eee;
+  border-radius: 20px;
+  border: 1px solid #e6e9ee;
 }
 
 .internTop {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  gap: 4px;
+  margin: 0;
 }
 
 .internName {
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   color: #333;
   letter-spacing: -0.3px;
+  white-space: nowrap;
 }
 
 .internIcons {
@@ -119,26 +123,27 @@
 }
 
 .internProgram {
-  align-self: flex-start;
   color: #555;
   background-color: #f1f3f5;
-  padding: 2px 6px;
+  padding: 1px 6px;
   border-radius: 4px;
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .internPrograms {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 4px;
-  margin-bottom: 4px;
+  margin: 0;
 }
 
 .internPeriod {
   color: #999;
-  font-size: 0.7rem;
-  margin-top: 2px;
+  font-size: 0.68rem;
+  margin: 0;
+  white-space: nowrap;
 }
 
 /* ===== 모바일 대응 ===== */
@@ -151,7 +156,7 @@
     margin-bottom: 50px;
   }
 
-  .internGrid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  .internCard {
+    padding: 4px 8px 4px 10px;
   }
 }

@@ -99,40 +99,22 @@
 }
 
 .meta {
-  margin: 2px 0 0;
+  margin: 1px 0 0;
   font-size: 0.76rem;
   color: #777;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   min-width: 0;
-}
-
-.dot {
-  color: #c5ccd6;
 }
 
 .email {
   color: #666;
   text-decoration: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
 }
 
 .email:hover {
   color: #004094;
   text-decoration: underline;
-}
-
-.area {
-  margin: 2px 0 0;
-  font-size: 0.76rem;
-  color: #6b7785;
-  font-style: italic;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 // 포털 「Account」 — 본인 멤버 정보 편집.
-// 편집 가능: 이름/영어이름/이메일/전화/카카오/링크 4개/사진/연구분야
+// 편집 가능: 이름/영어이름/이메일/전화/카카오/링크 4개/사진
 // 교수님 전용(신분·학위·상태·입학/합류 시기·졸업연도·현재 소속)은 읽기만.
 
 import { useState, useEffect } from "react";
@@ -16,7 +16,6 @@ import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall } from "./adminStyl
 const FIELD_LABELS = {
   name_kor: "이름 (한글)", name_eng: "이름 (영문)", email: "E-mail", phone: "전화번호", kakao_id: "Kakao ID",
   cv_link: "CV 링크", scholar_link: "Google Scholar", linkedin_link: "LinkedIn", orcid_link: "ORCID",
-  research_area: "연구 분야 (한 줄)",
 };
 
 function formFromMember(m) {
@@ -24,7 +23,6 @@ function formFromMember(m) {
     name_kor: m.nameKor || "", name_eng: m.nameEng || "", email: m.email || "", phone: m.phone || "",
     kakao_id: m.kakaoId || "",
     cv_link: m.links?.cv || "", scholar_link: m.links?.scholar || "", linkedin_link: m.links?.linkedin || "", orcid_link: m.links?.orcid || "",
-    research_area: m.researchArea || "",
     photo: itemsFromUrls(m.photoUrl ? [m.photoUrl] : []),
   };
 }
@@ -132,7 +130,6 @@ export default function MyProfileForm({ onSaved, showPassword = false, userId })
         {text("email", { type: "email" })}
         {text("phone", { placeholder: "010-0000-0000" })}
         {text("kakao_id")}
-        <div style={{ gridColumn: "1 / -1" }}>{text("research_area", { placeholder: "예: 2D materials for neuromorphic devices" })}</div>
 
         <div style={{ gridColumn: "1 / -1", fontSize: "0.82rem", color: "#888", marginTop: "6px", display: "flex", gap: "12px", alignItems: "center" }}>
           링크를 넣으면 홈페이지 Members 카드 이름 옆에 아이콘으로 표시됩니다:

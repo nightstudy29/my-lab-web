@@ -1,5 +1,5 @@
 // 공개 Members 페이지 카드 — 컴팩트 가로형.
-// 사진(56px) | 이름 + 링크 아이콘 / 직함 (+Co-advisor) / 입학 · 이메일 / 연구분야
+// 사진(56px) | 이름 + 링크 아이콘 / 직함 (+Co-advisor) / Joined / Email
 
 import Image from 'next/image';
 import { FaFilePdf, FaLinkedin, FaUser } from 'react-icons/fa6';
@@ -7,7 +7,7 @@ import { SiGooglescholar, SiOrcid } from 'react-icons/si';
 import styles from './MemberCard.module.css';
 
 export default function MemberCard({ member }) {
-  const { name, role, coAdvisor, joined, email, area, image, links } = member;
+  const { name, role, coAdvisor, joined, email, image, links } = member;
 
   return (
     <div className={styles.card}>
@@ -33,15 +33,8 @@ export default function MemberCard({ member }) {
         <p className={styles.role}>{role}</p>
         {coAdvisor && <p className={styles.coAdvisor}>Co-advisor: {coAdvisor}</p>}
 
-        {(joined || email) && (
-          <p className={styles.meta}>
-            {joined && <span>Joined {joined}</span>}
-            {joined && email && <span className={styles.dot}>·</span>}
-            {email && <a href={`mailto:${email}`} className={styles.email}>{email}</a>}
-          </p>
-        )}
-
-        {area && <p className={styles.area} title={area}>{area}</p>}
+        {joined && <p className={styles.meta}>Joined {joined}</p>}
+        {email && <p className={styles.meta}><a href={`mailto:${email}`} className={styles.email} title={email}>{email}</a></p>}
       </div>
     </div>
   );

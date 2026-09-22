@@ -52,7 +52,7 @@ export default async function MembersPage() {
 
       {/* ===== 1. Current Members ===== */}
       <section className={styles.section}>
-        <h1 className={styles.sectionTitleLarge}>Current Members</h1>
+        <h1 className={styles.sectionTitle}>Current Members</h1>
         <div className={styles.membersGrid}>
           {current.map((m) => (
             <MemberCard
@@ -63,7 +63,6 @@ export default async function MembersPage() {
                 coAdvisor: m.coAdvisor,
                 joined: m.yearJoined,
                 email: m.email,
-                area: m.researchArea,
                 image: m.photoUrl,
                 links: { cv: m.links.cv, googleScholar: m.links.scholar, linkedin: m.links.linkedin, orcid: m.links.orcid },
               }}
