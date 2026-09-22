@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall, dangerBtnSmall } from "./adminStyles";
+import FileUploader from "./FileUploader";
+import { uploadItems } from "@/lib/uploadClient";
 
 export default function ClassMaterialAdmin() {
   const [semesters, setSemesters] = useState([]);
@@ -156,7 +158,7 @@ export default function ClassMaterialAdmin() {
       title: "",
       isExternalLink: false,
       externalUrl: "",
-      file: null,
+      files: [], // FileUploader item 배열 (단일 파일이라 0~1개)
       isSubmitting: false,
     };
   }
@@ -166,7 +168,7 @@ export default function ClassMaterialAdmin() {
 
     if (!form.title.trim()) return alert("제목을 입력해주세요.");
     if (form.isExternalLink && !form.externalUrl.trim()) return alert("외부 링크 URL을 입력해주세요.");
-    if (!form.isExternalLink && !form.file) return alert("파일을 선택해주세요.");
+    if (!form.isExternalLink && form.files.length === 0) return alert("파일을 선택해주세요.");
 
     updateMaterialForm(courseId, "isSubmitting", true);
 
@@ -174,12 +176,13 @@ export default function ClassMaterialAdmin() {
       let fileUrl = form.externalUrl.trim();
 
       if (!form.isExternalLink) {
-        const fd = new FormData();
-        fd.append("file", form.file);
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
-        const uploadResult = await uploadRes.json();
-        if (!uploadRes.ok) throw new Error(uploadResult.error || "업로드 실패");
-        fileUrl = uploadResult.url;
+        // R2에 직접 업로드 (Vercel 4.5MB 제한 없음). 강의자료는 원본 그대로 올림.
+        const uploaded = await uploadItems(form.files, {
+          folder: "classmaterial",
+          resizeImages: false,
+          onItemsChange: (items) => updateMaterialForm(courseId, "files", items),
+        });
+        fileUrl = uploaded[0].url;
       }
 
       const res = await fetch("/api/classmaterials", {
@@ -439,12 +442,15 @@ export default function ClassMaterialAdmin() {
                       style={{ ...inputStyle, width: "100%", marginBottom: "8px", boxSizing: "border-box" }}
                     />
                   ) : (
-                    <input
-                      key="file-upload-input"
-                      type="file"
-                      onChange={(e) => updateMaterialForm(course.id, "file", e.target.files[0])}
-                      style={{ marginBottom: "8px", fontSize: "0.85rem" }}
-                    />
+                    <div style={{ marginBottom: "8px" }}>
+                      <FileUploader
+                        items={form.files}
+                        onChange={(items) => updateMaterialForm(course.id, "files", items)}
+                        multiple={false}
+                        disabled={form.isSubmitting}
+                        hint="PDF, PPT, HWP, ZIP 등 · 최대 200MB"
+                      />
+                    </div>
                   )}
 
                   <button

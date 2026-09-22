@@ -11,13 +11,14 @@ export function proxy(request) {
   //   (nonce는 Next.js 자체 인라인 스크립트에 제대로 전파되지 않아 하이드레이션이
   //    깨지는 문제가 있어 제거했습니다 — nonce가 있으면 unsafe-inline이 완전히
   //    무시되는 CSP 스펙 때문입니다.)
-  // - connect-src: Supabase API, Google Apps Script(휴가관리/가입승인), Google Sheets(회원 CSV) 허용
+  // - connect-src: Supabase API, Google Apps Script(휴가관리/가입승인), Google Sheets(회원 CSV),
+  //   Cloudflare R2 S3 API(관리자 패널의 presigned URL 직접 업로드 PUT) 허용
   // - img-src: Cloudflare R2에 올린 이미지(뉴스 사진 등) 허용. OTP QR은 서버가 data: URL로 생성.
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com;
     style-src 'self' 'unsafe-inline';
-    connect-src 'self' https://www.google-analytics.com https://iagkjazyhvahkeifxduq.supabase.co https://script.google.com https://docs.google.com https://script.googleusercontent.com https://*.googleusercontent.com;
+    connect-src 'self' https://www.google-analytics.com https://iagkjazyhvahkeifxduq.supabase.co https://script.google.com https://docs.google.com https://script.googleusercontent.com https://*.googleusercontent.com https://*.r2.cloudflarestorage.com;
     img-src 'self' blob: data: https://www.google-analytics.com https://pub-d01d2f0a6f224159a4981cb55c90fad3.r2.dev;
     font-src 'self' data:;
     object-src 'none';

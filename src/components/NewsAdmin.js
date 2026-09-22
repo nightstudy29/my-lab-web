@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall, dangerBtnSmall } from "./adminStyles";
+import FileUploader from "./FileUploader";
+import { itemsFromUrls, uploadItems } from "@/lib/uploadClient";
 
 const CATEGORY_OPTIONS = ["Announcement", "Award", "Paper Accepted", "Group Outing", "Event"];
 
@@ -13,8 +15,9 @@ function defaultForm() {
     title: "",
     description: "",
     link: "",
-    existingImages: [], // 수정 중일 때, 이미 올라가 있는 이미지 URL들 (개별 삭제 가능)
-    newFiles: [], // 새로 추가할 로컬 파일들 (업로드 전)
+    // FileUploader item 배열. 순서 = 페이지에 표시되는 순서.
+    // 수정 모드에서는 기존 사진(kind:'existing')이 먼저 채워지고, 새 파일(kind:'new')을 섞어 넣을 수 있음.
+    images: [],
     isSubmitting: false,
   };
 }
@@ -26,8 +29,7 @@ function formFromNews(n) {
     title: n.title,
     description: n.description,
     link: n.link || "",
-    existingImages: n.images || [],
-    newFiles: [],
+    images: itemsFromUrls(n.images || []),
     isSubmitting: false,
   };
 }
@@ -57,14 +59,6 @@ export default function NewsAdmin() {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  function handleFilesSelected(e) {
-    updateField("newFiles", Array.from(e.target.files));
-  }
-
-  function removeExistingImage(url) {
-    setForm((prev) => ({ ...prev, existingImages: prev.existingImages.filter((u) => u !== url) }));
-  }
-
   function openAddForm() {
     setEditingId(null);
     setForm(defaultForm());
@@ -90,19 +84,13 @@ export default function NewsAdmin() {
     updateField("isSubmitting", true);
 
     try {
-      // 새로 선택한 이미지 파일들을 R2에 업로드
-      const newlyUploadedUrls = [];
-      for (const file of form.newFiles) {
-        const fd = new FormData();
-        fd.append("file", file);
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
-        const uploadResult = await uploadRes.json();
-        if (!uploadRes.ok) throw new Error(uploadResult.error || "이미지 업로드 실패");
-        newlyUploadedUrls.push(uploadResult.url);
-      }
-
-      // 최종 이미지 배열 = (수정 중이면) 남아있는 기존 이미지 + 새로 올린 이미지
-      const finalImages = [...form.existingImages, ...newlyUploadedUrls];
+      // 새로 추가한 사진들을 R2에 직접 업로드 (진행률은 form.images에 실시간 반영됨).
+      // 이미지는 장변 2000px / JPEG 85% 로 자동 리사이즈.
+      const uploaded = await uploadItems(form.images, {
+        folder: "news",
+        resizeImages: true,
+        onItemsChange: (items) => setForm((prev) => ({ ...prev, images: items })),
+      });
 
       const payload = {
         date: form.date,
@@ -110,7 +98,7 @@ export default function NewsAdmin() {
         title: form.title.trim(),
         description: form.description.trim(),
         link: form.link.trim() || null,
-        images: finalImages,
+        images: uploaded.map((it) => it.url), // 화면에 보이는 순서 그대로 저장
       };
 
       const res = await fetch("/api/news", {
@@ -194,36 +182,19 @@ export default function NewsAdmin() {
             style={{ ...inputStyle, width: "100%", marginBottom: "10px", boxSizing: "border-box" }}
           />
 
-          {/* 기존 이미지 (수정 모드일 때만) */}
-          {editingId && form.existingImages.length > 0 && (
-            <div style={{ marginBottom: "10px" }}>
-              <div style={{ fontSize: "0.85rem", color: "#666", marginBottom: "6px" }}>기존 사진</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                {form.existingImages.map((url) => (
-                  <div key={url} style={{ position: "relative" }}>
-                    <img src={url} alt="" style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "6px", border: "1px solid #ddd" }} />
-                    <button
-                      onClick={() => removeExistingImage(url)}
-                      style={{ position: "absolute", top: "-6px", right: "-6px", background: "#c5221f", color: "#fff", border: "none", borderRadius: "50%", width: "20px", height: "20px", fontSize: "0.7rem", cursor: "pointer" }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div style={{ marginBottom: "10px" }}>
+          {/* 사진 — 드래그앤드롭, 순서 변경, 진행률 */}
+          <div style={{ marginBottom: "12px" }}>
             <div style={{ fontSize: "0.85rem", color: "#666", marginBottom: "6px" }}>
-              {editingId ? "사진 추가 (선택, 여러 장 가능)" : "사진 (여러 장 선택 가능)"}
+              사진 (여러 장 가능 · 위에서부터 순서대로 표시됩니다)
             </div>
-            <input type="file" multiple accept="image/*" onChange={handleFilesSelected} style={{ fontSize: "0.85rem" }} />
-            {form.newFiles.length > 0 && (
-              <div style={{ fontSize: "0.8rem", color: "#888", marginTop: "4px" }}>
-                {form.newFiles.length}장 새로 추가됨
-              </div>
-            )}
+            <FileUploader
+              items={form.images}
+              onChange={(items) => updateField("images", items)}
+              accept="image/*"
+              multiple
+              disabled={form.isSubmitting}
+              hint="큰 사진은 자동으로 장변 2000px로 줄여서 올라갑니다 (용량 제한 없음)"
+            />
           </div>
 
           <button
@@ -239,12 +210,18 @@ export default function NewsAdmin() {
       {/* ===== 뉴스 목록 ===== */}
       <div style={boxStyle}>
         {newsList.map((n) => (
-          <div key={n.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "10px 0", borderBottom: "1px solid #f1f3f5", gap: "10px" }}>
+          <div key={n.id} style={{ display: "flex", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #f1f3f5", gap: "12px" }}>
+            {n.images?.[0] ? (
+              // eslint-disable-next-line @next/next/no-img-element -- 관리자 목록 썸네일
+              <img src={n.images[0]} alt="" style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "6px", flexShrink: 0, background: "#f1f3f5" }} />
+            ) : (
+              <div style={{ width: "48px", height: "48px", borderRadius: "6px", background: "#f1f3f5", flexShrink: 0 }} />
+            )}
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: "0.85rem", color: "#888" }}>
                 {n.date} · {n.category} {n.images?.length > 0 && `· 사진 ${n.images.length}장`}
               </div>
-              <div style={{ fontSize: "0.95rem", fontWeight: "bold" }}>{n.title}</div>
+              <div style={{ fontSize: "0.95rem", fontWeight: "bold", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{n.title}</div>
             </div>
             <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
               <button onClick={() => openEditForm(n)} style={secondaryBtnSmall}>수정</button>
@@ -256,4 +233,3 @@ export default function NewsAdmin() {
     </div>
   );
 }
-
