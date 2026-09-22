@@ -2,7 +2,7 @@
   {
     "id": 1,
     "title": "Lab Portal 및 소통 채널 가입",
-    "desc": "1. <b>Lab Portal 가입:</b> 이름/ID/PW 기입 후 신청 (지도교수 승인 대기)<br>2. <b>2단계 인증:</b> 승인 후 Google Authenticator OTP 등록<br>3. <b>소통 채널:</b> 상단 아이콘을 눌러 <b>Slack</b> 및 <b>Kakao</b> 입장<br>4. <b>내 정보 입력:</b> 상단 <b>[내 정보]</b> 탭에서 영어 이름·연락처·입학 시기와 CV/Google Scholar/LinkedIn/ORCID 링크, 프로필 사진을 입력하세요. 입력한 내용은 홈페이지 <b>Members</b> 페이지와 포털 <b>Directory</b>에 자동 반영되고, 링크는 이름 옆 아이콘으로 표시됩니다."
+    "desc": "1. <b>Lab Portal 가입:</b> 이름/ID/PW 기입 후 신청 (지도교수 승인 대기)<br>2. <b>2단계 인증:</b> 승인 후 Google Authenticator OTP 등록<br>3. <b>소통 채널:</b> 상단 아이콘을 눌러 <b>Slack</b> 및 <b>Kakao</b> 입장<br>4. <b>내 정보 입력:</b> 상단 <b>[Account]</b> 탭에서 영어 이름·연락처와 CV/Google Scholar/LinkedIn/ORCID 링크, 프로필 사진을 입력하세요. 입력한 내용은 홈페이지 <b>Members</b> 페이지와 포털 <b>Directory</b>에 자동 반영되고, 링크는 이름 옆 아이콘으로 표시됩니다."
   },
   {
     "id": 2,

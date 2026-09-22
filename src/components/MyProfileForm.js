@@ -1,8 +1,8 @@
 "use client";
 
-// 포털 「내 정보」 — 본인 멤버 정보 편집.
-// 편집 가능: 이름/영어이름/이메일/전화/카카오/입학연도/현재 소속/링크 4개/사진/연구분야/좌우명
-// 교수님 전용(신분·학위·상태·졸업연도)은 읽기만.
+// 포털 「Account」 — 본인 멤버 정보 편집.
+// 편집 가능: 이름/영어이름/이메일/전화/카카오/링크 4개/사진/연구분야/좌우명
+// 교수님 전용(신분·학위·상태·입학/합류 시기·졸업연도·현재 소속)은 읽기만.
 
 import { useState, useEffect } from "react";
 import { FaFilePdf, FaLinkedin } from "react-icons/fa6";
@@ -14,7 +14,6 @@ import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall } from "./adminStyl
 
 const FIELD_LABELS = {
   name_kor: "이름 (한글)", name_eng: "이름 (영문)", email: "E-mail", phone: "전화번호", kakao_id: "Kakao ID",
-  year_joined: "입학/합류 시기", current_position: "현재 소속·직위",
   cv_link: "CV 링크", scholar_link: "Google Scholar", linkedin_link: "LinkedIn", orcid_link: "ORCID",
   research_area: "연구 분야 (한 줄)", motto: "좌우명 (한 줄)",
 };
@@ -22,7 +21,7 @@ const FIELD_LABELS = {
 function formFromMember(m) {
   return {
     name_kor: m.nameKor || "", name_eng: m.nameEng || "", email: m.email || "", phone: m.phone || "",
-    kakao_id: m.kakaoId || "", year_joined: m.yearJoined || "", current_position: m.currentPosition || "",
+    kakao_id: m.kakaoId || "",
     cv_link: m.links?.cv || "", scholar_link: m.links?.scholar || "", linkedin_link: m.links?.linkedin || "", orcid_link: m.links?.orcid || "",
     research_area: m.researchArea || "", motto: m.motto || "",
     photo: itemsFromUrls(m.photoUrl ? [m.photoUrl] : []),
@@ -31,7 +30,7 @@ function formFromMember(m) {
 
 export function missingProfileFields(member) {
   if (!member) return [];
-  const map = { name_eng: member.nameEng, email: member.email, phone: member.phone, year_joined: member.yearJoined };
+  const map = { name_eng: member.nameEng, email: member.email, phone: member.phone };
   return REQUIRED_PROFILE_FIELDS.filter((f) => !map[f]);
 }
 
@@ -87,7 +86,7 @@ export default function MyProfileForm({ onSaved }) {
   if (!member) {
     return (
       <div style={{ ...boxStyle, color: "#666" }}>
-        아직 계정에 연결된 멤버 정보가 없습니다. 교수님께 Directory Master에서 연결을 요청해주세요.
+        아직 계정에 연결된 멤버 정보가 없습니다. 교수님께 「멤버 관리」에서 연결을 요청해주세요.
       </div>
     );
   }
@@ -113,6 +112,8 @@ export default function MyProfileForm({ onSaved }) {
         <span><strong>신분</strong> {POSITION_LABELS_EN[member.position]} ({POSITION_LABELS_KO[member.position]})</span>
         <span><strong>최종 학위</strong> {member.degree}</span>
         <span><strong>상태</strong> {member.status === "active" ? "Active" : `Graduated${member.yearLeft ? ` (${member.yearLeft})` : ""}`}</span>
+        <span><strong>입학/합류</strong> {member.yearJoined || "-"}</span>
+        {member.currentPosition && <span><strong>현재 소속</strong> {member.currentPosition}</span>}
         <span style={{ marginLeft: "auto", color: "#999" }}>이 항목들은 교수님만 변경할 수 있어요</span>
       </div>
 
@@ -128,8 +129,6 @@ export default function MyProfileForm({ onSaved }) {
         {text("email", { type: "email" })}
         {text("phone", { placeholder: "010-0000-0000" })}
         {text("kakao_id")}
-        {text("year_joined", { placeholder: "예: 2026-1" })}
-        <div style={{ gridColumn: "1 / -1" }}>{text("current_position", { placeholder: "졸업 후 소속 등 (재학 중이면 비워두세요)" })}</div>
         <div style={{ gridColumn: "1 / -1" }}>{text("research_area", { placeholder: "예: 2D materials for neuromorphic devices" })}</div>
         <div style={{ gridColumn: "1 / -1" }}>{text("motto", { placeholder: "홈페이지 카드에 작게 표시됩니다" })}</div>
 

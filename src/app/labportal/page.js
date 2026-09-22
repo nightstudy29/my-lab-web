@@ -25,7 +25,7 @@ import { ROLE_LABELS, canManageContent } from '@/lib/roles';
 const ADMIN_SUB_TABS = [
   { id: 'approvals', label: '가입 승인', roles: ['admin'] },
   { id: 'accounts', label: '계정 관리', roles: ['admin'] },
-  { id: 'directory', label: 'Directory Master', roles: ['admin'] },
+  { id: 'directory', label: '멤버 관리', roles: ['admin'] },
   { id: 'requests', label: '수정 요청', roles: ['admin'] },
   { id: 'vacation', label: '휴가 관리', roles: ['admin'] },
   { id: 'classmaterial', label: '강의자료', roles: ['admin'] },
@@ -52,7 +52,6 @@ export default function LabPortalPage() {
   const [requestCategory, setRequestCategory] = useState("");
   const [requestContent, setRequestContent] = useState("");
   const [adminSubTab, setAdminSubTab] = useState('approvals');
-  const [isPwModalOpen, setIsPwModalOpen] = useState(false);
   const [rejectTarget, setRejectTarget] = useState(null);   // 거절 모달 대상 (pending user)
   const [rejectReason, setRejectReason] = useState("");
 
@@ -204,9 +203,6 @@ export default function LabPortalPage() {
           <span style={{ color: '#666', fontWeight: 'bold', fontSize: mobile ? '0.9rem' : '1rem' }}>
             {user.name} <span style={{ color: user.role === 'admin' ? '#d32f2f' : user.role === 'manager' ? '#004094' : '#888', fontWeight: 'normal', fontSize: '0.85rem' }}>({ROLE_LABELS[user.role] || user.role})</span>
           </span>
-          <button onClick={() => setIsPwModalOpen(true)} title="비밀번호 변경" style={{ cursor: 'pointer', border: '1px solid #ddd', background: '#fff', padding: '8px 12px', borderRadius: '20px', color: '#555', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.85rem' }}>
-            <FaIcons.FaKey /> {!mobile && '비밀번호'}
-          </button>
           <button onClick={handleLogout} style={{ cursor: 'pointer', border: '1px solid #ddd', background: '#fff', padding: '8px 15px', borderRadius: '20px', color: '#555', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.9rem' }}>
             <FaIcons.FaSignOutAlt /> Sign Out
           </button>
@@ -219,15 +215,15 @@ export default function LabPortalPage() {
           <FaIcons.FaUserEdit />
           <span style={{ flex: 1 }}>
             {myMember === null
-              ? '계정에 연결된 멤버 정보가 아직 없습니다. 교수님이 연결하면 「내 정보」에서 채울 수 있어요.'
-              : `「내 정보」에 아직 비어 있는 항목이 있어요 — 채워두면 홈페이지 Members 와 Directory 에 자동 반영됩니다.`}
+              ? '계정에 연결된 멤버 정보가 아직 없습니다. 교수님이 연결하면 「Account」에서 채울 수 있어요.'
+              : `「Account」에 아직 비어 있는 항목이 있어요 — 채워두면 홈페이지 Members 와 Directory 에 자동 반영됩니다.`}
           </span>
-          {myMember !== null && <button onClick={() => setActiveTab('profile')} style={{ ...requestBtnStyle, background: '#004094', color: '#fff', border: 'none' }}>내 정보 채우기</button>}
+          {myMember !== null && <button onClick={() => setActiveTab('profile')} style={{ ...requestBtnStyle, background: '#004094', color: '#fff', border: 'none' }}>Account에서 채우기</button>}
         </div>
       )}
 
       {/* ===== Shortcuts ===== */}
-      <div style={{ display: 'grid', gridTemplateColumns: mobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: mobile ? '12px' : '20px', marginBottom: '40px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: mobile ? '10px' : '20px', marginBottom: '40px' }}>
         <a href="https://smidlab.slack.com" target="_blank" rel="noopener noreferrer" style={cardLinkStyle(mobile)}>
           <div style={shortcutIconStyle}><SiSlack /></div>
           <div>
@@ -249,13 +245,6 @@ export default function LabPortalPage() {
             <div style={shortcutSubStyle}>교수님 미포함 톡방</div>
           </div>
         </a>
-        <button onClick={() => setActiveTab('profile')} style={{ ...cardLinkStyle(mobile), textAlign: 'left', font: 'inherit' }}>
-          <div style={shortcutIconStyle}><FaIcons.FaIdCard /></div>
-          <div>
-            <div style={shortcutTitleStyle}>내 정보</div>
-            <div style={shortcutSubStyle}>연락처·링크·사진 관리</div>
-          </div>
-        </button>
       </div>
 
       {/* ===== Tabs ===== */}
@@ -265,7 +254,7 @@ export default function LabPortalPage() {
           { id: 'rules', label: 'Lab Rules', icon: <FaIcons.FaGavel /> },
           { id: 'wiki', label: 'Lab Wiki', icon: <FaIcons.FaBook /> },
           { id: 'directory', label: 'Directory', icon: <FaIcons.FaAddressBook /> },
-          { id: 'profile', label: mobile ? 'My Info' : '내 정보', icon: <FaIcons.FaIdCard /> },
+          { id: 'profile', label: 'Account', icon: <FaIcons.FaIdCard /> },
         ].map(t => (
           <button key={t.id} onClick={() => setActiveTab(t.id)} style={tabBtnStyle(activeTab === t.id, false, mobile)}>
             {t.icon}
@@ -375,15 +364,21 @@ export default function LabPortalPage() {
         {/* ===== Member Directory ===== */}
         {activeTab === 'directory' && <MemberDirectory mobile={mobile} />}
 
-        {/* ===== 내 정보 ===== */}
+        {/* ===== Account: 내 정보 + 비밀번호 변경 ===== */}
         {activeTab === 'profile' && (
           <div>
-            <h2 style={{ color: '#333', marginBottom: '6px' }}>🪪 내 정보</h2>
+            <h2 style={{ color: '#333', marginBottom: '6px' }}>🪪 Account</h2>
             <p style={{ color: '#666', fontSize: '0.9rem', margin: '0 0 20px' }}>
               여기 입력한 내용은 홈페이지 <strong>Members</strong> 페이지(공개)와 포털 <strong>Directory</strong>(멤버만)에 자동 반영됩니다. 전화번호·Kakao ID는 공개되지 않습니다.
             </p>
             <div style={adminCardStyle}>
+              <h3 style={{ marginTop: 0, color: '#333' }}>내 정보</h3>
               <MyProfileForm onSaved={(m) => setMyMember(m)} />
+            </div>
+            <div style={{ ...adminCardStyle, maxWidth: '480px' }}>
+              <h3 style={{ marginTop: 0, color: '#333' }}>🔑 비밀번호 변경</h3>
+              <p style={{ fontSize: '0.85rem', color: '#666', margin: '0 0 14px' }}>로그인 ID: <strong>{user.userID}</strong></p>
+              <ChangePasswordForm key={activeTab} onSuccess={() => alert('비밀번호가 변경되었습니다.')} />
             </div>
           </div>
         )}
@@ -465,7 +460,7 @@ export default function LabPortalPage() {
             {/* 계정 관리 */}
             {activeSubTab === 'accounts' && <AccountsAdmin currentUserId={user.userID} />}
 
-            {/* Directory Master */}
+            {/* 멤버 관리 */}
             {activeSubTab === 'directory' && <DirectoryMaster />}
 
             {/* 콘텐츠 수정 요청 */}
@@ -530,16 +525,6 @@ export default function LabPortalPage() {
         </div>
       )}
 
-      {/* ===== 비밀번호 변경 모달 ===== */}
-      {isPwModalOpen && (
-        <div style={modalBackdrop}>
-          <div style={{ ...modalBox(mobile), maxWidth: '400px' }}>
-            <h3 style={{ marginTop: 0, marginBottom: '16px', color: '#333' }}>🔑 비밀번호 변경</h3>
-            <ChangePasswordForm onSuccess={() => { setIsPwModalOpen(false); alert('비밀번호가 변경되었습니다.'); }} onCancel={() => setIsPwModalOpen(false)} />
-          </div>
-        </div>
-      )}
-
       {/* ===== Request Modal ===== */}
       {isModalOpen && (
         <div style={modalBackdrop}>
@@ -570,7 +555,8 @@ export default function LabPortalPage() {
 // ===== 스타일 헬퍼 =====
 const cardLinkStyle = (mobile) => ({
   display: 'flex', alignItems: 'center',
-  padding: mobile ? '16px 12px' : '25px',
+  flexDirection: mobile ? 'column' : 'row', textAlign: mobile ? 'center' : 'left', gap: mobile ? '6px' : 0,
+  padding: mobile ? '14px 8px' : '25px',
   backgroundColor: '#fff', borderRadius: '12px', textDecoration: 'none',
   border: '1px solid #eee', boxShadow: '0 2px 8px rgba(0,0,0,0.03)', cursor: 'pointer',
 });
@@ -598,9 +584,9 @@ const adminSubTabBtnStyle = (isActive) => ({
   borderRadius: '20px 20px 0 0', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s', flexShrink: 0,
 });
 
-const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px', display: 'flex', alignItems: 'center', flexShrink: 0 };
-const shortcutTitleStyle = { fontWeight: 'bold', fontSize: '1rem', color: '#333', marginBottom: '3px' };
-const shortcutSubStyle = { fontSize: '0.85rem', color: '#777' };
+const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 };
+const shortcutTitleStyle = { fontWeight: 'bold', fontSize: 'clamp(0.8rem, 3vw, 1rem)', color: '#333', marginBottom: '3px' };
+const shortcutSubStyle = { fontSize: 'clamp(0.7rem, 2.5vw, 0.85rem)', color: '#777' };
 const wikiCardStyle = { display: 'flex', flexDirection: 'column', padding: '20px', background: '#fff', border: '1px solid #e9ecef', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' };
 const adminCardStyle = { marginBottom: '20px', background: '#fff', border: '1px solid #eee', borderRadius: '12px', padding: '25px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' };
 const approveBtn = { background: '#4dabf7', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', whiteSpace: 'nowrap' };

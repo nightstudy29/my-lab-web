@@ -34,16 +34,18 @@ export const DEGREES = ["PhD", "MS", "BS", "TBD", "Postdoc", "Visitor", "Intern"
 export const STATUSES = ["active", "graduated"];
 export const MEMBER_STATUS_LABELS = { active: "Active", graduated: "Graduated" };
 
-// 본인이 포털 「내 정보」에서 편집할 수 있는 필드 (API 화이트리스트와 동일)
+// 본인이 포털 「Account」에서 편집할 수 있는 필드 (API 화이트리스트와 동일)
 export const SELF_EDITABLE_FIELDS = [
-  "name_kor", "name_eng", "email", "phone", "kakao_id", "year_joined", "current_position",
+  "name_kor", "name_eng", "email", "phone", "kakao_id",
   "cv_link", "scholar_link", "linkedin_link", "orcid_link", "photo_url", "research_area", "motto",
 ];
-// 교수님만 편집
-export const ADMIN_ONLY_FIELDS = ["position", "degree", "status", "year_left", "is_public", "sort_order", "user_id"];
+// 교수님만 편집 (입학/합류 시기, 현재 소속·직위 포함)
+export const ADMIN_ONLY_FIELDS = [
+  "position", "degree", "status", "year_joined", "year_left", "current_position", "is_public", "sort_order", "user_id",
+];
 
-// 「내 정보」 배너용 — 이게 비어 있으면 "정보를 채워주세요"
-export const REQUIRED_PROFILE_FIELDS = ["name_eng", "email", "phone", "year_joined"];
+// 「Account」 배너용 — 이게 비어 있으면 "정보를 채워주세요"
+export const REQUIRED_PROFILE_FIELDS = ["name_eng", "email", "phone"];
 
 // "2025-1" / "2025.03" / "2025" 같은 문자열을 정렬 가능한 숫자로
 export function yearKey(yearJoined) {

@@ -1,6 +1,6 @@
 "use client";
 
-// Directory Master (admin 전용) — 멤버 전체 편집 + 계정 연결 + 단기 인턴 기록.
+// 멤버 관리 (admin 전용) — 멤버 전체 편집 + 계정 연결 + 단기 인턴 기록.
 
 import { useState, useEffect } from "react";
 import FileUploader from "./FileUploader";
@@ -123,7 +123,7 @@ export default function DirectoryMaster() {
     <div style={{ marginTop: "20px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
         <h3 style={{ color: "#333", margin: 0, display: "flex", gap: "8px", alignItems: "center" }}>
-          🗂 Directory Master
+          🗂 멤버 관리
           <button onClick={() => setSection("members")} style={{ ...secondaryBtnSmall, background: section === "members" ? "#004094" : "#e7f5ff", color: section === "members" ? "#fff" : "#004094" }}>멤버 {members.length}</button>
           <button onClick={() => setSection("interns")} style={{ ...secondaryBtnSmall, background: section === "interns" ? "#004094" : "#e7f5ff", color: section === "interns" ? "#fff" : "#004094" }}>단기 인턴 기록 {interns.length}</button>
         </h3>
@@ -308,7 +308,9 @@ function MemberForm({ form, setForm, linkableUsers, disabled }) {
           <Field label="신분 (position)"><select value={form.position} onChange={(e) => set("position", e.target.value)} style={full}>{POSITIONS.map((p) => <option key={p} value={p}>{POSITION_LABELS_KO[p]} ({p})</option>)}</select></Field>
           <Field label="최종 학위 (degree)"><select value={form.degree} onChange={(e) => set("degree", e.target.value)} style={full}>{DEGREES.map((d) => <option key={d} value={d}>{d}</option>)}</select></Field>
           <Field label="상태"><select value={form.status} onChange={(e) => set("status", e.target.value)} style={full}><option value="active">Active</option><option value="graduated">Graduated</option></select></Field>
+          {T("year_joined", "입학/합류 시기", { placeholder: "예: 2026-1" })}
           {T("year_left", "졸업/퇴소 연도", { placeholder: "graduated 로 바꾸면 자동" })}
+          {T("current_position", "현재 소속·직위", { placeholder: "졸업 후 소속 등" })}
           <Field label="포털 계정">
             <select value={form.user_id || ""} onChange={(e) => set("user_id", e.target.value)} style={full}>
               <option value="">(연결 안 함)</option>
@@ -324,9 +326,8 @@ function MemberForm({ form, setForm, linkableUsers, disabled }) {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 12px" }}>
         {T("name_kor", "이름 (한글) *")}{T("name_eng", "이름 (영문)")}
         {T("email", "E-mail")}{T("phone", "전화번호")}
-        {T("kakao_id", "Kakao ID")}{T("year_joined", "입학/합류 시기")}
+        {T("kakao_id", "Kakao ID")}
       </div>
-      {T("current_position", "현재 소속·직위")}
       {T("research_area", "연구 분야 (한 줄)")}
       {T("motto", "좌우명 (한 줄)")}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 12px" }}>
