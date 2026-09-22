@@ -13,6 +13,7 @@ import PapersAdmin from '@/components/PapersAdmin';
 import NewsAdmin from '@/components/NewsAdmin';
 import PatentsAdmin from '@/components/PatentsAdmin';
 import AccountsAdmin from '@/components/AccountsAdmin';
+import AdminDashboard from '@/components/AdminDashboard';
 import DirectoryMaster from '@/components/DirectoryMaster';
 import VacationAdmin from '@/components/VacationAdmin';
 import MemberDirectory from '@/components/MemberDirectory';
@@ -21,18 +22,20 @@ import ChangePasswordForm from '@/components/ChangePasswordForm';
 import useIsMobile from '@/hooks/useIsMobile';
 import { ROLE_LABELS, canManageContent } from '@/lib/roles';
 
-// roles: 이 서브탭을 볼 수 있는 역할 (manager 는 논문/특허/뉴스만)
+// roles: 이 메뉴를 볼 수 있는 역할 (manager 는 논문/특허/뉴스만). group: 왼쪽 메뉴 묶음.
 const ADMIN_SUB_TABS = [
-  { id: 'approvals', label: '가입 승인', roles: ['admin'] },
-  { id: 'accounts', label: '계정 관리', roles: ['admin'] },
-  { id: 'directory', label: '멤버 관리', roles: ['admin'] },
-  { id: 'requests', label: '수정 요청', roles: ['admin'] },
-  { id: 'vacation', label: '휴가 관리', roles: ['admin'] },
-  { id: 'classmaterial', label: '강의자료', roles: ['admin'] },
-  { id: 'papers', label: '논문', roles: ['admin', 'manager'] },
-  { id: 'patents', label: '특허', roles: ['admin', 'manager'] },
-  { id: 'news', label: '뉴스', roles: ['admin', 'manager'] },
+  { id: 'dashboard', label: '대시보드', roles: ['admin', 'manager'], group: null },
+  { id: 'papers', label: '논문', roles: ['admin', 'manager'], group: '콘텐츠' },
+  { id: 'patents', label: '특허', roles: ['admin', 'manager'], group: '콘텐츠' },
+  { id: 'news', label: '뉴스', roles: ['admin', 'manager'], group: '콘텐츠' },
+  { id: 'classmaterial', label: '강의자료', roles: ['admin'], group: '콘텐츠' },
+  { id: 'approvals', label: '가입 승인', roles: ['admin'], group: '사람', badge: 'pending' },
+  { id: 'accounts', label: '계정 관리', roles: ['admin'], group: '사람' },
+  { id: 'directory', label: '멤버 관리', roles: ['admin'], group: '사람' },
+  { id: 'vacation', label: '휴가 관리', roles: ['admin'], group: '사람' },
+  { id: 'requests', label: '수정 요청', roles: ['admin'], group: '기타', badge: 'requests' },
 ];
+const ADMIN_GROUPS = [null, '콘텐츠', '사람', '기타'];
 
 export default function LabPortalPage() {
   const router = useRouter();
@@ -51,7 +54,7 @@ export default function LabPortalPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [requestCategory, setRequestCategory] = useState("");
   const [requestContent, setRequestContent] = useState("");
-  const [adminSubTab, setAdminSubTab] = useState('approvals');
+  const [adminSubTab, setAdminSubTab] = useState('dashboard');
   const [rejectTarget, setRejectTarget] = useState(null);   // 거절 모달 대상 (pending user)
   const [rejectReason, setRejectReason] = useState("");
 
@@ -380,18 +383,51 @@ export default function LabPortalPage() {
         {/* ===== Admin Dashboard ===== */}
         {activeTab === 'admin' && canManageContent(user.role) && (
           <div>
-            <h2 style={{ color: user.role === 'admin' ? '#d32f2f' : '#004094', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <MdAdminPanelSettings size={24} /> {user.role === 'admin' ? 'Admin Dashboard' : '콘텐츠 관리'}
+            <h2 style={{ color: '#004094', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <MdAdminPanelSettings size={24} /> {user.role === 'admin' ? 'Admin' : '콘텐츠 관리'}
             </h2>
 
-            {/* ===== Admin 서브 탭 ===== */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '2px solid #f1f3f5', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '2px' }}>
-              {visibleSubTabs.map(t => (
-                <button key={t.id} onClick={() => setAdminSubTab(t.id)} style={adminSubTabBtnStyle(activeSubTab === t.id)}>
-                  {t.label}
-                </button>
-              ))}
-            </div>
+            {/* ===== 2단: 왼쪽 세로 메뉴(데스크톱) / 가로 칩(모바일) + 오른쪽 내용 ===== */}
+            <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '190px minmax(0, 1fr)', gap: mobile ? '16px' : '28px', alignItems: 'start' }}>
+              {mobile ? (
+                <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
+                  {visibleSubTabs.map(t => {
+                    const badge = t.badge === 'pending' ? pendingUsers.length : t.badge === 'requests' ? contentRequests.length : 0;
+                    return (
+                      <button key={t.id} onClick={() => setAdminSubTab(t.id)} style={adminChipStyle(activeSubTab === t.id)}>
+                        {t.label}{badge > 0 && <span style={menuBadge}>{badge}</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <nav style={{ position: 'sticky', top: '20px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  {ADMIN_GROUPS.map(g => {
+                    const items = visibleSubTabs.filter(t => t.group === g);
+                    if (items.length === 0) return null;
+                    return (
+                      <div key={g ?? 'top'} style={{ marginBottom: '10px' }}>
+                        {g && <div style={menuGroupLabel}>{g}</div>}
+                        {items.map(t => {
+                          const badge = t.badge === 'pending' ? pendingUsers.length : t.badge === 'requests' ? contentRequests.length : 0;
+                          return (
+                            <button key={t.id} onClick={() => setAdminSubTab(t.id)} style={adminMenuItemStyle(activeSubTab === t.id)}>
+                              <span>{t.label}</span>
+                              {badge > 0 && <span style={menuBadge}>{badge}</span>}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </nav>
+              )}
+
+              <div style={{ minWidth: 0 }}>
+            {/* 대시보드 */}
+            {activeSubTab === 'dashboard' && (
+              <AdminDashboard user={user} mobile={mobile} pendingCount={pendingUsers.length} requestsCount={contentRequests.length} onNavigate={setAdminSubTab} />
+            )}
 
             {/* 가입 승인 대기 */}
             {activeSubTab === 'approvals' && (
@@ -499,6 +535,8 @@ export default function LabPortalPage() {
             {activeSubTab === 'papers' && <PapersAdmin />}
             {activeSubTab === 'patents' && <PatentsAdmin />}
             {activeSubTab === 'news' && <NewsAdmin />}
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -558,8 +596,8 @@ const cardLinkStyle = (mobile) => ({
 const tabBtnStyle = (isActive, isAdmin, mobile) => ({
   padding: mobile ? '10px 0' : '12px 5px',
   border: 'none', background: 'none', fontWeight: 'bold',
-  color: isActive ? (isAdmin ? '#d32f2f' : '#004094') : '#adb5bd',
-  borderBottom: isActive ? `3px solid ${isAdmin ? '#d32f2f' : '#004094'}` : '3px solid transparent',
+  color: isActive ? '#004094' : '#adb5bd',
+  borderBottom: isActive ? '3px solid #004094' : '3px solid transparent',
   cursor: 'pointer', display: 'flex', alignItems: 'center',
   flexDirection: mobile ? 'column' : 'row',
   flex: mobile ? '1 1 0' : 'unset',
@@ -570,12 +608,21 @@ const tabBtnStyle = (isActive, isAdmin, mobile) => ({
   minWidth: 0, lineHeight: 1, boxSizing: 'border-box',
 });
 
-const adminSubTabBtnStyle = (isActive) => ({
-  padding: '8px 14px', border: 'none',
-  background: isActive ? '#fce8e6' : 'transparent',
-  color: isActive ? '#d32f2f' : '#888',
-  fontWeight: 'bold', fontSize: '0.85rem',
-  borderRadius: '20px 20px 0 0', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s', flexShrink: 0,
+// Admin 왼쪽 세로 메뉴 (데스크톱)
+const adminMenuItemStyle = (isActive) => ({
+  width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+  padding: '8px 12px', border: 'none', borderRadius: '8px', textAlign: 'left', font: 'inherit',
+  background: isActive ? '#eef4ff' : 'transparent',
+  color: isActive ? '#004094' : '#4a5a6d',
+  fontWeight: isActive ? 700 : 500, fontSize: '0.9rem', cursor: 'pointer', transition: 'background 0.15s',
+});
+const menuGroupLabel = { fontSize: '0.7rem', fontWeight: 700, color: '#aab2bd', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '6px 12px 4px' };
+const menuBadge = { minWidth: '18px', height: '18px', padding: '0 5px', borderRadius: '9px', background: '#d32f2f', color: '#fff', fontSize: '0.7rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginLeft: '6px' };
+// Admin 가로 칩 (모바일)
+const adminChipStyle = (isActive) => ({
+  padding: '7px 12px', border: '1px solid', borderColor: isActive ? '#004094' : '#e3e7ed', borderRadius: '20px',
+  background: isActive ? '#004094' : '#fff', color: isActive ? '#fff' : '#555',
+  fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0, display: 'inline-flex', alignItems: 'center',
 });
 
 const shortcutIconStyle = { fontSize: '2rem', color: '#444', marginRight: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 };

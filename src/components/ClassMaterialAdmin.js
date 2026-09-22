@@ -365,7 +365,6 @@ export default function ClassMaterialAdmin() {
                                 <option value="grade">성적 (grade)</option>
                               </select>
                               <input type="date" value={editForm.date} onChange={(e) => updateEditForm("date", e.target.value)} style={inputStyle} />
-                              <input type="number" placeholder="주차" value={editForm.week} onChange={(e) => updateEditForm("week", e.target.value)} style={{ ...inputStyle, width: "70px" }} />
                               <input type="text" placeholder="제목" value={editForm.title} onChange={(e) => updateEditForm("title", e.target.value)} style={{ ...inputStyle, flex: 1, minWidth: "150px" }} />
                             </div>
                             {editForm.is_external_link && (
@@ -417,7 +416,6 @@ export default function ClassMaterialAdmin() {
                       <option value="grade">성적 (grade)</option>
                     </select>
                     <input type="date" value={form.date} onChange={(e) => updateMaterialForm(course.id, "date", e.target.value)} style={inputStyle} />
-                    <input type="number" placeholder="주차" value={form.week} onChange={(e) => updateMaterialForm(course.id, "week", e.target.value)} style={{ ...inputStyle, width: "70px" }} />
                     <input type="text" placeholder="제목" value={form.title} onChange={(e) => updateMaterialForm(course.id, "title", e.target.value)} style={{ ...inputStyle, flex: 1, minWidth: "150px" }} />
                   </div>
 
