@@ -1,235 +1,178 @@
 "use client";
 
-import { useState, useEffect } from "react";
+// 뉴스 관리 — 검색/연도/카테고리 필터 + 표(썸네일), 추가·수정은 슬라이드 패널 (사진 드래그 업로드, 순서 지정).
+
+import { useState, useEffect, useMemo } from "react";
+import { FaPen, FaTrash, FaPlus, FaImage } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
-import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall, dangerBtnSmall } from "./adminStyles";
 import FileUploader from "./FileUploader";
 import { itemsFromUrls, uploadItems } from "@/lib/uploadClient";
+import {
+  Button, Input, Select, Textarea, Field, Card, Toolbar, SearchInput, Table, td, Badge, Empty, FormGrid, span2,
+  SlidePanel, useToast, useConfirm,
+} from "./ui";
 
 const CATEGORY_OPTIONS = ["Announcement", "Award", "Paper Accepted", "Group Outing", "Event"];
+const CATEGORY_COLOR = { Announcement: "red", Award: "orange", "Paper Accepted": "blue", "Group Outing": "green", Event: "green" };
 
 function defaultForm() {
-  return {
-    date: new Date().toISOString().slice(0, 10),
-    category: "Announcement",
-    title: "",
-    description: "",
-    link: "",
-    // FileUploader item 배열. 순서 = 페이지에 표시되는 순서.
-    // 수정 모드에서는 기존 사진(kind:'existing')이 먼저 채워지고, 새 파일(kind:'new')을 섞어 넣을 수 있음.
-    images: [],
-    isSubmitting: false,
-  };
+  return { date: new Date().toISOString().slice(0, 10), category: "Announcement", title: "", description: "", link: "", images: [] };
 }
-
 function formFromNews(n) {
-  return {
-    date: n.date,
-    category: n.category,
-    title: n.title,
-    description: n.description,
-    link: n.link || "",
-    images: itemsFromUrls(n.images || []),
-    isSubmitting: false,
-  };
+  return { date: n.date, category: n.category, title: n.title, description: n.description, link: n.link || "", images: itemsFromUrls(n.images || []) };
 }
 
 export default function NewsAdmin() {
+  const toast = useToast();
+  const confirm = useConfirm();
+
   const [newsList, setNewsList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [form, setForm] = useState(defaultForm());
-  const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState(null);
+  const [search, setSearch] = useState("");
+  const [year, setYear] = useState("all");
+  const [category, setCategory] = useState("all");
+  const [panel, setPanel] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    loadNews();
-  }, []);
+  useEffect(() => { load(); }, []);
 
-  async function loadNews() {
-    setIsLoading(true);
-    const { data } = await supabase
-      .from("news")
-      .select("*")
-      .order("date", { ascending: false });
+  async function load() {
+    const { data } = await supabase.from("news").select("*").order("date", { ascending: false });
     setNewsList(data || []);
     setIsLoading(false);
   }
 
-  function updateField(field, value) {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  }
+  const years = useMemo(() => [...new Set(newsList.map((n) => (n.date || "").slice(0, 4)).filter(Boolean))].sort((a, b) => b - a), [newsList]);
+  const visible = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return newsList.filter((n) =>
+      (year === "all" || (n.date || "").startsWith(year)) && (category === "all" || n.category === category) &&
+      (!q || [n.title, n.description].some((v) => (v || "").toLowerCase().includes(q)))
+    );
+  }, [newsList, search, year, category]);
 
-  function openAddForm() {
-    setEditingId(null);
-    setForm(defaultForm());
-    setShowForm(true);
-  }
+  const setF = (k, v) => setPanel((p) => ({ ...p, form: { ...p.form, [k]: v } }));
 
-  function openEditForm(newsItem) {
-    setEditingId(newsItem.id);
-    setForm(formFromNews(newsItem));
-    setShowForm(true);
-  }
-
-  function closeForm() {
-    setShowForm(false);
-    setEditingId(null);
-    setForm(defaultForm());
-  }
-
-  async function handleSaveNews() {
-    if (!form.title.trim()) return alert("제목을 입력해주세요.");
-    if (!form.description.trim()) return alert("내용을 입력해주세요.");
-
-    updateField("isSubmitting", true);
-
+  async function save() {
+    const f = panel.form;
+    if (!f.title.trim()) return toast.error("제목을 입력해주세요.");
+    if (!f.description.trim()) return toast.error("내용을 입력해주세요.");
+    setIsSaving(true);
     try {
-      // 새로 추가한 사진들을 R2에 직접 업로드 (진행률은 form.images에 실시간 반영됨).
-      // 이미지는 장변 2000px / JPEG 85% 로 자동 리사이즈.
-      const uploaded = await uploadItems(form.images, {
-        folder: "news",
-        resizeImages: true,
-        onItemsChange: (items) => setForm((prev) => ({ ...prev, images: items })),
+      // 새 사진은 R2에 직접 업로드 (장변 2000px 리사이즈). 진행률은 패널 안에 표시됨.
+      const uploaded = await uploadItems(f.images, {
+        folder: "news", resizeImages: true,
+        onItemsChange: (items) => setPanel((p) => (p ? { ...p, form: { ...p.form, images: items } } : p)),
       });
-
       const payload = {
-        date: form.date,
-        category: form.category,
-        title: form.title.trim(),
-        description: form.description.trim(),
-        link: form.link.trim() || null,
-        images: uploaded.map((it) => it.url), // 화면에 보이는 순서 그대로 저장
+        date: f.date, category: f.category, title: f.title.trim(), description: f.description.trim(),
+        link: f.link.trim() || null, images: uploaded.map((it) => it.url),
       };
-
       const res = await fetch("/api/news", {
-        method: editingId ? "PATCH" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editingId ? { id: editingId, ...payload } : payload),
+        method: panel.id ? "PATCH" : "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(panel.id ? { id: panel.id, ...payload } : payload),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "저장 실패");
-
-      closeForm();
-      loadNews();
-    } catch (err) {
-      alert("실패: " + err.message);
-      updateField("isSubmitting", false);
+      toast.success(panel.id ? "뉴스를 수정했습니다." : "뉴스를 추가했습니다. 홈과 News 페이지에 바로 반영됩니다.");
+      setPanel(null);
+      load();
+    } catch (e) {
+      toast.error("실패: " + e.message);
+    } finally {
+      setIsSaving(false);
     }
   }
 
-  async function handleDeleteNews(id, title) {
-    if (!confirm(`"${title}" 뉴스를 삭제하시겠습니까? 첨부된 이미지도 함께 삭제됩니다.`)) return;
-
-    const res = await fetch(`/api/news?id=${id}`, { method: "DELETE" });
-    const result = await res.json();
-    if (!res.ok) return alert("실패: " + result.error);
-
-    loadNews();
+  async function remove(n) {
+    if (!(await confirm({ title: "뉴스 삭제", message: `"${n.title}"\n첨부된 사진 ${n.images?.length || 0}장도 함께 삭제됩니다.`, confirmText: "삭제", danger: true }))) return;
+    const res = await fetch(`/api/news?id=${n.id}`, { method: "DELETE" });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) return toast.error("삭제 실패: " + (result.error || ""));
+    toast.success("삭제했습니다.");
+    load();
   }
 
-  if (isLoading) return <p style={{ color: "#888" }}>불러오는 중...</p>;
-
   return (
-    <div style={{ marginTop: "20px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-        <h3 style={{ color: "#333", margin: 0 }}>📰 뉴스 관리 ({newsList.length}건)</h3>
-        <button onClick={showForm ? closeForm : openAddForm} style={primaryBtn}>
-          {showForm ? "취소" : "+ 새 뉴스 추가"}
-        </button>
-      </div>
+    <div>
+      <Toolbar title="📰 뉴스" count={`${newsList.length}건`}>
+        <SearchInput value={search} onChange={setSearch} placeholder="제목 · 내용 검색" />
+        <Select value={category} onChange={(e) => setCategory(e.target.value)} style={{ width: "auto" }}>
+          <option value="all">전체 카테고리</option>
+          {CATEGORY_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
+        </Select>
+        <Select value={year} onChange={(e) => setYear(e.target.value)} style={{ width: "auto" }}>
+          <option value="all">전체 연도</option>
+          {years.map((y) => <option key={y} value={y}>{y}</option>)}
+        </Select>
+        <Button onClick={() => setPanel({ id: null, form: defaultForm() })}><FaPlus size={11} /> 뉴스 추가</Button>
+      </Toolbar>
 
-      {/* ===== 추가/수정 폼 ===== */}
-      {showForm && (
-        <div style={boxStyle}>
-          <div style={{ fontSize: "0.85rem", color: "#888", marginBottom: "8px" }}>
-            {editingId ? "뉴스 수정 중" : "새 뉴스 추가"}
-          </div>
-
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "10px" }}>
-            <input
-              type="date"
-              value={form.date}
-              onChange={(e) => updateField("date", e.target.value)}
-              style={inputStyle}
-            />
-            <select value={form.category} onChange={(e) => updateField("category", e.target.value)} style={inputStyle}>
-              {CATEGORY_OPTIONS.map((c) => (
-                <option key={c} value={c}>{c}</option>
+      <Card tight>
+        {isLoading ? <Empty>불러오는 중...</Empty> : visible.length === 0 ? <Empty>{newsList.length === 0 ? "등록된 뉴스가 없습니다." : "검색 결과가 없습니다."}</Empty> : (
+          <Table>
+            <thead>
+              <tr><th style={{ width: 110 }}>날짜</th><th>제목</th><th style={{ width: 130 }}>카테고리</th><th style={{ width: 60 }}>사진</th><th style={{ width: 90 }}></th></tr>
+            </thead>
+            <tbody>
+              {visible.map((n) => (
+                <tr key={n.id}>
+                  <td className={td.muted}>{n.date}</td>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      {n.images?.[0] ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- 관리자 목록 썸네일
+                        <img src={n.images[0]} alt="" style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 6, flexShrink: 0, background: "#f1f3f5" }} />
+                      ) : (
+                        <div style={{ width: 44, height: 44, borderRadius: 6, background: "#f1f3f5", display: "flex", alignItems: "center", justifyContent: "center", color: "#c5ccd6", flexShrink: 0 }}><FaImage /></div>
+                      )}
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontWeight: 600, color: "#222", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{n.title}</div>
+                        <div style={{ fontSize: "0.78rem", color: "#8a94a0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 480 }}>{n.description}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><Badge color={CATEGORY_COLOR[n.category] || "gray"}>{n.category}</Badge></td>
+                  <td className={td.muted}>{n.images?.length > 0 ? `${n.images.length}장` : "-"}</td>
+                  <td className={td.right}>
+                    <span className={td.actions}>
+                      <Button variant="ghost" size="icon" title="수정" onClick={() => setPanel({ id: n.id, form: formFromNews(n) })}><FaPen size={11} /></Button>
+                      <Button variant="danger" size="icon" title="삭제" onClick={() => remove(n)}><FaTrash size={11} /></Button>
+                    </span>
+                  </td>
+                </tr>
               ))}
-            </select>
-          </div>
+            </tbody>
+          </Table>
+        )}
+      </Card>
 
-          <input
-            type="text"
-            placeholder="제목"
-            value={form.title}
-            onChange={(e) => updateField("title", e.target.value)}
-            style={{ ...inputStyle, width: "100%", marginBottom: "10px", boxSizing: "border-box" }}
-          />
-
-          <textarea
-            placeholder="내용"
-            value={form.description}
-            onChange={(e) => updateField("description", e.target.value)}
-            style={{ ...inputStyle, width: "100%", height: "80px", marginBottom: "10px", boxSizing: "border-box", resize: "vertical" }}
-          />
-
-          <input
-            type="text"
-            placeholder="관련 링크 (선택)"
-            value={form.link}
-            onChange={(e) => updateField("link", e.target.value)}
-            style={{ ...inputStyle, width: "100%", marginBottom: "10px", boxSizing: "border-box" }}
-          />
-
-          {/* 사진 — 드래그앤드롭, 순서 변경, 진행률 */}
-          <div style={{ marginBottom: "12px" }}>
-            <div style={{ fontSize: "0.85rem", color: "#666", marginBottom: "6px" }}>
-              사진 (여러 장 가능 · 위에서부터 순서대로 표시됩니다)
-            </div>
-            <FileUploader
-              items={form.images}
-              onChange={(items) => updateField("images", items)}
-              accept="image/*"
-              multiple
-              disabled={form.isSubmitting}
-              hint="큰 사진은 자동으로 장변 2000px로 줄여서 올라갑니다 (용량 제한 없음)"
-            />
-          </div>
-
-          <button
-            onClick={handleSaveNews}
-            disabled={form.isSubmitting}
-            style={{ ...primaryBtn, opacity: form.isSubmitting ? 0.6 : 1 }}
-          >
-            {form.isSubmitting ? "저장 중..." : editingId ? "수정 저장" : "뉴스 저장"}
-          </button>
-        </div>
-      )}
-
-      {/* ===== 뉴스 목록 ===== */}
-      <div style={boxStyle}>
-        {newsList.map((n) => (
-          <div key={n.id} style={{ display: "flex", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #f1f3f5", gap: "12px" }}>
-            {n.images?.[0] ? (
-              // eslint-disable-next-line @next/next/no-img-element -- 관리자 목록 썸네일
-              <img src={n.images[0]} alt="" style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "6px", flexShrink: 0, background: "#f1f3f5" }} />
-            ) : (
-              <div style={{ width: "48px", height: "48px", borderRadius: "6px", background: "#f1f3f5", flexShrink: 0 }} />
-            )}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "0.85rem", color: "#888" }}>
-                {n.date} · {n.category} {n.images?.length > 0 && `· 사진 ${n.images.length}장`}
-              </div>
-              <div style={{ fontSize: "0.95rem", fontWeight: "bold", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{n.title}</div>
-            </div>
-            <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
-              <button onClick={() => openEditForm(n)} style={secondaryBtnSmall}>수정</button>
-              <button onClick={() => handleDeleteNews(n.id, n.title)} style={dangerBtnSmall}>삭제</button>
-            </div>
-          </div>
-        ))}
-      </div>
+      <SlidePanel
+        open={!!panel}
+        title={panel?.id ? "뉴스 수정" : "뉴스 추가"}
+        onClose={() => !isSaving && setPanel(null)}
+        footer={<>
+          <Button variant="ghost" onClick={() => setPanel(null)} disabled={isSaving}>취소</Button>
+          <Button onClick={save} disabled={isSaving}>{isSaving ? "저장 중..." : "저장"}</Button>
+        </>}
+      >
+        {panel && (
+          <FormGrid>
+            <Field label="날짜" required><Input type="date" value={panel.form.date} onChange={(e) => setF("date", e.target.value)} /></Field>
+            <Field label="카테고리" required>
+              <Select value={panel.form.category} onChange={(e) => setF("category", e.target.value)}>
+                {CATEGORY_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
+              </Select>
+            </Field>
+            <Field label="제목" required className={span2}><Input value={panel.form.title} onChange={(e) => setF("title", e.target.value)} /></Field>
+            <Field label="내용" required className={span2}><Textarea rows={5} value={panel.form.description} onChange={(e) => setF("description", e.target.value)} /></Field>
+            <Field label="관련 링크" className={span2}><Input value={panel.form.link} onChange={(e) => setF("link", e.target.value)} placeholder="https://…" /></Field>
+            <Field label="사진" hint="위에서부터 표시 순서. 큰 사진은 자동으로 장변 2000px로 줄여서 올라갑니다." className={span2}>
+              <FileUploader items={panel.form.images} onChange={(items) => setF("images", items)} accept="image/*" multiple disabled={isSaving} />
+            </Field>
+          </FormGrid>
+        )}
+      </SlidePanel>
     </div>
   );
 }

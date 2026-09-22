@@ -1,255 +1,166 @@
 "use client";
 
-import { useState, useEffect } from "react";
+// 특허 관리 — 검색/연도/구분 필터 + 표, 추가·수정은 슬라이드 패널.
+
+import { useState, useEffect, useMemo } from "react";
+import { FaPen, FaTrash, FaPlus } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
-import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall, dangerBtnSmall } from "./adminStyles";
+import {
+  Button, Input, Select, Field, Card, Toolbar, SearchInput, Table, td, Badge, Empty, FormGrid, span2, Segment,
+  SlidePanel, useToast, useConfirm,
+} from "./ui";
 
 function defaultForm() {
-  return {
-    year: new Date().getFullYear(),
-    title: "",
-    koreanTitle: "",
-    inventors: "",
-    type: "Application",
-    applicationDate: "",
-    applicationNumber: "",
-    registrationDate: "",
-    registrationNumber: "",
-    url: "",
-    isSubmitting: false,
-  };
+  return { year: new Date().getFullYear(), title: "", koreanTitle: "", inventors: "", type: "Application", applicationDate: "", applicationNumber: "", registrationDate: "", registrationNumber: "", url: "" };
 }
-
 function formFromPatent(p) {
   return {
-    year: p.year,
-    title: p.title,
-    koreanTitle: p.korean_title || "",
-    inventors: p.inventors,
-    type: p.type,
-    applicationDate: p.application_date || "",
-    applicationNumber: p.application_number || "",
-    registrationDate: p.registration_date || "",
-    registrationNumber: p.registration_number || "",
-    url: p.url || "",
-    isSubmitting: false,
+    year: p.year, title: p.title, koreanTitle: p.korean_title || "", inventors: p.inventors, type: p.type,
+    applicationDate: p.application_date || "", applicationNumber: p.application_number || "",
+    registrationDate: p.registration_date || "", registrationNumber: p.registration_number || "", url: p.url || "",
   };
 }
 
 export default function PatentsAdmin() {
+  const toast = useToast();
+  const confirm = useConfirm();
+
   const [patents, setPatents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [form, setForm] = useState(defaultForm());
-  const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState(null);
+  const [search, setSearch] = useState("");
+  const [year, setYear] = useState("all");
+  const [type, setType] = useState("all");
+  const [panel, setPanel] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    loadPatents();
-  }, []);
+  useEffect(() => { load(); }, []);
 
-  async function loadPatents() {
-    setIsLoading(true);
-    const { data } = await supabase
-      .from("patents")
-      .select("*")
-      .order("seq", { ascending: false });
+  async function load() {
+    const { data } = await supabase.from("patents").select("*").order("seq", { ascending: false });
     setPatents(data || []);
     setIsLoading(false);
   }
 
-  function updateField(field, value) {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  }
+  const years = useMemo(() => [...new Set(patents.map((p) => String(p.year)))].sort((a, b) => b - a), [patents]);
+  const visible = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return patents.filter((p) =>
+      (year === "all" || String(p.year) === year) && (type === "all" || p.type === type) &&
+      (!q || [p.title, p.korean_title, p.inventors, p.application_number, p.registration_number].some((v) => (v || "").toLowerCase().includes(q)))
+    );
+  }, [patents, search, year, type]);
 
-  function openAddForm() {
-    setEditingId(null);
-    setForm(defaultForm());
-    setShowForm(true);
-  }
+  const setF = (k, v) => setPanel((p) => ({ ...p, form: { ...p.form, [k]: v } }));
 
-  function openEditForm(patent) {
-    setEditingId(patent.id);
-    setForm(formFromPatent(patent));
-    setShowForm(true);
-  }
-
-  function closeForm() {
-    setShowForm(false);
-    setEditingId(null);
-    setForm(defaultForm());
-  }
-
-  async function handleSavePatent() {
-    if (!form.title.trim()) return alert("제목을 입력해주세요.");
-    if (!form.inventors.trim()) return alert("발명자를 입력해주세요.");
-    if (!form.year) return alert("연도를 입력해주세요.");
-
-    updateField("isSubmitting", true);
-
+  async function save() {
+    const f = panel.form;
+    if (!f.title.trim()) return toast.error("제목을 입력해주세요.");
+    if (!f.inventors.trim()) return toast.error("발명자를 입력해주세요.");
+    if (!f.year) return toast.error("연도를 입력해주세요.");
+    setIsSaving(true);
     try {
-      const payload = {
-        year: form.year,
-        title: form.title.trim(),
-        koreanTitle: form.koreanTitle.trim(),
-        inventors: form.inventors.trim(),
-        type: form.type,
-        applicationDate: form.applicationDate.trim(),
-        applicationNumber: form.applicationNumber.trim(),
-        registrationDate: form.registrationDate.trim(),
-        registrationNumber: form.registrationNumber.trim(),
-        url: form.url.trim(),
-      };
-
+      const payload = Object.fromEntries(Object.entries(f).map(([k, v]) => [k, typeof v === "string" ? v.trim() : v]));
       const res = await fetch("/api/patents", {
-        method: editingId ? "PATCH" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editingId ? { id: editingId, ...payload } : payload),
+        method: panel.id ? "PATCH" : "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(panel.id ? { id: panel.id, ...payload } : payload),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "저장 실패");
-
-      closeForm();
-      loadPatents();
-    } catch (err) {
-      alert("실패: " + err.message);
-      updateField("isSubmitting", false);
+      toast.success(panel.id ? "특허를 수정했습니다." : "특허를 추가했습니다.");
+      setPanel(null);
+      load();
+    } catch (e) {
+      toast.error("실패: " + e.message);
+    } finally {
+      setIsSaving(false);
     }
   }
 
-  async function handleDeletePatent(id, title) {
-    if (!confirm(`"${title}" 특허를 삭제하시겠습니까?`)) return;
-
-    const res = await fetch(`/api/patents?id=${id}`, { method: "DELETE" });
-    const result = await res.json();
-    if (!res.ok) return alert("실패: " + result.error);
-
-    loadPatents();
+  async function remove(p) {
+    if (!(await confirm({ title: "특허 삭제", message: `"${p.title}"\n삭제하면 되돌릴 수 없습니다.`, confirmText: "삭제", danger: true }))) return;
+    const res = await fetch(`/api/patents?id=${p.id}`, { method: "DELETE" });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) return toast.error("삭제 실패: " + (result.error || ""));
+    toast.success("삭제했습니다.");
+    load();
   }
 
-  if (isLoading) return <p style={{ color: "#888" }}>불러오는 중...</p>;
+  const isReg = panel?.form.type === "Registered";
 
   return (
-    <div style={{ marginTop: "20px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-        <h3 style={{ color: "#333", margin: 0 }}>💡 특허 관리 ({patents.length}건)</h3>
-        <button onClick={showForm ? closeForm : openAddForm} style={primaryBtn}>
-          {showForm ? "취소" : "+ 새 특허 추가"}
-        </button>
-      </div>
+    <div>
+      <Toolbar title="💡 특허" count={`${patents.length}건`}>
+        <Segment value={type} onChange={setType} options={[["all", "전체"], ["Application", "출원"], ["Registered", "등록"]]} />
+        <SearchInput value={search} onChange={setSearch} placeholder="제목 · 발명자 · 번호 검색" />
+        <Select value={year} onChange={(e) => setYear(e.target.value)} style={{ width: "auto" }}>
+          <option value="all">전체 연도</option>
+          {years.map((y) => <option key={y} value={y}>{y}</option>)}
+        </Select>
+        <Button onClick={() => setPanel({ id: null, form: defaultForm() })}><FaPlus size={11} /> 특허 추가</Button>
+      </Toolbar>
 
-      {/* ===== 추가/수정 폼 ===== */}
-      {showForm && (
-        <div style={boxStyle}>
-          <div style={{ fontSize: "0.85rem", color: "#888", marginBottom: "8px" }}>
-            {editingId ? "특허 수정 중" : "새 특허 추가"}
-          </div>
+      <Card tight>
+        {isLoading ? <Empty>불러오는 중...</Empty> : visible.length === 0 ? <Empty>{patents.length === 0 ? "등록된 특허가 없습니다." : "검색 결과가 없습니다."}</Empty> : (
+          <Table>
+            <thead>
+              <tr><th style={{ width: 70 }}>연도</th><th>제목 / 발명자</th><th style={{ width: 80 }}>구분</th><th style={{ width: 200 }}>번호</th><th style={{ width: 90 }}></th></tr>
+            </thead>
+            <tbody>
+              {visible.map((p) => (
+                <tr key={p.id}>
+                  <td className={td.muted}>{p.year}</td>
+                  <td>
+                    <div style={{ fontWeight: 600, color: "#222", lineHeight: 1.4 }}>{p.title}</div>
+                    {p.korean_title && <div style={{ fontSize: "0.78rem", color: "#666", marginTop: 1 }}>{p.korean_title}</div>}
+                    <div style={{ fontSize: "0.78rem", color: "#8a94a0", marginTop: 2 }}>{p.inventors}</div>
+                  </td>
+                  <td><Badge color={p.type === "Registered" ? "green" : "orange"}>{p.type === "Registered" ? "등록" : "출원"}</Badge></td>
+                  <td className={td.muted} style={{ whiteSpace: "normal", lineHeight: 1.5 }}>
+                    {p.application_number && <div>출원 {p.application_number}</div>}
+                    {p.registration_number && <div>등록 {p.registration_number}</div>}
+                  </td>
+                  <td className={td.right}>
+                    <span className={td.actions}>
+                      <Button variant="ghost" size="icon" title="수정" onClick={() => setPanel({ id: p.id, form: formFromPatent(p) })}><FaPen size={11} /></Button>
+                      <Button variant="danger" size="icon" title="삭제" onClick={() => remove(p)}><FaTrash size={11} /></Button>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </Card>
 
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "10px" }}>
-            <input
-              type="number"
-              placeholder="연도"
-              value={form.year}
-              onChange={(e) => updateField("year", e.target.value)}
-              style={{ ...inputStyle, width: "100px" }}
-            />
-            <select value={form.type} onChange={(e) => updateField("type", e.target.value)} style={inputStyle}>
-              <option value="Application">Application (출원)</option>
-              <option value="Registered">Registered (등록)</option>
-            </select>
-          </div>
-
-          <input
-            type="text"
-            placeholder="제목 (영문)"
-            value={form.title}
-            onChange={(e) => updateField("title", e.target.value)}
-            style={{ ...inputStyle, width: "100%", marginBottom: "10px", boxSizing: "border-box" }}
-          />
-
-          <input
-            type="text"
-            placeholder="한글 제목 (선택)"
-            value={form.koreanTitle}
-            onChange={(e) => updateField("koreanTitle", e.target.value)}
-            style={{ ...inputStyle, width: "100%", marginBottom: "10px", boxSizing: "border-box" }}
-          />
-
-          <input
-            type="text"
-            placeholder="발명자 (예: H. W. Jang, J. M. Suh)"
-            value={form.inventors}
-            onChange={(e) => updateField("inventors", e.target.value)}
-            style={{ ...inputStyle, width: "100%", marginBottom: "10px", boxSizing: "border-box" }}
-          />
-
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "10px" }}>
-            <input
-              type="text"
-              placeholder="출원일 (예: Jan 8, 2019)"
-              value={form.applicationDate}
-              onChange={(e) => updateField("applicationDate", e.target.value)}
-              style={{ ...inputStyle, flex: 1, minWidth: "160px" }}
-            />
-            <input
-              type="text"
-              placeholder="출원번호 (예: 10-2019-0002101)"
-              value={form.applicationNumber}
-              onChange={(e) => updateField("applicationNumber", e.target.value)}
-              style={{ ...inputStyle, flex: 1, minWidth: "160px" }}
-            />
-          </div>
-
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "10px" }}>
-            <input
-              type="text"
-              placeholder="등록일 (등록된 경우만, 예: Nov 16, 2020)"
-              value={form.registrationDate}
-              onChange={(e) => updateField("registrationDate", e.target.value)}
-              style={{ ...inputStyle, flex: 1, minWidth: "160px" }}
-            />
-            <input
-              type="text"
-              placeholder="등록번호 (등록된 경우만)"
-              value={form.registrationNumber}
-              onChange={(e) => updateField("registrationNumber", e.target.value)}
-              style={{ ...inputStyle, flex: 1, minWidth: "160px" }}
-            />
-          </div>
-
-          <input
-            type="text"
-            placeholder="URL (없으면 비워두세요 → 자동으로 링크 없음 처리)"
-            value={form.url}
-            onChange={(e) => updateField("url", e.target.value)}
-            style={{ ...inputStyle, width: "100%", marginBottom: "10px", boxSizing: "border-box" }}
-          />
-
-          <button
-            onClick={handleSavePatent}
-            disabled={form.isSubmitting}
-            style={{ ...primaryBtn, opacity: form.isSubmitting ? 0.6 : 1 }}
-          >
-            {form.isSubmitting ? "저장 중..." : editingId ? "수정 저장" : "특허 저장"}
-          </button>
-        </div>
-      )}
-
-      {/* ===== 특허 목록 ===== */}
-      <div style={boxStyle}>
-        {patents.map((p) => (
-          <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "10px 0", borderBottom: "1px solid #f1f3f5", gap: "10px" }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "0.85rem", color: "#888" }}>{p.year} · {p.type}</div>
-              <div style={{ fontSize: "0.95rem", fontWeight: "bold" }}>{p.title}</div>
-            </div>
-            <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
-              <button onClick={() => openEditForm(p)} style={secondaryBtnSmall}>수정</button>
-              <button onClick={() => handleDeletePatent(p.id, p.title)} style={dangerBtnSmall}>삭제</button>
-            </div>
-          </div>
-        ))}
-      </div>
+      <SlidePanel
+        open={!!panel}
+        title={panel?.id ? "특허 수정" : "특허 추가"}
+        onClose={() => !isSaving && setPanel(null)}
+        footer={<>
+          <Button variant="ghost" onClick={() => setPanel(null)} disabled={isSaving}>취소</Button>
+          <Button onClick={save} disabled={isSaving}>{isSaving ? "저장 중..." : "저장"}</Button>
+        </>}
+      >
+        {panel && (
+          <FormGrid>
+            <Field label="연도" required><Input type="number" value={panel.form.year} onChange={(e) => setF("year", e.target.value)} /></Field>
+            <Field label="구분" required>
+              <Select value={panel.form.type} onChange={(e) => setF("type", e.target.value)}>
+                <option value="Application">Application (출원)</option>
+                <option value="Registered">Registered (등록)</option>
+              </Select>
+            </Field>
+            <Field label="제목 (영문)" required className={span2}><Input value={panel.form.title} onChange={(e) => setF("title", e.target.value)} /></Field>
+            <Field label="제목 (한글)" className={span2}><Input value={panel.form.koreanTitle} onChange={(e) => setF("koreanTitle", e.target.value)} /></Field>
+            <Field label="발명자" required hint="예: H. W. Jang, J. M. Suh" className={span2}><Input value={panel.form.inventors} onChange={(e) => setF("inventors", e.target.value)} /></Field>
+            <Field label="출원일" hint="예: Jan 8, 2019"><Input value={panel.form.applicationDate} onChange={(e) => setF("applicationDate", e.target.value)} /></Field>
+            <Field label="출원번호" hint="예: 10-2019-0002101"><Input value={panel.form.applicationNumber} onChange={(e) => setF("applicationNumber", e.target.value)} /></Field>
+            <Field label="등록일" hint={isReg ? "" : "등록된 경우만"}><Input value={panel.form.registrationDate} onChange={(e) => setF("registrationDate", e.target.value)} disabled={!isReg} /></Field>
+            <Field label="등록번호" hint={isReg ? "" : "등록된 경우만"}><Input value={panel.form.registrationNumber} onChange={(e) => setF("registrationNumber", e.target.value)} disabled={!isReg} /></Field>
+            <Field label="URL" hint="없으면 비워두세요" className={span2}><Input value={panel.form.url} onChange={(e) => setF("url", e.target.value)} placeholder="https://…" /></Field>
+          </FormGrid>
+        )}
+      </SlidePanel>
     </div>
   );
 }
-

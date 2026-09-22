@@ -21,6 +21,7 @@ import MyProfileForm, { missingProfileFields } from '@/components/MyProfileForm'
 import ChangePasswordForm from '@/components/ChangePasswordForm';
 import useIsMobile from '@/hooks/useIsMobile';
 import { ROLE_LABELS, canManageContent } from '@/lib/roles';
+import { ToastProvider, ConfirmProvider, useToast, useConfirm } from '@/components/ui';
 
 // roles: 이 메뉴를 볼 수 있는 역할 (manager 는 논문/특허/뉴스만). group: 왼쪽 메뉴 묶음.
 const ADMIN_SUB_TABS = [
@@ -38,7 +39,19 @@ const ADMIN_SUB_TABS = [
 const ADMIN_GROUPS = [null, '콘텐츠', '사람', '기타'];
 
 export default function LabPortalPage() {
+  return (
+    <ToastProvider>
+      <ConfirmProvider>
+        <LabPortalInner />
+      </ConfirmProvider>
+    </ToastProvider>
+  );
+}
+
+function LabPortalInner() {
   const router = useRouter();
+  const toast = useToast();
+  const confirm = useConfirm();
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("rules");
   const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +116,7 @@ export default function LabPortalPage() {
       if (res2.ok) setContentRequests((await res2.json()).requests || []);
     } catch (e) {
       console.error("데이터 로딩 실패:", e);
-      alert("데이터를 불러오지 못했습니다.");
+      toast.error("데이터를 불러오지 못했습니다.");
     }
     setIsLoading(false);
   };
@@ -119,12 +132,13 @@ export default function LabPortalPage() {
   };
 
   const handleApproveUser = async (u) => {
-    if (!confirm(`${u.name} (${u.userId}) 계정을 승인하시겠습니까?\n멤버 정보(Directory) 행이 자동으로 만들어집니다.`)) return;
+    if (!(await confirm({ title: '가입 승인', message: `${u.name} (${u.userId}) 계정을 승인합니다.\n멤버 정보(Directory) 행이 자동으로 만들어집니다.`, confirmText: '승인' }))) return;
     setIsSaving(true);
     try {
       await patchUser(u.id, 'approve');
       setPendingUsers(prev => prev.filter(p => p.id !== u.id));
-    } catch (e) { alert("승인 실패: " + e.message); }
+      toast.success(`${u.name} 계정을 승인했습니다.`);
+    } catch (e) { toast.error("승인 실패: " + e.message); }
     setIsSaving(false);
   };
 
@@ -136,12 +150,13 @@ export default function LabPortalPage() {
       setPendingUsers(prev => prev.filter(p => p.id !== rejectTarget.id));
       setRejectTarget(null);
       setRejectReason("");
-    } catch (e) { alert("거절 실패: " + e.message); }
+      toast.success('가입 신청을 거절했습니다.');
+    } catch (e) { toast.error("거절 실패: " + e.message); }
     setIsSaving(false);
   };
 
   const handleResolveRequest = async (req) => {
-    if (!confirm("이 요청을 처리 완료로 변경하시겠습니까?")) return;
+    if (!(await confirm({ title: '처리 완료', message: '이 요청을 처리 완료로 표시합니다.', confirmText: '완료' }))) return;
     try {
       const res = await fetch('/api/requests', {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
@@ -149,7 +164,8 @@ export default function LabPortalPage() {
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || '실패');
       setContentRequests(prev => prev.filter(r => r.id !== req.id));
-    } catch (e) { console.error(e); alert("오류가 발생했습니다: " + e.message); }
+      toast.success('처리 완료로 표시했습니다.');
+    } catch (e) { console.error(e); toast.error("오류가 발생했습니다: " + e.message); }
   };
 
   const openRequestModal = (category) => {
@@ -159,7 +175,7 @@ export default function LabPortalPage() {
   };
 
   const submitRequest = async () => {
-    if (!requestContent.trim()) return alert("내용을 입력해주세요.");
+    if (!requestContent.trim()) return toast.error("내용을 입력해주세요.");
     setIsSaving(true);
     try {
       const res = await fetch('/api/requests', {
@@ -168,8 +184,8 @@ export default function LabPortalPage() {
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || '실패');
       setIsModalOpen(false);
-      alert("요청사항이 전달되었습니다.");
-    } catch (e) { alert("전송 실패: " + e.message); }
+      toast.success("요청사항이 전달되었습니다.");
+    } catch (e) { toast.error("전송 실패: " + e.message); }
     setIsSaving(false);
   };
 
