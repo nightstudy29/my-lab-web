@@ -16,8 +16,8 @@ export default function EquipmentPage() {
       
       {/* 1. 헤더 */}
       <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '15px', color: '#333' }}>Research Equipment</h1>
-        <p style={{ fontSize: '1.1rem', color: '#666' }}>
+        <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 1.8rem)', fontWeight: 700, marginBottom: '12px', color: '#333' }}>Research Equipment</h1>
+        <p style={{ fontSize: '0.95rem', color: '#666' }}>
          </p>
       </div>
 
@@ -87,7 +87,7 @@ function EquipmentCard({ item }) {
       <div style={{ padding: '25px' }}>
         {/* ★ 수정된 부분: HTML 태그 적용 가능하도록 변경 (dangerouslySetInnerHTML) */}
         <h3 
-          style={{ margin: '0 0 10px 0', color: '#333', fontSize: '1.4rem' }}
+          style={{ margin: '0 0 8px 0', color: '#333', fontSize: '1.1rem' }}
           dangerouslySetInnerHTML={{ __html: item.name }} 
         />
         
@@ -108,7 +108,7 @@ function EquipmentCard({ item }) {
         
         {/* ★ 수정된 부분: 설명에도 HTML 태그 적용 (단위 등) */}
         <p 
-          style={{ margin: 0, color: '#666', lineHeight: '1.5', fontSize: '1rem' }}
+          style={{ margin: 0, color: '#666', lineHeight: '1.55', fontSize: '0.9rem' }}
           dangerouslySetInnerHTML={{ __html: item.description }}
         />
       </div>

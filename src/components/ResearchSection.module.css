@@ -30,9 +30,9 @@
 }
 
 .itemTitle {
-  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-size: clamp(1.2rem, 3vw, 1.4rem);
   color: #004094;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
   font-weight: 700;
   border-left: 5px solid #004094;
   padding-left: 15px;
@@ -40,9 +40,9 @@
 }
 
 .description {
-  font-size: clamp(1rem, 3vw, 1.1rem);
+  font-size: 0.95rem;
   color: #444;
-  line-height: 1.8;
+  line-height: 1.75;
 }
 
 /* ===== 모바일 대응 (900px 이하) ===== */

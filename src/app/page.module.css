@@ -132,10 +132,10 @@
 }
 
 .sectionTitle {
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 800;
+  font-size: clamp(1.5rem, 4vw, 1.8rem);
+  font-weight: 700;
   color: #111;
-  margin-bottom: 50px;
+  margin-bottom: 32px;
   letter-spacing: -0.5px;
 }
 

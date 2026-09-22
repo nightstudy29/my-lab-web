@@ -21,9 +21,9 @@ function PaperItem({ item }) {
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           style={{
-            fontSize: 'clamp(1.1rem, 4vw, 1.2rem)',
+            fontSize: '0.98rem',
             color: hovered ? '#004094' : '#222',
-            fontWeight: '700', marginBottom: '8px', lineHeight: '1.4',
+            fontWeight: '600', marginBottom: '4px', lineHeight: '1.45',
             cursor: 'pointer', transition: 'color 0.2s', wordBreak: 'break-word'
           }}
           dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.title) }}
@@ -31,12 +31,12 @@ function PaperItem({ item }) {
       </Link>
       {item.authors && (
         <div
-          style={{ fontSize: '0.95rem', color: '#555', marginBottom: '6px', lineHeight: '1.6' }}
+          style={{ fontSize: '0.85rem', color: '#555', marginBottom: '4px', lineHeight: '1.5' }}
           dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.authors.replace(/\s*[‐–-]\s*/g, '-')) }}
         />
       )}
       {item.conference && (
-        <div style={{ fontSize: '0.95rem', color: '#666', marginBottom: '10px' }}>
+        <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '6px' }}>
           <span style={{ fontStyle: 'italic', fontWeight: '600', color: '#004094' }}>{item.conference}</span>
         </div>
       )}
@@ -48,7 +48,7 @@ function PaperItem({ item }) {
                 display: 'flex', alignItems: 'center', gap: '5px',
                 padding: '3px 10px', backgroundColor: '#f0f7ff',
                 border: '1px solid #cce0ff', borderRadius: '15px',
-                textDecoration: 'none', color: '#004094', fontSize: '0.75rem', fontWeight: 'bold'
+                textDecoration: 'none', color: '#004094', fontSize: '0.7rem', fontWeight: 'bold'
               }}
             >
               <FaNewspaper size={11} /> {newsItem.name}
@@ -72,7 +72,7 @@ function PatentItem({ item }) {
       borderTop: '1px solid #eee', borderBottom: '1px solid #eee', borderRight: '1px solid #eee'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '15px', marginBottom: '5px' }}>
-        <h3 style={{ fontSize: 'clamp(1rem, 4vw, 1.1rem)', fontWeight: '700', margin: 0, lineHeight: '1.3', flex: 1, wordBreak: 'break-word' }}>
+        <h3 style={{ fontSize: '0.95rem', fontWeight: '600', margin: 0, lineHeight: '1.4', flex: 1, wordBreak: 'break-word' }}>
           {item.url && item.url !== '#' ? (
             <a href={item.url} target="_blank" rel="noopener noreferrer"
               onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
@@ -87,13 +87,13 @@ function PatentItem({ item }) {
           whiteSpace: 'nowrap', alignSelf: 'center'
         }}>{item.type}</span>
       </div>
-      {item.koreanTitle && <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '8px' }}>{item.koreanTitle}</div>}
-      <div style={{ fontSize: '0.95rem', color: '#444', marginBottom: '10px' }}>
+      {item.koreanTitle && <div style={{ fontSize: '0.82rem', color: '#666', marginBottom: '6px' }}>{item.koreanTitle}</div>}
+      <div style={{ fontSize: '0.85rem', color: '#444', marginBottom: '8px' }}>
         <span style={{ fontWeight: '600', marginRight: '5px' }}>Inv.</span>{item.inventors}
       </div>
       <div style={{
         backgroundColor: '#eee', padding: '6px 12px', borderRadius: '4px',
-        fontSize: '0.85rem', color: '#555', display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center'
+        fontSize: '0.78rem', color: '#555', display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center'
       }}>
         <span><strong>App:</strong> {item.applicationNumber} ({item.applicationDate})</span>
         {isRegistered && (
@@ -196,14 +196,14 @@ export default function PublicationsPage() {
       <div style={{ padding: '60px 20px', maxWidth: '1000px', width: '100%', boxSizing: 'border-box' }}>
 
         {/* 헤더 */}
-        <div style={{ marginBottom: '50px' }}>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', color: '#333', marginBottom: '20px', fontWeight: '800' }}>
+        <div style={{ marginBottom: '36px' }}>
+          <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 1.8rem)', color: '#333', marginBottom: '16px', fontWeight: '700' }}>
             Publications
           </h1>
           <div style={{ display: 'flex', marginBottom: '30px', borderBottom: '2px solid #eee' }}>
             {['papers', 'patents'].map((tab) => (
               <button key={tab} onClick={() => handleTabChange(tab)} style={{
-                padding: '10px 15px', fontSize: '1.1rem', fontWeight: 'bold',
+                padding: '8px 14px', fontSize: '0.95rem', fontWeight: 'bold',
                 background: 'none', border: 'none',
                 borderBottom: activeTab === tab ? '4px solid #004094' : '4px solid transparent',
                 color: activeTab === tab ? '#004094' : '#888',
@@ -218,27 +218,27 @@ export default function PublicationsPage() {
 
         {/* 리스트 */}
         {isLoading ? (
-          <div style={{ padding: '50px 0', textAlign: 'center', color: '#888', fontSize: '1.2rem' }}>
+          <div style={{ padding: '50px 0', textAlign: 'center', color: '#888', fontSize: '1rem' }}>
             불러오는 중입니다...
           </div>
         ) : groupedData.sortedYears.length > 0 ? (
           groupedData.sortedYears.map((year) => (
-            <div key={year} id={`pub-year-${year}`} style={{ marginBottom: '60px' }}>
+            <div key={year} id={`pub-year-${year}`} style={{ marginBottom: '44px' }}>
               <div style={{
                 position: 'sticky', top: '0', zIndex: 10, backgroundColor: '#fff',
-                padding: '20px 0', borderBottom: '2px solid #eee', marginBottom: '30px',
+                padding: '12px 0', borderBottom: '2px solid #eee', marginBottom: '20px',
                 display: 'flex', alignItems: 'baseline', gap: '12px'
               }}>
-                <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', color: '#004094', margin: 0, fontWeight: '800' }}>
+                <h2 style={{ fontSize: 'clamp(1.15rem, 3vw, 1.35rem)', color: '#004094', margin: 0, fontWeight: '800' }}>
                   {year}
                 </h2>
-                <span style={{ color: '#888', fontWeight: '500', fontSize: '1.1rem' }}>
+                <span style={{ color: '#888', fontWeight: '500', fontSize: '0.9rem' }}>
                   ({groupedData.groups[year].length})
                 </span>
               </div>
               <ul style={{ listStyle: 'none', padding: 0 }}>
                 {groupedData.groups[year].map((item) => (
-                  <li key={item.id} style={{ marginBottom: '40px' }}>
+                  <li key={item.id} style={{ marginBottom: '26px' }}>
                     {activeTab === 'papers' ? <PaperItem item={item} /> : <PatentItem item={item} />}
                   </li>
                 ))}
@@ -246,7 +246,7 @@ export default function PublicationsPage() {
             </div>
           ))
         ) : (
-          <div style={{ padding: '50px 0', textAlign: 'center', color: '#888', fontSize: '1.2rem' }}>
+          <div style={{ padding: '50px 0', textAlign: 'center', color: '#888', fontSize: '1rem' }}>
             No {activeTab} found.
           </div>
         )}
@@ -297,14 +297,14 @@ export default function PublicationsPage() {
                       }} />
                       {/* 연도 텍스트 */}
                       <span style={isActive ? {
-                        fontSize: '0.95rem',
+                        fontSize: '0.85rem',
                         fontWeight: '800',
                         color: '#004094',
                         transition: 'all 0.3s ease',
                         transform: 'translateX(5px)',
                         display: 'inline-block',
                       } : {
-                        fontSize: '0.95rem',
+                        fontSize: '0.85rem',
                         fontWeight: '500',
                         color: '#adb5bd',
                         transition: 'all 0.3s ease',
