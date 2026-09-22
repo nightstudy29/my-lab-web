@@ -11,7 +11,7 @@ import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall, dangerBtnSmall } f
 const EMPTY_MEMBER = {
   name_kor: "", name_eng: "", email: "", phone: "", kakao_id: "", year_joined: "", current_position: "",
   cv_link: "", scholar_link: "", linkedin_link: "", orcid_link: "", research_area: "", motto: "",
-  position: "MS-PhD Student", degree: "TBD", status: "active", year_left: "", is_public: true, sort_order: "", user_id: "",
+  position: "MS-PhD Student", degree: "TBD", status: "active", year_left: "", co_advisor: "", is_public: true, sort_order: "", user_id: "",
 };
 
 function formFromMember(m) {
@@ -311,6 +311,7 @@ function MemberForm({ form, setForm, linkableUsers, disabled }) {
           {T("year_joined", "입학/합류 시기", { placeholder: "예: 2026-1" })}
           {T("year_left", "졸업/퇴소 연도", { placeholder: "graduated 로 바꾸면 자동" })}
           {T("current_position", "현재 소속·직위", { placeholder: "졸업 후 소속 등" })}
+          {T("co_advisor", "Co-advisor", { placeholder: "예: Prof. Tae Heon Kim (KIST)" })}
           <Field label="포털 계정">
             <select value={form.user_id || ""} onChange={(e) => set("user_id", e.target.value)} style={full}>
               <option value="">(연결 안 함)</option>

@@ -60,6 +60,7 @@ export default async function MembersPage() {
               member={{
                 name: m.nameEng || m.nameKor,
                 role: m.positionLabel,
+                coAdvisor: m.coAdvisor,
                 joined: m.yearJoined,
                 email: m.email,
                 area: m.researchArea,

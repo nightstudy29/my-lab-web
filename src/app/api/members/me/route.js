@@ -5,6 +5,7 @@
 //   PATCH {...}   → SELF_EDITABLE_FIELDS 만 반영. position/degree/status 등은 무시(교수님 전용).
 
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { requireLogin } from "@/lib/auth";
 import { MEMBER_COLUMNS, toDirectory } from "@/lib/memberShapes";
@@ -80,6 +81,7 @@ export async function PATCH(request) {
       await supabaseAdmin.from("users").update({ name: updates.name_kor }).eq("user_id", auth.user.userID);
     }
 
+    revalidatePath("/members"); // 공개 Members 페이지 캐시 즉시 갱신
     return NextResponse.json({ member: toDirectory(data) });
   } catch (err) {
     const known = /http:\/\/ 또는 https:\/\//.test(err.message);

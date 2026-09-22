@@ -5,6 +5,7 @@
 //   PATCH {id, ...} / DELETE ?id=
 
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { requireAdmin } from "@/lib/auth";
 
@@ -41,6 +42,7 @@ export async function POST(request) {
   if (!row.name_eng) return NextResponse.json({ error: "영어 이름은 필수입니다." }, { status: 400 });
   const { data, error } = await supabaseAdmin.from("interns").insert(row).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  revalidatePath("/members");
   return NextResponse.json({ intern: data });
 }
 
@@ -53,6 +55,7 @@ export async function PATCH(request) {
   if (row.name_eng === null) return NextResponse.json({ error: "영어 이름은 비울 수 없습니다." }, { status: 400 });
   const { data, error } = await supabaseAdmin.from("interns").update(row).eq("id", body.id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  revalidatePath("/members");
   return NextResponse.json({ intern: data });
 }
 
@@ -63,5 +66,6 @@ export async function DELETE(request) {
   if (!id) return NextResponse.json({ error: "id가 필요합니다." }, { status: 400 });
   const { error } = await supabaseAdmin.from("interns").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  revalidatePath("/members");
   return NextResponse.json({ success: true });
 }

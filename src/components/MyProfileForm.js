@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { FaFilePdf, FaLinkedin } from "react-icons/fa6";
 import { SiGooglescholar, SiOrcid } from "react-icons/si";
 import FileUploader from "./FileUploader";
+import ChangePasswordForm from "./ChangePasswordForm";
 import { itemsFromUrls, uploadItems } from "@/lib/uploadClient";
 import { POSITION_LABELS_EN, POSITION_LABELS_KO, REQUIRED_PROFILE_FIELDS } from "@/lib/memberConstants";
 import { boxStyle, inputStyle, primaryBtn, secondaryBtnSmall } from "./adminStyles";
@@ -34,7 +35,8 @@ export function missingProfileFields(member) {
   return REQUIRED_PROFILE_FIELDS.filter((f) => !map[f]);
 }
 
-export default function MyProfileForm({ onSaved }) {
+// showPassword = true 면 같은 카드 안에 비밀번호 변경 섹션을 이어서 보여줌 (포털 Account 탭)
+export default function MyProfileForm({ onSaved, showPassword = false, userId }) {
   const [member, setMember] = useState(null);
   const [form, setForm] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -100,6 +102,7 @@ export default function MyProfileForm({ onSaved }) {
   );
 
   return (
+    <div>
     <form onSubmit={handleSave}>
       {missing.length > 0 && (
         <div style={{ background: "#fff4e5", border: "1px solid #ffd9a8", color: "#8a5200", borderRadius: "8px", padding: "10px 14px", fontSize: "0.88rem", marginBottom: "14px" }}>
@@ -151,5 +154,17 @@ export default function MyProfileForm({ onSaved }) {
         </span>
       </div>
     </form>
+
+    {showPassword && (
+      <>
+        <hr style={{ border: "none", borderTop: "1px solid #eee", margin: "28px 0 20px" }} />
+        <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "12px" }}>
+          <h4 style={{ margin: 0, color: "#333", fontSize: "0.95rem" }}>🔑 비밀번호 변경</h4>
+          {userId && <span style={{ fontSize: "0.8rem", color: "#888" }}>로그인 ID: <strong>{userId}</strong></span>}
+        </div>
+        <ChangePasswordForm variant="inline" />
+      </>
+    )}
+    </div>
   );
 }

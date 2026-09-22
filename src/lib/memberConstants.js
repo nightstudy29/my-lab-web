@@ -41,7 +41,7 @@ export const SELF_EDITABLE_FIELDS = [
 ];
 // 교수님만 편집 (입학/합류 시기, 현재 소속·직위 포함)
 export const ADMIN_ONLY_FIELDS = [
-  "position", "degree", "status", "year_joined", "year_left", "current_position", "is_public", "sort_order", "user_id",
+  "position", "degree", "status", "year_joined", "year_left", "current_position", "co_advisor", "is_public", "sort_order", "user_id",
 ];
 
 // 「Account」 배너용 — 이게 비어 있으면 "정보를 채워주세요"

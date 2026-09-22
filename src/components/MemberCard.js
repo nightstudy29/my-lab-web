@@ -8,7 +8,7 @@ import { SiGooglescholar, SiOrcid } from 'react-icons/si';
 import styles from './MemberCard.module.css';
 
 export default function MemberCard({ member }) {
-  const { name, role, joined, email, area, motto, image, links } = member;
+  const { name, role, coAdvisor, joined, email, area, motto, image, links } = member;
 
   return (
     <div className={styles.card}>
@@ -63,6 +63,7 @@ export default function MemberCard({ member }) {
 
         {/* 직함 */}
         <p className={styles.role}>{role}</p>
+        {coAdvisor && <p className={styles.role} style={{ fontSize: '0.8rem', color: '#777', marginTop: '-4px' }}>Co-advisor: {coAdvisor}</p>}
 
         <hr className={styles.divider} />
 

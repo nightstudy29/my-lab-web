@@ -15,6 +15,7 @@
 //   본인 계정에는 block / set_role / delete 불가 (실수로 스스로 잠기는 것 방지)
 
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 import { randomInt } from 'crypto';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
@@ -161,7 +162,7 @@ export async function PATCH(request) {
     if (error) throw error;
 
     // 승인 시 멤버 정보(members) 행을 자동으로 준비 — 온보딩 자동화
-    if (action === 'approve') await ensureMemberRow(data);
+    if (action === 'approve') { await ensureMemberRow(data); revalidatePath('/members'); }
 
     return NextResponse.json({ user: toPublic(data), ...extra });
   } catch (err) {

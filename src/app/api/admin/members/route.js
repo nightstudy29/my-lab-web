@@ -7,6 +7,7 @@
 //   DELETE ?id=        → 삭제 (휴가 기록은 cascade)
 
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { requireAdmin } from "@/lib/auth";
 import { MEMBER_COLUMNS, toAdmin } from "@/lib/memberShapes";
@@ -69,6 +70,7 @@ export async function POST(request) {
 
     const { data, error } = await supabaseAdmin.from("members").insert(updates).select(MEMBER_COLUMNS).single();
     if (error) throw error;
+    revalidatePath("/members");
     return NextResponse.json({ member: toAdmin(data) });
   } catch (err) {
     const known = /올바르지 않은/.test(err.message) || err.code === "23505";
@@ -96,6 +98,7 @@ export async function PATCH(request) {
     if (data.user_id && updates.name_kor) {
       await supabaseAdmin.from("users").update({ name: data.name_kor }).eq("user_id", data.user_id);
     }
+    revalidatePath("/members");
     return NextResponse.json({ member: toAdmin(data) });
   } catch (err) {
     const known = /올바르지 않은/.test(err.message) || err.code === "23505";
@@ -116,6 +119,7 @@ export async function DELETE(request) {
 
     const { error } = await supabaseAdmin.from("members").delete().eq("id", id);
     if (error) throw error;
+    revalidatePath("/members");
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("멤버 삭제 실패:", err);

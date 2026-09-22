@@ -372,13 +372,7 @@ export default function LabPortalPage() {
               여기 입력한 내용은 홈페이지 <strong>Members</strong> 페이지(공개)와 포털 <strong>Directory</strong>(멤버만)에 자동 반영됩니다. 전화번호·Kakao ID는 공개되지 않습니다.
             </p>
             <div style={adminCardStyle}>
-              <h3 style={{ marginTop: 0, color: '#333' }}>내 정보</h3>
-              <MyProfileForm onSaved={(m) => setMyMember(m)} />
-            </div>
-            <div style={{ ...adminCardStyle, maxWidth: '480px' }}>
-              <h3 style={{ marginTop: 0, color: '#333' }}>🔑 비밀번호 변경</h3>
-              <p style={{ fontSize: '0.85rem', color: '#666', margin: '0 0 14px' }}>로그인 ID: <strong>{user.userID}</strong></p>
-              <ChangePasswordForm key={activeTab} onSuccess={() => alert('비밀번호가 변경되었습니다.')} />
+              <MyProfileForm onSaved={(m) => setMyMember(m)} showPassword userId={user.userID} />
             </div>
           </div>
         )}
