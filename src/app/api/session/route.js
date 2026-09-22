@@ -6,12 +6,11 @@
 import { NextResponse } from 'next/server';
 import { getSession, SESSION_COOKIE, sessionCookieOptions } from '@/lib/auth';
 
+// 비로그인 상태도 200 + { user: null }로 응답합니다.
+// (401로 주면 로그인 페이지가 "이미 로그인돼 있나?" 확인할 때마다 브라우저 콘솔에 빨간 에러가 찍힘)
 export async function GET(request) {
   const user = await getSession(request);
-  if (!user) {
-    return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
-  }
-  return NextResponse.json({ user });
+  return NextResponse.json({ user: user ?? null });
 }
 
 export async function DELETE() {

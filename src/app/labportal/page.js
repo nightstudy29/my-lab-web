@@ -52,8 +52,8 @@ export default function LabPortalPage() {
     fetch('/api/session')
       .then(async (res) => {
         if (cancelled) return;
-        if (!res.ok) { router.replace('/login'); return; }
-        const data = await res.json();
+        const data = res.ok ? await res.json() : null;
+        if (!data?.user) { router.replace('/login'); return; }
         setUser(data.user);
       })
       .catch(() => { if (!cancelled) router.replace('/login'); });

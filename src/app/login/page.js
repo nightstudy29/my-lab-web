@@ -29,7 +29,8 @@ export default function LoginPage() {
   // 1. 이미 로그인된 세션(httpOnly 쿠키)이 있으면 바로 포털로
   useEffect(() => {
     fetch('/api/session')
-      .then((res) => { if (res.ok) router.replace('/labportal'); })
+      .then((res) => res.json())
+      .then((data) => { if (data?.user) router.replace('/labportal'); })
       .catch(() => {});
   }, [router]);
 
