@@ -10,7 +10,7 @@ import { apiFetch } from "@/lib/apiClient";
 import FileUploader from "./FileUploader";
 import { itemsFromUrls, uploadItems } from "@/lib/uploadClient";
 import {
-  Button, Input, Select, Field, Card, Toolbar, Table, td, Badge, Empty, Segment, FormGrid, span2,
+  Button, Input, Select, Textarea, Field, Card, Toolbar, Table, td, Badge, Empty, Segment, FormGrid, span2,
   SlidePanel, useToast, useConfirm,
 } from "./ui";
 
@@ -119,17 +119,27 @@ export default function ClassMaterialAdmin() {
         reloadSemester();
       } else {
         if (!form.title.trim()) throw new Error("제목을 입력해주세요.");
-        let fileUrl = form.externalUrl.trim();
-        if (form.isExternalLink) {
-          if (!fileUrl) throw new Error("외부 링크 URL을 입력해주세요.");
-        } else if (!id) {
+        const isNotice = form.type === "notice";
+        if (!isNotice && form.attachMode === "none") throw new Error("강의자료/성적은 파일 또는 링크가 필요합니다.");
+
+        // 첨부: none → null, link → URL, file → (새 파일이면 업로드) URL
+        let fileUrl = null;
+        if (form.attachMode === "link") {
+          fileUrl = form.externalUrl.trim();
+          if (!fileUrl) throw new Error("링크 URL을 입력해주세요.");
+        } else if (form.attachMode === "file") {
           if (form.files.length === 0) throw new Error("파일을 선택해주세요.");
           const up = await uploadItems(form.files, { folder: "classmaterial", onItemsChange: (items) => setPanel((p) => (p ? { ...p, form: { ...p.form, files: items } } : p)) });
           fileUrl = up[0].url;
         }
-        const body = { type: form.type, date: form.date, title: form.title.trim(), is_external_link: form.isExternalLink };
-        if (id) { await api("/api/classmaterials", "PATCH", { id, ...body, file_url: form.isExternalLink ? fileUrl : undefined }); toast.success("자료를 수정했습니다."); }
-        else { await api("/api/classmaterials", "POST", { course_id: courseId, ...body, file_url: fileUrl }); toast.success("자료를 추가했습니다."); }
+
+        const body = {
+          type: form.type, date: form.date, title: form.title.trim(),
+          content: isNotice ? form.content.trim() : null,
+          file_url: fileUrl, is_external_link: form.attachMode === "link",
+        };
+        if (id) { await api("/api/classmaterials", "PATCH", { id, ...body }); toast.success(isNotice ? "공지를 수정했습니다." : "자료를 수정했습니다."); }
+        else { await api("/api/classmaterials", "POST", { course_id: courseId, ...body }); toast.success(isNotice ? "공지를 올렸습니다." : "자료를 추가했습니다."); }
         reloadSemester();
       }
       setPanel(null);
@@ -140,12 +150,20 @@ export default function ClassMaterialAdmin() {
     }
   }
 
+  // attachMode: none(첨부 없음, 공지만) | link(외부 링크) | file(업로드)
   const openMaterial = (m) => setPanel({
     kind: "material", id: m?.id ?? null,
     form: m
-      ? { type: m.type, date: m.date, title: m.title, isExternalLink: !!m.is_external_link, externalUrl: m.is_external_link ? m.file_url : "", files: m.is_external_link ? [] : itemsFromUrls([m.file_url]) }
-      : { type: "slide", date: new Date().toISOString().slice(0, 10), title: "", isExternalLink: false, externalUrl: "", files: [] },
+      ? {
+          type: m.type, date: m.date, title: m.title, content: m.content || "",
+          attachMode: !m.file_url ? "none" : m.is_external_link ? "link" : "file",
+          externalUrl: m.is_external_link ? m.file_url : "",
+          files: m.file_url && !m.is_external_link ? itemsFromUrls([m.file_url]) : [],
+        }
+      : { type: "slide", date: new Date().toISOString().slice(0, 10), title: "", content: "", attachMode: "file", externalUrl: "", files: [] },
   });
+  // 유형을 바꿀 때 첨부 모드 기본값 맞추기 (공지 → 없음, 그 외 → 파일)
+  const setType = (type) => setPanel((p) => ({ ...p, form: { ...p.form, type, attachMode: type === "notice" ? (p.form.attachMode === "file" && p.form.files.length ? "file" : p.form.attachMode === "link" ? "link" : "none") : (p.form.attachMode === "none" ? "file" : p.form.attachMode) } }));
 
   if (isLoading) return <Empty>불러오는 중...</Empty>;
 
@@ -202,10 +220,17 @@ export default function ClassMaterialAdmin() {
                         <td className={td.muted}>{m.date}</td>
                         <td><Badge color={TYPE_COLOR[m.type] || "gray"}>{TYPE_LABEL[m.type] || m.type}</Badge></td>
                         <td>
-                          <a href={m.file_url} target="_blank" rel="noopener noreferrer" style={{ color: "#222", fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}>
-                            {m.title}<FaArrowUpRightFromSquare size={10} color="#a5adb8" />
-                          </a>
+                          {m.file_url ? (
+                            <a href={m.file_url} target="_blank" rel="noopener noreferrer" style={{ color: "#222", fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                              {m.title}<FaArrowUpRightFromSquare size={10} color="#a5adb8" />
+                            </a>
+                          ) : (
+                            <span style={{ color: "#222", fontWeight: 600 }}>{m.title}</span>
+                          )}
                           {m.is_external_link && <span style={{ marginLeft: 8, fontSize: "0.72rem", color: "#a5adb8" }}>외부 링크</span>}
+                          {m.type === "notice" && m.content && (
+                            <div style={{ fontSize: "0.78rem", color: "#8a94a0", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 520 }}>{m.content}</div>
+                          )}
                         </td>
                         <td className={td.right}>
                           <span className={td.actions}>
@@ -245,25 +270,39 @@ export default function ClassMaterialAdmin() {
         {panel?.kind === "material" && (
           <FormGrid>
             <Field label="유형" required>
-              <Select value={panel.form.type} onChange={(e) => setF("type", e.target.value)}>{TYPES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</Select>
+              <Select value={panel.form.type} onChange={(e) => setType(e.target.value)}>{TYPES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</Select>
             </Field>
             <Field label="날짜" required><Input type="date" value={panel.form.date} onChange={(e) => setF("date", e.target.value)} /></Field>
-            <Field label="제목" required className={span2}><Input autoFocus value={panel.form.title} onChange={(e) => setF("title", e.target.value)} placeholder="예: Lecture 3 – Bravais lattice" /></Field>
-            <div className={span2}>
-              <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.85rem", color: "#333" }}>
-                <input type="checkbox" checked={panel.form.isExternalLink} disabled={!!panel.id} onChange={(e) => setF("isExternalLink", e.target.checked)} /> 외부 링크로 등록 (강의계획서, 구글 드라이브 등)
-              </label>
-            </div>
-            {panel.form.isExternalLink ? (
-              <Field label="URL" required className={span2}><Input value={panel.form.externalUrl} onChange={(e) => setF("externalUrl", e.target.value)} placeholder="https://…" /></Field>
-            ) : panel.id ? (
-              <Field label="파일" hint="업로드된 파일 자체를 바꾸려면 삭제 후 새로 추가해주세요." className={span2}>
-                <a href={panel.form.files[0]?.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.85rem", color: "#004094" }}>{panel.form.files[0]?.name}</a>
+            <Field label="제목" required className={span2}><Input autoFocus value={panel.form.title} onChange={(e) => setF("title", e.target.value)} placeholder={panel.form.type === "notice" ? "예: 중간고사 안내" : "예: Lecture 3 – Bravais lattice"} /></Field>
+
+            {/* 공지: 본문 — 공개 페이지에서 제목을 누르면 펼쳐짐 */}
+            {panel.form.type === "notice" && (
+              <Field label="내용" hint="학생이 제목을 누르면 이 내용이 펼쳐집니다. 줄바꿈 그대로 표시" className={span2}>
+                <Textarea rows={6} value={panel.form.content} onChange={(e) => setF("content", e.target.value)} placeholder="공지 내용을 적어주세요." />
               </Field>
-            ) : (
-              <Field label="파일" required hint="PDF, PPT, HWP, ZIP 등 · 최대 200MB" className={span2}>
-                <FileUploader items={panel.form.files} onChange={(items) => setF("files", items)} multiple={false} disabled={isSaving} />
-              </Field>
+            )}
+
+            {/* 첨부: 공지는 선택, 강의자료/성적은 필수 */}
+            <Field label={panel.form.type === "notice" ? "첨부 (선택)" : "첨부"} required={panel.form.type !== "notice"} className={span2}>
+              <Segment
+                value={panel.form.attachMode}
+                onChange={(v) => setF("attachMode", v)}
+                options={[...(panel.form.type === "notice" ? [["none", "없음"]] : []), ["file", "파일 업로드"], ["link", "외부 링크"]]}
+              />
+            </Field>
+            {panel.form.attachMode === "link" && (
+              <Field label="URL" required hint="강의계획서, 구글 드라이브 등" className={span2}><Input value={panel.form.externalUrl} onChange={(e) => setF("externalUrl", e.target.value)} placeholder="https://…" /></Field>
+            )}
+            {panel.form.attachMode === "file" && (
+              panel.id && panel.form.files[0]?.kind === "existing" ? (
+                <Field label="파일" hint={panel.form.type === "notice" ? "파일을 바꾸려면 첨부를 「없음」으로 저장한 뒤 다시 올리거나, 삭제 후 재등록" : "업로드된 파일 자체를 바꾸려면 삭제 후 새로 추가해주세요."} className={span2}>
+                  <a href={panel.form.files[0]?.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.85rem", color: "#004094" }}>{panel.form.files[0]?.name}</a>
+                </Field>
+              ) : (
+                <Field label="파일" hint="PDF, PPT, HWP, ZIP 등 · 최대 200MB" className={span2}>
+                  <FileUploader items={panel.form.files} onChange={(items) => setF("files", items)} multiple={false} disabled={isSaving} />
+                </Field>
+              )
             )}
           </FormGrid>
         )}

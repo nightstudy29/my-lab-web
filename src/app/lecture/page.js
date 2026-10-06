@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { FaFileLines, FaChartSimple, FaBullhorn, FaArrowUpRightFromSquare, FaBookOpen } from "react-icons/fa6";
+import { FaFileLines, FaChartSimple, FaBullhorn, FaArrowUpRightFromSquare, FaBookOpen, FaChevronDown, FaPaperclip } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
 import styles from "./page.module.css";
 
@@ -25,6 +25,7 @@ export default function LecturePage() {
   const [courses, setCourses] = useState([]);
   const [materialsByCourse, setMaterialsByCourse] = useState({});
   const [activeCourseId, setActiveCourseId] = useState(null);
+  const [openNoticeId, setOpenNoticeId] = useState(null); // 펼쳐진 공지
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -159,6 +160,46 @@ export default function LecturePage() {
         {sortedMaterials.map((item) => {
           const meta = TYPE_META[item.type] ?? TYPE_META.slide;
           const Icon = meta.icon;
+          const badge = (
+            <div className={`${styles.badge} ${styles[`badge_${item.type}`] || ""}`}>
+              <Icon size={13} />
+              <span>{meta.label}</span>
+            </div>
+          );
+
+          // 공지: 제목을 누르면 본문이 펼쳐짐 (첨부가 있으면 본문 아래 링크)
+          if (item.type === "notice") {
+            const open = openNoticeId === item.id;
+            return (
+              <div key={item.id} className={`${styles.item} ${styles.notice} ${open ? styles.noticeOpen : ""}`}>
+                <button
+                  type="button"
+                  className={styles.noticeHeader}
+                  onClick={() => setOpenNoticeId(open ? null : item.id)}
+                  aria-expanded={open}
+                >
+                  {badge}
+                  <div className={styles.itemBody}>
+                    <span className={styles.itemDate}>{item.date}</span>
+                    <span className={styles.itemTitle}>{item.title}</span>
+                  </div>
+                  <FaChevronDown size={13} className={styles.chevron} />
+                </button>
+                {open && (
+                  <div className={styles.noticeDetail}>
+                    {item.content ? <p className={styles.noticeContent}>{item.content}</p> : <p className={styles.noticeEmpty}>내용 없음</p>}
+                    {item.file_url && (
+                      <a href={item.file_url} target="_blank" rel="noopener noreferrer" className={styles.noticeAttachment}>
+                        <FaPaperclip size={12} /> {item.is_external_link ? "관련 링크 열기" : "첨부파일 열기"} <FaArrowUpRightFromSquare size={11} />
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          // 강의자료 / 성적: 바로 파일(링크)로 연결
           return (
             <a
               key={item.id}
@@ -167,16 +208,11 @@ export default function LecturePage() {
               rel="noopener noreferrer"
               className={styles.item}
             >
-              <div className={`${styles.badge} ${styles[`badge_${item.type}`] || ""}`}>
-                <Icon size={13} />
-                <span>{meta.label}</span>
-              </div>
-
+              {badge}
               <div className={styles.itemBody}>
                 <span className={styles.itemDate}>{item.date}</span>
                 <span className={styles.itemTitle}>{item.title}</span>
               </div>
-
               <FaArrowUpRightFromSquare size={13} className={styles.itemLinkIcon} />
             </a>
           );
