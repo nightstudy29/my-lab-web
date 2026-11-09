@@ -6,6 +6,7 @@ import Image from "next/image";
 import { FaArrowRight } from "react-icons/fa6";
 import { supabase } from "@/lib/supabaseClient";
 import useIsMobile from "@/hooks/useIsMobile";
+import NoticePopup from "@/components/NoticePopup";
 import styles from "./page.module.css";
 
 // ===== 파티클 캔버스 컴포넌트 =====
@@ -139,6 +140,7 @@ export default function Home() {
 
   return (
     <div style={{ width: "100%" }}>
+      <NoticePopup />
 
       {/* ===== Hero Section ===== */}
       <div className={styles.hero}>
