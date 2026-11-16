@@ -7,16 +7,18 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import styles from "./NoticePopup.module.css";
 
-const NOTICE = {
-  id: "2026-winter-intern-closed",
-  until: "2026-12-31", // 이 날짜까지 표시 (KST 기준, 해당 날짜 포함)
-  title: "2026 동계 재료공학부 학부생 인턴 프로그램 모집 마감 안내",
-  body: [
-    "2026 동계 재료공학부 인턴 프로그램의 모집이 마감되어\n신규 지원은 더 이상 받지 않습니다.\n관심을 가지고 지원해 주신 모든 분들께 감사드립니다.",
-    "기존 지원자분들께는 선발 절차에 따라 개별적으로 연락드릴 예정입니다.",
-    "마감 이후 접수된 신규 지원 및 문의 메일에는 개별 답변을 드리기 어려운 점 양해 부탁드립니다.",
-  ],
-};
+// 현재 게시 중인 공지 없음. 다시 띄우려면 아래 예시처럼 객체를 넣으면 됩니다.
+//
+// const NOTICE = {
+//   id: "2026-winter-intern-closed",      // 공지마다 다르게 (「오늘 하루 보지 않기」 키)
+//   until: "2026-12-31",                   // 이 날짜까지 표시 (KST 기준, 해당 날짜 포함)
+//   title: "2026 동계 재료공학부 학부생 인턴 프로그램 모집 마감 안내",
+//   body: [                                // 문단 배열. \n 은 줄바꿈
+//     "2026 동계 재료공학부 인턴 프로그램의 모집이 마감되어\n신규 지원은 더 이상 받지 않습니다.",
+//     "기존 지원자분들께는 선발 절차에 따라 개별적으로 연락드릴 예정입니다.",
+//   ],
+// };
+const NOTICE = null;
 
 const STORAGE_KEY = "smid-notice-hidden";
 
